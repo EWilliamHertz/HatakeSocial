@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hatake TCG Shop - Premium TCG Accessories</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.1/css/lightgallery.min.css">
+    <script src="https://cdn.snipcart.com/themes/v3.2.0/default/snipcart.js"></script>
+    <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.2.0/default/snipcart.css">
+    <style>
+        :root {
+            --primary: #1a365d;
+            --secondary: #2b6cb0;
+            --accent: #f6ad55;
+            --light: #f7fafc;
+            --dark: #1a202c;
+            --success: #48bb78;
+            --warning: #ecc94b;
+            --danger: #e53e3e;
+            --card-border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .dark-mode {
+            --primary: #2d3748;
+            --secondary: #4a5568;
+            --light: #1a202c;
+            --dark: #f7fafc;
+            --card-border: #4a5568;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            height: 50px;
+            width: auto;
+            background: linear-gradient(135deg, #2b6cb0, #1a365d);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        nav a:hover, nav a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-container input {
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            border-radius: 20px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            width: 200px;
+        }
+
+        .search-container input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .action-icons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-icons div {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .action-icons .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--accent);
+            color: var(--dark);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f6ad55, #e53e3e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Shop Hero */
+        .shop-hero {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            text-align: center;
+            padding: 4rem 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .shop-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .shop-hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+
+        .cta-button {
+            background-color: var(--accent);
+            color: var(--dark);
+            border: none;
+            border-radius: 30px;
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cta-button:hover {
+            background-color: #ed8936;
+            transform: translateY(-2px);
+        }
+
+        /* Shop Content */
+        .shop-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem 3rem;
+        }
+
+        .shop-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .shop-title {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .product-filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background-color: var(--light);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 0.5rem 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background-color: var(--light);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-image-container {
+            height: 250px;
+            position: relative;
+            overflow: hidden;
+            background-color: #f8f9fa;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+
+        .product-tag {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background-color: var(--accent);
+            color: var(--dark);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+
+        .product-meta {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .product-meta div {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .product-description {
+            color: #4a5568;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .product-features {
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .feature-item i {
+            color: var(--accent);
+            margin-top: 0.2rem;
+        }
+
+        .snipcart-add-item {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .snipcart-add-item:hover {
+            background-color: var(--secondary);
+        }
+
+        .product-gallery {
+            margin-top: 4rem;
+            border-top: 1px solid var(--card-border);
+            padding-top: 2rem;
+        }
+
+        .gallery-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+
+        .gallery-item {
+            border-radius: 8px;
+            overflow: hidden;
+            height: 150px;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.03);
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 2rem 1.5rem;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: space-between;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .footer-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #cbd5e0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .social-link:hover {
+            background-color: var(--accent);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #a0aec0;
+            font-size: 0.9rem;
+        }
+
+        /* Dark mode toggle */
+        .dark-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 992px) {
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            nav ul {
+                gap: 0.8rem;
+            }
+            
+            .search-container input {
+                width: 150px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            
+            .logo-container {
+                order: 1;
+            }
+            
+            nav {
+                order: 3;
+                width: 100%;
+            }
+            
+            nav ul {
+                justify-content: center;
+            }
+            
+            .header-actions {
+                order: 2;
+            }
+            
+            .search-container input {
+                width: 120px;
+            }
+            
+            .shop-hero h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .product-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-section {
+                min-width: 100%;
+            }
+            
+            .shop-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .shop-hero p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo-container">
+            <div class="logo">HATA<span>KE</span></div>
+            <button class="dark-toggle" id="darkModeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+        
+        <nav>
+            <ul>
+                <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="#" class="active"><i class="fas fa-store"></i> Shop</a></li>
+                <li><a href="#"><i class="fas fa-calendar-alt"></i> Events</a></li>
+                <li><a href="#"><i class="fas fa-users"></i> Community</a></li>
+                <li><a href="#"><i class="fas fa-info-circle"></i> About</a></li>
+                <li><a href="#"><i class="fas fa-handshake"></i> Partners</a></li>
+            </ul>
+        </nav>
+        
+        <div class="header-actions">
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search products...">
+            </div>
+            
+            <div class="action-icons">
+                <div>
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </div>
+                <div>
+                    <i class="fas fa-comment-alt"></i>
+                    <span class="badge">5</span>
+                </div>
+                <div>
+                    <i class="fas fa-shopping-cart snipcart-checkout"></i>
+                    <span class="badge snipcart-items-count">2</span>
+                </div>
+            </div>
+            
+            <div class="user-avatar">JH</div>
+        </div>
+    </header>
+
+    <!-- Shop Hero -->
+    <section class="shop-hero">
+        <h1>Premium TCG Accessories</h1>
+        <p>Discover Hatake's premium collection of TCG accessories designed for collectors and players. Pre-order now for October 2025 release!</p>
+        <button class="cta-button">
+            <i class="fas fa-fire"></i> Pre-order Now
+        </button>
+    </section>
+
+    <!-- Shop Content -->
+    <main class="shop-container">
+        <div class="shop-header">
+            <h2 class="shop-title">Our Products</h2>
+            <div class="product-filters">
+                <button class="filter-btn active">All Products</button>
+                <button class="filter-btn">Sleeves</button>
+                <button class="filter-btn">Binders</button>
+                <button class="filter-btn">Top-Loaders</button>
+                <button class="filter-btn">Deck Boxes</button>
+                <button class="filter-btn">Bags</button>
+            </div>
+        </div>
+        
+        <div class="products-grid">
+            <!-- Matte Sleeves -->
+            <div class="product-card">
+                <div class="product-image-container">
+                    <img src="https://images.unsplash.com/photo-1600003263720-95b45a4035d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Matte Sleeves" class="product-image">
+                    <div class="product-tag">Pre-order</div>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">Matte Sleeves</h3>
+                    <div class="product-price">89 SEK</div>
+                    <div class="product-meta">
+                        <div><i class="fas fa-box"></i> SKU: 0.01</div>
+                        <div><i class="fas fa-layer-group"></i> Category: Sleeves</div>
+                        <div><i class="fas fa-warehouse"></i> Units: 1000</div>
+                    </div>
+                    <p class="product-description">Premium matte finish sleeves for reduced glare and improved shuffling. 100-pack, 66x91mm.</p>
+                    
+                    <div class="product-features">
+                        <h4 class="feature-title">Features:</h4>
+                        <div class="features-grid">
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> Acid-free materials</div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> Tournament-ready</div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> Reduced glare</div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> Durable construction</div>
+                        </div>
+                    </div>
+                    
+                    <button class="snipcart-add-item"
+                        data-item-id="0.01"
+                        data-item-price="89.00"
+                        data-item-name="Matte Sleeves"
+                        data-item-description="Premium matte finish sleeves (100-pack, 66x91mm). Acid-free, tournament-ready, reduced glare."
+                        data-item-image="https://images.unsplash.com/photo-1600003263720-95b45a4035d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+                        data-item-url="/">
+                        <i class="fas fa-cart-plus"></i> Add to Cart
+                    </button>
+                </div>
+                
+                <div class="product-gallery">
+                    <h4 class="gallery-title">Product Gallery</h4>
+                    <div class="gallery-grid">
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1600003263720-95b45a4035d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Sleeve Detail" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1588666309990-d68f08e3d4a6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Sleeve Package" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1588666309990-d68f08e3d4a6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Sleeve Comparison" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1600003263720-95b45a4035d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Sleeve Texture" class="gallery-img">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 480-Slot Binder -->
+            <div class="product-card">
+                <div class="product-image-container">
+                    <img src="https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="480-Slot Binder" class="product-image">
+                    <div class="product-tag">Pre-order</div>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">480-Slot Binder</h3>
+                    <div class="product-price">360 SEK</div>
+                    <div class="product-meta">
+                        <div><i class="fas fa-box"></i> SKU: 0.02</div>
+                        <div><i class="fas fa-layer-group"></i> Category: Binder</div>
+                        <div><i class="fas fa-warehouse"></i> Units: 100</div>
+                    </div>
+                    <p class="product-description">Premium zippered binder with side-loading pockets to keep your valuable cards secure and protected.</p>
+                    
+                    <div class="product-features">
+                        <h4 class="feature-title">Features:</h4>
+                        <div class="features-grid">
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> 480 card capacity</div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> Nordic design</div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> Reinforced construction</div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> Side-loading pockets</div>
+                        </div>
+                    </div>
+                    
+                    <button class="snipcart-add-item"
+                        data-item-id="0.02"
+                        data-item-price="360.00"
+                        data-item-name="480-Slot Binder"
+                        data-item-description="Premium zippered binder with side-loading pockets. 480 card capacity, Nordic design."
+                        data-item-image="https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+                        data-item-url="/">
+                        <i class="fas fa-cart-plus"></i> Add to Cart
+                    </button>
+                </div>
+                
+                <div class="product-gallery">
+                    <h4 class="gallery-title">Product Gallery</h4>
+                    <div class="gallery-grid">
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Binder Front" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Binder Interior" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Binder Zipper" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Binder Pages" class="gallery-img">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 35pt Top-Loaders -->
+            <div class="product-card">
+                <div class="product-image-container">
+                    <img src="https://images.unsplash.com/photo-1553531384-411a247ccd73?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="35pt Top-Loaders" class="product-image">
+                    <div class="product-tag">Pre-order</div>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">35pt Top-Loaders (25-pack)</h3>
+                    <div class="product-price">30 SEK</div>
+                    <div class="product-meta">
+                        <div><i class="fas fa-box"></i> SKU: 0.031</div>
+                        <div><i class="fas fa-layer-group"></i> Category: Top-Loaders</div>
+                        <div><i class="fas fa-warehouse"></i> Units: 550</div>
+                    </div>
+                    <p class="product-description">Crystal-clear protection for your most valuable standard-sized trading cards. 25-pack.</p>
+                    
+                    <div class="product-features">
+                        <h4 class="feature-title">Features:</h4>
+                        <div class="features-grid">
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> 35pt thickness</div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> Rigid protection</div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> Precision-cut edges</div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> Acid-free materials</div>
+                        </div>
+                    </div>
+                    
+                    <button class="snipcart-add-item"
+                        data-item-id="0.031"
+                        data-item-price="30.00"
+                        data-item-name="35pt Top-Loaders"
+                        data-item-description="Crystal-clear protection (25-pack). Rigid protection, precision-cut edges."
+                        data-item-image="https://images.unsplash.com/photo-1553531384-411a247ccd73?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+                        data-item-url="/">
+                        <i class="fas fa-cart-plus"></i> Add to Cart
+                    </button>
+                </div>
+                
+                <div class="product-gallery">
+                    <h4 class="gallery-title">Product Gallery</h4>
+                    <div class="gallery-grid">
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1553531384-411a247ccd73?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Top-Loader Front" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1553531384-411a247ccd73?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Top-Loader Package" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1553531384-411a247ccd73?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Top-Loader Cards" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1553531384-411a247ccd73?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Top-Loader Stack" class="gallery-img">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 130pt Top-Loaders -->
+            <div class="product-card">
+                <div class="product-image-container">
+                    <img src="https://images.unsplash.com/photo-1553531384-cc64ac80b931?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="130pt Top-Loaders" class="product-image">
+                    <div class="product-tag">Pre-order</div>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">130pt Top-Loaders (10-pack)</h3>
+                    <div class="product-price">35 SEK</div>
+                    <div class="product-meta">
+                        <div><i class="fas fa-box"></i> SKU: 0.032</div>
+                        <div><i class="fas fa-layer-group"></i> Category: Top-Loaders</div>
+                        <div><i class="fas fa-warehouse"></i> Units: 200</div>
+                    </div>
+                    <p class="product-description">Extra-thick, crystal-clear rigid sleeves that provide superior protection for multiple cards or oversized collectibles.</p>
+                    
+                    <div class="product-features">
+                        <h4 class="feature-title">Features:</h4>
+                        <div class="features-grid">
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> 130pt thickness</div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> Maximum rigidity</div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> Oversized compatible</div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> Precision-cut edges</div>
+                        </div>
+                    </div>
+                    
+                    <button class="snipcart-add-item"
+                        data-item-id="0.032"
+                        data-item-price="35.00"
+                        data-item-name="130pt Top-Loaders"
+                        data-item-description="Extra-thick protection (10-pack). Maximum rigidity, oversized collectible compatible."
+                        data-item-image="https://images.unsplash.com/photo-1553531384-cc64ac80b931?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+                        data-item-url="/">
+                        <i class="fas fa-cart-plus"></i> Add to Cart
+                    </button>
+                </div>
+                
+                <div class="product-gallery">
+                    <h4 class="gallery-title">Product Gallery</h4>
+                    <div class="gallery-grid">
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1553531384-cc64ac80b931?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="130pt Front" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1553531384-cc64ac80b931?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="130pt Comparison" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1553531384-cc64ac80b931?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="130pt Cards" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1553531384-cc64ac80b931?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="130pt Stack" class="gallery-img">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PU DeckBox -->
+            <div class="product-card">
+                <div class="product-image-container">
+                    <img src="https://images.unsplash.com/photo-1600003263720-95b45a4035d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="PU DeckBox" class="product-image">
+                    <div class="product-tag">Pre-order</div>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">PU DeckBox</h3>
+                    <div class="product-price">300 SEK</div>
+                    <div class="product-meta">
+                        <div><i class="fas fa-box"></i> SKU: 0.4</div>
+                        <div><i class="fas fa-layer-group"></i> Category: Deckbox</div>
+                        <div><i class="fas fa-warehouse"></i> Units: 100</div>
+                    </div>
+                    <p class="product-description">Premium leather deckbox with magnetic closure and separate compartments. 160+ card capacity.</p>
+                    
+                    <div class="product-features">
+                        <h4 class="feature-title">Features:</h4>
+                        <div class="features-grid">
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> Magnetic closure</div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> Separate compartments</div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> Embossed logo</div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> Premium PU leather</div>
+                        </div>
+                    </div>
+                    
+                    <button class="snipcart-add-item"
+                        data-item-id="0.4"
+                        data-item-price="300.00"
+                        data-item-name="PU DeckBox"
+                        data-item-description="Premium leather deckbox (160+ card capacity). Magnetic closure, separate compartments, embossed logo."
+                        data-item-image="https://images.unsplash.com/photo-1600003263720-95b45a4035d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+                        data-item-url="/">
+                        <i class="fas fa-cart-plus"></i> Add to Cart
+                    </button>
+                </div>
+                
+                <div class="product-gallery">
+                    <h4 class="gallery-title">Product Gallery</h4>
+                    <div class="gallery-grid">
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1600003263720-95b45a4035d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="DeckBox Front" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1600003263720-95b45a4035d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="DeckBox Interior" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1600003263720-95b45a4035d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="DeckBox Logo" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1600003263720-95b45a4035d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="DeckBox Size" class="gallery-img">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Duffel Bag -->
+            <div class="product-card">
+                <div class="product-image-container">
+                    <img src="https://images.unsplash.com/photo-1546938576-6e6a64f317cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Duffel Bag" class="product-image">
+                    <div class="product-tag">Pre-order</div>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">Tournament Duffel Bag</h3>
+                    <div class="product-price">300 SEK</div>
+                    <div class="product-meta">
+                        <div><i class="fas fa-box"></i> SKU: 0.5</div>
+                        <div><i class="fas fa-layer-group"></i> Category: Bag</div>
+                        <div><i class="fas fa-warehouse"></i> Units: 22</div>
+                    </div>
+                    <p class="product-description">Ultimate tournament companion bag with padded compartments for all your TCG essentials.</p>
+                    
+                    <div class="product-features">
+                        <h4 class="feature-title">Features:</h4>
+                        <div class="features-grid">
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> Water-resistant</div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> Padded compartments</div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> YKK zippers</div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> Adjustable straps</div>
+                        </div>
+                    </div>
+                    
+                    <button class="snipcart-add-item"
+                        data-item-id="0.5"
+                        data-item-price="300.00"
+                        data-item-name="Duffel Bag"
+                        data-item-description="Tournament companion bag (47×28×55cm). Water-resistant, padded compartments, YKK zippers."
+                        data-item-image="https://images.unsplash.com/photo-1546938576-6e6a64f317cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+                        data-item-url="/">
+                        <i class="fas fa-cart-plus"></i> Add to Cart
+                    </button>
+                </div>
+                
+                <div class="product-gallery">
+                    <h4 class="gallery-title">Product Gallery</h4>
+                    <div class="gallery-grid">
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1546938576-6e6a64f317cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Duffel Front" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1546938576-6e6a64f317cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Duffel Compartments" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1546938576-6e6a64f317cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Duffel Interior" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1546938576-6e6a64f317cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Duffel Size" class="gallery-img">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PetDragon Playmat -->
+            <div class="product-card">
+                <div class="product-image-container">
+                    <img src="https://images.unsplash.com/photo-1551103782-8ab07afd45c1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="PetDragon Playmat" class="product-image">
+                    <div class="product-tag">Pre-order</div>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">PetDragon Playmat</h3>
+                    <div class="product-price">120 SEK</div>
+                    <div class="product-meta">
+                        <div><i class="fas fa-box"></i> SKU: 0.6</div>
+                        <div><i class="fas fa-layer-group"></i> Category: Playmat</div>
+                        <div><i class="fas fa-warehouse"></i> Units: 250</div>
+                    </div>
+                    <p class="product-description">Limited edition collaboration design featuring PetDragon and Hatake logos. Ships in protective tube.</p>
+                    
+                    <div class="product-features">
+                        <h4 class="feature-title">Features:</h4>
+                        <div class="features-grid">
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> Limited edition</div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> 14×24 inches</div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> Protective tube</div>
+                            <div class="feature-item"><i class="fas fa-check-circle"></i> Premium stitching</div>
+                        </div>
+                    </div>
+                    
+                    <button class="snipcart-add-item"
+                        data-item-id="0.6"
+                        data-item-price="120.00"
+                        data-item-name="PetDragon Playmat"
+                        data-item-description="Limited edition collaboration design. 14×24 inches, ships in protective tube."
+                        data-item-image="https://images.unsplash.com/photo-1551103782-8ab07afd45c1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+                        data-item-url="/">
+                        <i class="fas fa-cart-plus"></i> Add to Cart
+                    </button>
+                </div>
+                
+                <div class="product-gallery">
+                    <h4 class="gallery-title">Product Gallery</h4>
+                    <div class="gallery-grid">
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1551103782-8ab07afd45c1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Playmat Design" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1551103782-8ab07afd45c1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Playmat Detail" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1551103782-8ab07afd45c1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Playmat Size" class="gallery-img">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://images.unsplash.com/photo-1551103782-8ab07afd45c1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Playmat Tube" class="gallery-img">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-title">About Hatake TCG</div>
+                <p>Hatake is a premium TCG accessories brand founded by passionate players who understand what collectors and competitors need.</p>
+                <p>This website was built by DeepSeek.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <div class="footer-title">Quick Links</div>
+                <ul class="footer-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Shop</a></li>
+                    <li><a href="#">Events</a></li>
+                    <li><a href="#">Community</a></li>
+                    <li><a href="#">Deck Builder</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <div class="footer-title">Products</div>
+                <ul class="footer-links">
+                    <li><a href="#">Sleeves & Protectors</a></li>
+                    <li><a href="#">Binders & Portfolios</a></li>
+                    <li><a href="#">Deck Boxes</a></li>
+                    <li><a href="#">Playmats</a></li>
+                    <li><a href="#">Bags & Accessories</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <div class="footer-title">Contact Us</div>
+                <ul class="footer-links">
+                    <li><i class="fas fa-envelope"></i> support@hatake.eu</li>
+                    <li><i class="fas fa-phone"></i> +46 123 456 789</li>
+                    <li><i class="fas fa-map-marker-alt"></i> Falköping, Sweden</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            &copy; 2025 Hatake TCG. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Snipcart Configuration -->
+    <div hidden id="snipcart" data-api-key="ZDJjNmYwNTUtMmUwOC00MjBlLTk3YmQtNWFhNGQzNzE1NzhkNjM4ODUwOTE1MzE1MDMxMzQ0" data-config-modal-style="side"></div>
+
+    <script>
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+        
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const icon = darkModeToggle.querySelector('i');
+            
+            if (body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+        
+        // Simulate cart items
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.querySelector('.snipcart-items-count').textContent = '2';
+            }, 1000);
+        });
+        
+        // Initialize Snipcart
+        document.addEventListener('snipcart.ready', () => {
+            // Add coupon codes
+            Snipcart.api.coupons.add('MTGFB', {
+                discount: 5,
+                type: 'Percentage'
+            });
+            
+            Snipcart.api.coupons.add('214', {
+                discount: 30,
+                type: 'FixedAmount'
+            });
+        });
+        
+        // Filter products
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // In a real implementation, you would filter products here
+            });
+        });
+    </script>
+</body>
+</html>
