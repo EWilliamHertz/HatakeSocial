@@ -838,6 +838,24 @@
             font-weight: 600;
         }
         
+        /* Auth Modal */
+        #authModal .modal-body {
+            padding: 2rem;
+        }
+
+        #authModal .form-group input[type="email"],
+        #authModal .form-group input[type="password"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--card-border);
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        #authModal .modal-footer {
+            justify-content: space-between;
+        }
+
         /* Responsive styles */
         @media (max-width: 1200px) {
             .shop-sidebar {
@@ -1043,7 +1061,7 @@
                     <div class="user-details">
                         <h2 id="mainProfileName">Guest User</h2>
                         <div id="mainProfileBio">Join our TCG community to connect with other players!</div>
-                        <div class="user-tags">
+                        <div class="user-tags" id="mainUserTags">
                             <span class="user-tag">MTG Commander</span>
                             <span class="user-tag">Pokémon TCG</span>
                             <span class="user-tag">Collector</span>
@@ -1055,12 +1073,12 @@
             <div class="card">
                 <div class="auth-section" id="authSection">
                     <h2>Join Our Community</h2>
-                    <p>Sign in to access all community features, join groups, and connect with other TCG players.</p>
+                    <p id="authMessage">Sign in to access all community features, join groups, and connect with other TCG players.</p>
                     <div class="auth-buttons">
                         <button class="auth-btn google-btn" id="googleSignInBtn">
                             <i class="fab fa-google"></i> Sign in with Google
                         </button>
-                        <button class="auth-btn" id="logoutBtn" style="display: none; background-color: #e53e3e;">
+                        <button class="auth-btn logout-btn" id="logoutBtn" style="display: none;">
                             <i class="fas fa-sign-out-alt"></i> Logout
                         </button>
                     </div>
@@ -1078,6 +1096,7 @@
                             <div class="continent-info">
                                 <h3>Europe</h3>
                                 <p>Connect with players across Europe</p>
+                                <button class="btn" style="margin-top: 1rem; width: 100%;" onclick="connectRegions('Europe', 'North America')">Connect with North America</button>
                             </div>
                         </div>
                         <div class="continent-group">
@@ -1087,6 +1106,7 @@
                             <div class="continent-info">
                                 <h3>North America</h3>
                                 <p>Players from USA and Canada</p>
+                                <button class="btn" style="margin-top: 1rem; width: 100%;" onclick="connectRegions('North America', 'Europe')">Connect with Europe</button>
                             </div>
                         </div>
                         <div class="continent-group">
@@ -1096,6 +1116,7 @@
                             <div class="continent-info">
                                 <h3>Asia</h3>
                                 <p>TCG communities across Asia</p>
+                                <button class="btn" style="margin-top: 1rem; width: 100%;" onclick="connectRegions('Asia', 'North America')">Connect with North America</button>
                             </div>
                         </div>
                         <div class="continent-group">
@@ -1105,6 +1126,7 @@
                             <div class="continent-info">
                                 <h3>Africa</h3>
                                 <p>Growing TCG scene in Africa</p>
+                                <button class="btn" style="margin-top: 1rem; width: 100%;" onclick="connectRegions('Africa', 'Europe')">Connect with Europe</button>
                             </div>
                         </div>
                     </div>
@@ -1243,20 +1265,7 @@
                         <i class="fas fa-comments"></i> Community Chat
                     </div>
                     <div class="chat-messages" id="chatMessages">
-                        <div class="message received">
-                            <div class="message-sender">Maria Sanchez</div>
-                            <div>Anyone going to the tournament this weekend?</div>
-                            <div class="message-time">10:24 AM</div>
-                        </div>
-                        <div class="message sent">
-                            <div>I'll be there! Bringing my new Commander deck</div>
-                            <div class="message-time">10:26 AM</div>
-                        </div>
-                        <div class="message received">
-                            <div class="message-sender">Thomas Johnson</div>
-                            <div>Looking forward to seeing everyone! I'll have some cards for trade too</div>
-                            <div class="message-time">10:28 AM</div>
-                        </div>
+                        <!-- Messages will be loaded from Supabase -->
                     </div>
                     <div class="chat-input">
                         <input type="text" placeholder="Type your message..." id="chatInput">
@@ -1323,7 +1332,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Edit Profile</h3>
-                <button class="modal-close" id="closeModal">&times;</button>
+                <button class="modal-close" id="closeModal">×</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
@@ -1364,6 +1373,33 @@
             <div class="modal-footer">
                 <button class="modal-btn cancel-btn" id="cancelEdit">Cancel</button>
                 <button class="modal-btn save-btn" id="saveProfile">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Sign In or Register</h3>
+                <button class="modal-close" id="closeAuthModal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter your password">
+                </div>
+                <div class="form-group" style="text-align: center;">
+                    <button class="modal-btn" id="registerBtn" style="background-color: #48bb78; color: white;">Register</button>
+                    <button class="modal-btn" id="loginBtn" style="background-color: #2b6cb0; color: white;">Login</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn cancel-btn" id="cancelAuth">Cancel</button>
             </div>
         </div>
     </div>
@@ -1415,7 +1451,7 @@
         </div>
         
         <div class="copyright">
-            &copy; 2025 Hatake TCG. All rights reserved.
+            © 2025 Hatake TCG. All rights reserved.
         </div>
     </footer>
 
@@ -1435,6 +1471,7 @@
         const mainProfilePic = document.getElementById('mainProfilePic');
         const mainProfileName = document.getElementById('mainProfileName');
         const mainProfileBio = document.getElementById('mainProfileBio');
+        const mainUserTags = document.getElementById('mainUserTags');
         const editProfileBtn = document.getElementById('editProfileBtn');
         const profileModal = document.getElementById('profileModal');
         const closeModal = document.getElementById('closeModal');
@@ -1443,10 +1480,18 @@
         const googleSignInBtn = document.getElementById('googleSignInBtn');
         const logoutBtn = document.getElementById('logoutBtn');
         const authSection = document.getElementById('authSection');
+        const authMessage = document.getElementById('authMessage');
         const chatInput = document.getElementById('chatInput');
         const sendMessageBtn = document.getElementById('sendMessageBtn');
         const chatMessages = document.getElementById('chatMessages');
-        
+        const authModal = document.getElementById('authModal');
+        const closeAuthModal = document.getElementById('closeAuthModal');
+        const cancelAuth = document.getElementById('cancelAuth');
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+        const registerBtn = document.getElementById('registerBtn');
+        const loginBtn = document.getElementById('loginBtn');
+
         // Check for saved dark mode preference
         if (localStorage.getItem('darkMode') === 'true') {
             body.classList.add('dark-mode');
@@ -1471,42 +1516,46 @@
         });
         
         // Check if user is logged in
-        function checkAuthState() {
-            const user = JSON.parse(localStorage.getItem('user'));
+        async function checkAuthState() {
+            const { data: { session } } = await supabase.auth.getSession();
+            const user = session?.user || JSON.parse(localStorage.getItem('user'));
             if (user) {
                 updateProfileUI(user);
+                googleSignInBtn.style.display = 'none';
                 logoutBtn.style.display = 'block';
-                authSection.querySelector('p').textContent = `Welcome back, ${user.name}!`;
+                authMessage.textContent = `Welcome back, ${user.user_metadata?.name || user.name}!`;
             } else {
                 logoutBtn.style.display = 'none';
-                authSection.querySelector('p').textContent = 'Sign in to access all community features.';
+                googleSignInBtn.style.display = 'block';
+                authMessage.textContent = 'Sign in to access all community features.';
             }
+            loadMessages();
         }
-        
+
         // Update UI with user data
         function updateProfileUI(user) {
-            // Set profile info
-            profileName.textContent = user.name;
-            profileBio.textContent = user.bio || 'Join our TCG community!';
-            mainProfileName.textContent = user.name;
-            mainProfileBio.textContent = user.bio || 'Join our TCG community to connect with other players!';
+            profileName.textContent = user.user_metadata?.name || user.name || "Guest User";
+            profileBio.textContent = user.user_metadata?.bio || user.bio || 'Join our TCG community!';
+            mainProfileName.textContent = user.user_metadata?.name || user.name || "Guest User";
+            mainProfileBio.textContent = user.user_metadata?.bio || user.bio || 'Join our TCG community to connect with other players!';
             
-            // Set avatar
             const avatarColors = ['#f6ad55', '#2b6cb0', '#48bb78', '#e53e3e'];
-            const avatarIndex = user.avatar || 0;
+            const avatarIndex = user.user_metadata?.avatar || user.avatar || 0;
             const avatarColor = avatarColors[avatarIndex];
             
             userAvatar.style.background = `linear-gradient(135deg, ${avatarColor}, ${darkenColor(avatarColor, 20)})`;
             profilePic.style.background = `linear-gradient(135deg, ${avatarColor}, ${darkenColor(avatarColor, 20)})`;
             mainProfilePic.style.background = `linear-gradient(135deg, ${avatarColor}, ${darkenColor(avatarColor, 20)})`;
             
-            // Set avatar initials
-            const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            const initials = (user.user_metadata?.name || user.name).split(' ').map(n => n[0]).join('').toUpperCase();
             userAvatar.textContent = initials;
             profilePic.textContent = initials;
             mainProfilePic.textContent = initials;
             
-            // Update stats with random numbers
+            // Update tags with favorite games
+            const games = user.user_metadata?.games || user.games || ['MTG Commander', 'Pokémon TCG', 'Collector'];
+            mainUserTags.innerHTML = games.map(game => `<span class="user-tag">${game}</span>`).join('');
+            
             document.getElementById('postCount').textContent = Math.floor(Math.random() * 100);
             document.getElementById('friendsCount').textContent = Math.floor(Math.random() * 500);
             document.getElementById('groupsCount').textContent = Math.floor(Math.random() * 20);
@@ -1529,30 +1578,71 @@
         async function signInWithGoogle() {
             try {
                 const { data, error } = await supabase.auth.signInWithOAuth({
-                    provider: 'google'
+                    provider: 'google',
+                    options: {
+                        redirectTo: window.location.origin + '/community.html'
+                    }
                 });
                 
                 if (error) throw error;
                 
-                // Simulate user data (in a real app, we would get this from Supabase)
-                const user = {
-                    name: "John Player",
-                    email: "john.player@example.com",
-                    avatar: 0,
-                    bio: "Passionate MTG Commander player and collector"
-                };
-                
-                localStorage.setItem('user', JSON.stringify(user));
-                checkAuthState();
-                
             } catch (error) {
                 console.error('Error signing in:', error.message);
-                alert('Failed to sign in. Please try again.');
+                alert('Failed to sign in with Google. Please try again or use email login.');
             }
         }
-        
+
+        // Email Registration
+        async function registerWithEmail() {
+            const emailValue = email.value.trim();
+            const passwordValue = password.value.trim();
+            if (!emailValue || !passwordValue) {
+                alert('Please fill in all fields.');
+                return;
+            }
+            const { data, error } = await supabase.auth.signUp({
+                email: emailValue,
+                password: passwordValue,
+                options: {
+                    data: {
+                        name: emailValue.split('@')[0],
+                        avatar: 0,
+                        bio: '',
+                        games: []
+                    }
+                }
+            });
+            if (error) {
+                alert('Registration failed: ' + error.message);
+            } else {
+                alert('Registration successful! Please check your email for verification.');
+                closeAuthModal();
+            }
+        }
+
+        // Email Login
+        async function loginWithEmail() {
+            const emailValue = email.value.trim();
+            const passwordValue = password.value.trim();
+            if (!emailValue || !passwordValue) {
+                alert('Please fill in all fields.');
+                return;
+            }
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: emailValue,
+                password: passwordValue
+            });
+            if (error) {
+                alert('Login failed: ' + error.message);
+            } else {
+                checkAuthState();
+                closeAuthModal();
+            }
+        }
+
         // Logout
-        function logout() {
+        async function logout() {
+            await supabase.auth.signOut();
             localStorage.removeItem('user');
             checkAuthState();
             location.reload();
@@ -1562,18 +1652,22 @@
         editProfileBtn.addEventListener('click', () => {
             profileModal.style.display = 'flex';
             
-            // Load current profile data
-            const user = JSON.parse(localStorage.getItem('user')) || {};
-            document.getElementById('editName').value = user.name || '';
-            document.getElementById('editBio').value = user.bio || '';
+            const user = JSON.parse(localStorage.getItem('user')) || (await supabase.auth.getUser()).data.user;
+            document.getElementById('editName').value = user.user_metadata?.name || user.name || '';
+            document.getElementById('editBio').value = user.user_metadata?.bio || user.bio || '';
             
-            // Select current avatar
             const avatarOptions = document.querySelectorAll('.avatar-option');
             avatarOptions.forEach(option => {
                 option.classList.remove('selected');
-                if (parseInt(option.dataset.avatar) === user.avatar) {
+                if (parseInt(option.dataset.avatar) === (user.user_metadata?.avatar || user.avatar)) {
                     option.classList.add('selected');
                 }
+            });
+            
+            const gameCheckboxes = document.querySelectorAll('input[name="games"]');
+            const userGames = user.user_metadata?.games || user.games || [];
+            gameCheckboxes.forEach(checkbox => {
+                checkbox.checked = userGames.includes(checkbox.value);
             });
         });
         
@@ -1593,71 +1687,115 @@
         });
         
         // Save profile
-        saveProfile.addEventListener('click', () => {
+        saveProfile.addEventListener('click', async () => {
             const name = document.getElementById('editName').value;
             const bio = document.getElementById('editBio').value;
             const selectedAvatar = document.querySelector('.avatar-option.selected');
             const avatar = selectedAvatar ? parseInt(selectedAvatar.dataset.avatar) : 0;
+            const gameCheckboxes = document.querySelectorAll('input[name="games"]:checked');
+            const games = Array.from(gameCheckboxes).map(cb => cb.value);
             
-            const user = JSON.parse(localStorage.getItem('user')) || {};
-            user.name = name || "Guest User";
-            user.bio = bio || "";
-            user.avatar = avatar;
-            
-            localStorage.setItem('user', JSON.stringify(user));
-            updateProfileUI(user);
-            closeProfileModal();
-        });
-        
-        // Chat functionality
-        sendMessageBtn.addEventListener('click', () => {
-            const message = chatInput.value.trim();
-            if (message) {
-                const user = JSON.parse(localStorage.getItem('user')) || {name: "Guest"};
-                
-                const messageElement = document.createElement('div');
-                messageElement.classList.add('message', 'sent');
-                messageElement.innerHTML = `
-                    <div>${message}</div>
-                    <div class="message-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-                `;
-                
-                chatMessages.appendChild(messageElement);
-                chatInput.value = '';
-                chatMessages.scrollTop = chatMessages.scrollHeight;
+            const user = (await supabase.auth.getUser()).data.user;
+            const { data, error } = await supabase.auth.updateUser({
+                data: {
+                    name: name || user.user_metadata.name,
+                    bio: bio || user.user_metadata.bio,
+                    avatar: avatar,
+                    games: games
+                }
+            });
+            if (error) {
+                console.error('Error updating profile:', error.message);
+            } else {
+                localStorage.setItem('user', JSON.stringify(data.user));
+                updateProfileUI(data.user);
+                closeProfileModal();
             }
         });
         
+        // Chat functionality with Supabase
+        async function loadMessages() {
+            const { data, error } = await supabase
+                .from('messages')
+                .select('*')
+                .order('created_at', { ascending: true });
+            if (error) {
+                console.error('Error loading messages:', error.message);
+            } else {
+                chatMessages.innerHTML = data.map(msg => `
+                    <div class="message ${msg.user_id === (await supabase.auth.getUser()).data.user?.id ? 'sent' : 'received'}">
+                        <div class="message-sender">${msg.user_name || 'Anonymous'}</div>
+                        <div>${msg.content}</div>
+                        <div class="message-time">${new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                    </div>
+                `).join('');
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+
+        sendMessageBtn.addEventListener('click', async () => {
+            const message = chatInput.value.trim();
+            if (message) {
+                const user = (await supabase.auth.getUser()).data.user;
+                const { error } = await supabase
+                    .from('messages')
+                    .insert({
+                        content: message,
+                        user_id: user?.id,
+                        user_name: user.user_metadata?.name || 'Guest'
+                    });
+                if (error) {
+                    console.error('Error sending message:', error.message);
+                } else {
+                    chatInput.value = '';
+                    loadMessages();
+                }
+            }
+        });
+
         chatInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 sendMessageBtn.click();
             }
         });
-        
-        // Event listeners
-        closeModal.addEventListener('click', closeProfileModal);
-        cancelEdit.addEventListener('click', closeProfileModal);
+
+        // Real-time chat updates
+        supabase
+            .channel('chat')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, loadMessages)
+            .subscribe();
+
+        // Auth Modal
+        userAvatar.addEventListener('click', () => {
+            authModal.style.display = 'flex';
+        });
+
+        closeAuthModal.addEventListener('click', () => {
+            authModal.style.display = 'none';
+        });
+
+        cancelAuth.addEventListener('click', () => {
+            authModal.style.display = 'none';
+        });
+
+        registerBtn.addEventListener('click', registerWithEmail);
+        loginBtn.addEventListener('click', loginWithEmail);
         googleSignInBtn.addEventListener('click', signInWithGoogle);
         logoutBtn.addEventListener('click', logout);
-        
+
         // Initialize page
         checkAuthState();
-        
+
         // Close modal when clicking outside
         window.addEventListener('click', (e) => {
-            if (e.target === profileModal) {
-                closeProfileModal();
-            }
+            if (e.target === profileModal) closeProfileModal();
+            if (e.target === authModal) authModal.style.display = 'none';
         });
-        
-        // Simulate user data if not logged in
-        if (!localStorage.getItem('user')) {
-            const guestUser = {
-                name: "Guest User",
-                bio: "Join our TCG community!",
-                avatar: 0
-            };
-            updateProfileUI(guestUser);
+
+        // Connect regions (simulated)
+        function connectRegions(fromRegion, toRegion) {
+            alert(`Connecting ${fromRegion} with ${toRegion}! Feature coming soon.`);
+            // In a real app, this could trigger a Supabase event or API call
         }
     </script>
 </body>
