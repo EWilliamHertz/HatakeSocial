@@ -77,13 +77,11 @@
             align-items: center;
             justify-content: center;
             padding: 5px;
-            color: white;
-            font-weight: bold;
-            font-size: 1.2rem;
         }
 
-        .logo span {
-            color: var(--accent);
+        .logo img {
+            height: 100%;
+            width: auto;
         }
 
         nav ul {
@@ -173,6 +171,26 @@
             color: white;
             font-weight: bold;
             cursor: pointer;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .auth-btn {
+            background-color: var(--accent);
+            color: var(--dark);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .auth-btn:hover {
+            background-color: #ed8936;
         }
 
         /* Events Hero */
@@ -632,7 +650,7 @@
     <!-- Header -->
     <header>
         <div class="logo-container">
-            <div class="logo">HATA<span>KE</span></div>
+            <div class="logo"><img src="https://i.imgur.com/2z21nQW.png" alt="Hatake Logo"></div>
             <button class="dark-toggle" id="darkModeToggle">
                 <i class="fas fa-moon"></i>
             </button>
@@ -670,7 +688,9 @@
                 </div>
             </div>
             
-            <div class="user-avatar">EH</div>
+            <div class="auth-buttons" id="authButtons">
+                <!-- Will be populated by JavaScript -->
+            </div>
         </div>
     </header>
 
@@ -824,6 +844,7 @@
                 <div class="footer-title">About Hatake TCG</div>
                 <p>Hatake is a premium TCG accessories brand founded by passionate players who understand what collectors and competitors need.</p>
                 <p>This website was built by DeepSeek.</p>
+                <div class="logo"><img src="https://i.imgur.com/2z21nQW.png" alt="Hatake Logo"></div>
                 <div class="social-links">
                     <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
                     <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
@@ -865,11 +886,89 @@
         </div>
         
         <div class="copyright">
-            &copy; 2025 Hatake TCG. All rights reserved.
+            © 2025 Hatake TCG. All rights reserved.
         </div>
     </footer>
 
     <script>
+        // Supabase initialization
+        const { createClient } = supabase;
+        const supabaseUrl = 'https://llukovlzjhflhfhcajps.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxsdWtvdmx6amhmbGhmaGNhanBzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAwMDY3NzIsImV4cCI6MjA2NTU4Mjc3Mn0.kbaftEOsGUriJOxMlTOFkXUGhLcKBaHwfVLG9S60gpU';
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        // DOM elements
+        const authButtons = document.getElementById('authButtons');
+
+        // Check authentication state
+        async function checkAuth() {
+            const user = supabase.auth.getUser();
+            if (user) {
+                const { data, error } = await user;
+                if (error) console.error('Error checking user:', error);
+                else {
+                    localStorage.setItem('hatakeUser', JSON.stringify(data.user));
+                    updateAuthUI(data.user);
+                }
+            } else {
+                const storedUser = localStorage.getItem('hatakeUser');
+                if (storedUser) updateAuthUI(JSON.parse(storedUser));
+                else updateAuthUI(null);
+            }
+        }
+
+        // Update UI based on authentication
+        function updateAuthUI(user) {
+            authButtons.innerHTML = '';
+            if (user) {
+                const avatar = document.createElement('div');
+                avatar.className = 'user-avatar';
+                avatar.textContent = user.email[0].toUpperCase();
+                avatar.addEventListener('click', () => {
+                    supabase.auth.signOut().then(() => {
+                        localStorage.removeItem('hatakeUser');
+                        checkAuth();
+                    });
+                });
+                authButtons.appendChild(avatar);
+            } else {
+                const loginBtn = document.createElement('button');
+                loginBtn.className = 'auth-btn';
+                loginBtn.textContent = 'Log In';
+                loginBtn.addEventListener('click', () => {
+                    supabase.auth.signInWithPassword({
+                        email: prompt('Enter your email'),
+                        password: prompt('Enter your password'),
+                    }).then(({ data, error }) => {
+                        if (error) alert('Login failed: ' + error.message);
+                        else {
+                            localStorage.setItem('hatakeUser', JSON.stringify(data.user));
+                            checkAuth();
+                        }
+                    });
+                });
+
+                const signupBtn = document.createElement('button');
+                signupBtn.className = 'auth-btn';
+                signupBtn.textContent = 'Sign Up';
+                signupBtn.addEventListener('click', () => {
+                    supabase.auth.signUp({
+                        email: prompt('Enter your email'),
+                        password: prompt('Enter your password'),
+                    }).then(({ data, error }) => {
+                        if (error) alert('Signup failed: ' + error.message);
+                        else {
+                            localStorage.setItem('hatakeUser', JSON.stringify(data.user));
+                            checkAuth();
+                        }
+                    });
+                });
+
+                authButtons.appendChild(loginBtn);
+                authButtons.appendChild(signupBtn);
+            }
+        }
+
         // Dark mode toggle
         const darkModeToggle = document.getElementById('darkModeToggle');
         const body = document.body;
@@ -899,7 +998,20 @@
                     }
                 });
             }
+            checkAuth();
+        });
+
+        // Listen for auth state changes
+        supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN') {
+                localStorage.setItem('hatakeUser', JSON.stringify(session.user));
+                checkAuth();
+            } else if (event === 'SIGNED_OUT') {
+                localStorage.removeItem('hatakeUser');
+                checkAuth();
+            }
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </body>
 </html>
