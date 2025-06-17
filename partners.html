@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hatake TCG - Partners</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Existing styles from index.html */
+        :root {
+            --primary: #1a365d;
+            --secondary: #2b6cb0;
+            --accent: #f6ad55;
+            --light: #f7fafc;
+            --dark: #1a202c;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --text: #2d3748;
+            --text-light: #718096;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .dark-mode {
+            --primary: #2d3748;
+            --secondary: #4a5568;
+            --light: #1a202c;
+            --dark: #f7fafc;
+            --card-bg: #2d3748;
+            --card-border: #4a5568;
+            --text: #e2e8f0;
+            --text-light: #a0aec0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-img {
+            height: 40px;
+            width: auto;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        nav a:hover, nav a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-container input {
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            border-radius: 20px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            width: 200px;
+        }
+
+        .search-container input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .action-icons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-icons div {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .action-icons .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--accent);
+            color: var(--dark);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f6ad55, #e53e3e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Main Layout */
+        main {
+            display: flex;
+            max-width: 1400px;
+            margin: 1.5rem auto;
+            gap: 1.5rem;
+            padding: 0 1.5rem;
+            flex: 1;
+        }
+
+        .sidebar {
+            flex: 0 0 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .feed {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .shop-sidebar {
+            flex: 0 0 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+        }
+
+        .card-title {
+            padding: 1rem 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-bottom: 1px solid var(--card-border);
+            color: var(--text);
+        }
+
+        /* Partners Page Specific Styles */
+        .partners-hero {
+            padding: 3rem 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            margin-bottom: 2rem;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .partners-hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .partners-hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .partnership-content {
+            padding: 2rem;
+        }
+        
+        .partnership-content h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+        
+        .partnership-content p {
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+        
+        .partnership-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .benefit-card {
+            background: rgba(246, 173, 85, 0.1);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(246, 173, 85, 0.3);
+        }
+        
+        .benefit-card i {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+        
+        .benefit-card h3 {
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            overflow-x: auto;
+            display: block;
+        }
+        
+        .pricing-table th, 
+        .pricing-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--card-border);
+        }
+        
+        .pricing-table th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .pricing-table tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+        
+        .pricing-table tr:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        .pricing-table .profit {
+            color: #2ecc71;
+            font-weight: 600;
+        }
+        
+        .investment-section {
+            background: linear-gradient(135deg, rgba(26, 54, 93, 0.05), rgba(43, 108, 176, 0.05));
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 3rem 0;
+            border: 1px solid rgba(26, 54, 93, 0.1);
+        }
+        
+        .investment-section h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+        
+        .investment-highlight {
+            background: var(--accent);
+            color: var(--dark);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 700;
+            margin: 1.5rem 0;
+            font-size: 1.2rem;
+        }
+        
+        .partners-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .partner-card {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 8px;
+            background: rgba(43, 108, 176, 0.05);
+            border: 1px solid rgba(43, 108, 176, 0.1);
+        }
+        
+        .partner-icon {
+            font-size: 2.5rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+        
+        .partner-card h3 {
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        
+        .partner-card p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        
+        .cta-section {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 10px;
+            margin-top: 2rem;
+        }
+        
+        .cta-section h2 {
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+        
+        .cta-section p {
+            max-width: 700px;
+            margin: 0 auto 1.5rem;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .btn-large {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background-color: var(--accent);
+            color: var(--dark);
+            border: none;
+            border-radius: 5px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        
+        .btn-large:hover {
+            background-color: #e6983c;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Footer Styles */
+        footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 2rem 1.5rem;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: space-between;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .footer-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #cbd5e0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+            color: white;
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            background-color: var(--accent);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #a0aec0;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 1200px) {
+            .shop-sidebar {
+                display: none;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                display: none;
+            }
+            
+            nav ul {
+                gap: 0.8rem;
+            }
+            
+            .search-container input {
+                width: 150px;
+            }
+            
+            .partners-showcase {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            
+            .logo-container {
+                order: 1;
+            }
+            
+            nav {
+                order: 3;
+                width: 100%;
+            }
+            
+            nav ul {
+                justify-content: center;
+            }
+            
+            .header-actions {
+                order: 2;
+            }
+            
+            .search-container input {
+                width: 120px;
+            }
+            
+            .pricing-table {
+                font-size: 0.85rem;
+            }
+            
+            .partners-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .partners-hero p {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .partnership-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .partners-showcase {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo-container">
+            <img src="https://i.imgur.com/xod6JnJ.png" alt="Hatake TCG Logo" class="logo-img">
+            <button class="dark-toggle" id="darkModeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+        
+        <nav>
+            <ul>
+                <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="shop.html"><i class="fas fa-store"></i> Shop</a></li>
+                <li><a href="events.html"><i class="fas fa-calendar-alt"></i> Events</a></li>
+                <li><a href="community.html"><i class="fas fa-users"></i> Community</a></li>
+                <li><a href="about.html"><i class="fas fa-info-circle"></i> About</a></li>
+                <li><a href="partners.html" class="active"><i class="fas fa-handshake"></i> Partners</a></li>
+            </ul>
+        </nav>
+        
+        <div class="header-actions">
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search...">
+            </div>
+            
+            <div class="action-icons">
+                <div>
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </div>
+                <div>
+                    <i class="fas fa-comment-alt"></i>
+                    <span class="badge">5</span>
+                </div>
+                <div>
+                    <i class="fas fa-shopping-cart snipcart-checkout"></i>
+                    <span class="badge snipcart-items-count">2</span>
+                </div>
+            </div>
+            
+            <div class="user-avatar">EH</div>
+        </div>
+    </header>
+
+    <!-- Main Content - Partners Page -->
+    <main>
+        <!-- Partners Content -->
+        <div class="feed" style="flex: 1;">
+            <div class="card">
+                <div class="partners-hero">
+                    <h1>Retail Partnerships</h1>
+                    <p>Hatake is committed to supporting local game stores and retail partners. We offer competitive wholesale pricing, marketing support, and flexible ordering options to help your business thrive.</p>
+                </div>
+                
+                <div class="partnership-content">
+                    <h2>Premium Products for Your Store</h2>
+                    <p>Our products are designed to appeal to TCG enthusiasts who value quality, durability, and style. With our Nordic-inspired design and premium materials, Hatake accessories stand out in the market and offer excellent margins for retailers.</p>
+                    
+                    <h2>Wholesale Pricing</h2>
+                    <table class="pricing-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>SKU</th>
+                                <th>Buy-in Price</th>
+                                <th>Sales Price</th>
+                                <th>Profit Per Unit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Sleeves, Matte</td>
+                                <td>66*91mm</td>
+                                <td>0.01</td>
+                                <td>48 SEK</td>
+                                <td>89 SEK</td>
+                                <td class="profit">41 SEK</td>
+                            </tr>
+                            <tr>
+                                <td>12 slots 20 page</td>
+                                <td>top-loader binder 480 slots</td>
+                                <td>0.02</td>
+                                <td>220 SEK</td>
+                                <td>360 SEK</td>
+                                <td class="profit">140 SEK</td>
+                            </tr>
+                            <tr>
+                                <td>Top-loader</td>
+                                <td>35pt</td>
+                                <td>0.031</td>
+                                <td>20 SEK</td>
+                                <td>30 SEK</td>
+                                <td class="profit">10 SEK</td>
+                            </tr>
+                            <tr>
+                                <td>Top-loader</td>
+                                <td>130pt</td>
+                                <td>0.032</td>
+                                <td>16 SEK</td>
+                                <td>33 SEK</td>
+                                <td class="profit">17 SEK</td>
+                            </tr>
+                            <tr>
+                                <td>Deckboxes</td>
+                                <td>160+ Mult functional</td>
+                                <td>0.4</td>
+                                <td>130 SEK</td>
+                                <td>250 SEK</td>
+                                <td class="profit">120 SEK</td>
+                            </tr>
+                            <tr>
+                                <td>Duffel bags</td>
+                                <td>47*28*55cm</td>
+                                <td>0.5</td>
+                                <td>170 SEK</td>
+                                <td>300 SEK</td>
+                                <td class="profit">130 SEK</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h2>Partnership Benefits</h2>
+                    <div class="partnership-grid">
+                        <div class="benefit-card">
+                            <i class="fas fa-percentage"></i>
+                            <h3>Competitive Margins</h3>
+                            <p>Enjoy healthy profit margins on all Hatake products, with an average of 40-50% markup potential.</p>
+                        </div>
+                        <div class="benefit-card">
+                            <i class="fas fa-boxes"></i>
+                            <h3>Flexible Ordering</h3>
+                            <p>Low minimum order quantities and flexible reordering options to help you manage inventory efficiently.</p>
+                        </div>
+                        <div class="benefit-card">
+                            <i class="fas fa-bullhorn"></i>
+                            <h3>Marketing Support</h3>
+                            <p>Access to high-quality product images, promotional materials, and social media assets to help you market Hatake products.</p>
+                        </div>
+                        <div class="benefit-card">
+                            <i class="fas fa-headset"></i>
+                            <h3>Dedicated Support</h3>
+                            <p>Direct access to our partnership team for quick responses to your questions and concerns.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="investment-section">
+                        <h2>Invest in Hatake TCG's Future</h2>
+                        <p>At Hatake TCG, we're building a premium brand that resonates with trading card game enthusiasts worldwide. As a Swedish startup, we've already established a foothold in the TCG community with our high-quality accessories, and we're ready to take the next step in our growth journey.</p>
+                        
+                        <div class="investment-highlight">
+                            Hatake TCG is valued at $30,000 as of 2030
+                        </div>
+                        
+                        <p>We're now offering a unique opportunity for partners to invest in our vision. For just $300, you can secure a 1% stake in the company—a straightforward entry point to join us on this exciting path. However, we're open to negotiation and can offer smaller percentages for lower amounts to accommodate a range of investment levels.</p>
+                        
+                        <p>Our existing partners in Ystad, Malmö, and Falköping in Sweden, as well as Esbjerg in Denmark, are already helping us expand our reach. By investing, you'll become part of a growing network dedicated to elevating the TCG experience, with the potential for significant returns as we scale.</p>
+                        
+                        <p>If you're passionate about the TCG industry and want to support a brand with a bright future, we'd love to discuss how you can become a partner.</p>
+                    </div>
+                    
+                    <h2>Our Esteemed Retail Partners</h2>
+                    <p>We're proud to collaborate with outstanding retailers who share our commitment to quality and community:</p>
+                    
+                    <div class="partners-showcase">
+                        <div class="partner-card">
+                            <div class="partner-icon"><i class="fas fa-dragon"></i></div>
+                            <h3>Spelborgen</h3>
+                            <p>Trelleborg, Sweden</p>
+                            <p>Exceptional gaming environment and community support</p>
+                        </div>
+                        <div class="partner-card">
+                            <div class="partner-icon"><i class="fas fa-crown"></i></div>
+                            <h3>Petdragon.se</h3>
+                            <p>Online Retailer</p>
+                            <p>Premium commander decks and accessories</p>
+                        </div>
+                        <div class="partner-card">
+                            <div class="partner-icon"><i class="fas fa-dice"></i></div>
+                            <h3>Discus</h3>
+                            <p>Sweden</p>
+                            <p>Outstanding expertise in TCG products</p>
+                        </div>
+                        <div class="partner-card">
+                            <div class="partner-icon"><i class="fas fa-cards"></i></div>
+                            <h3>MTGbutiken.se</h3>
+                            <p>Online Retailer</p>
+                            <p>Top-tier Magic: The Gathering specialists</p>
+                        </div>
+                    </div>
+                    
+                    <p style="text-align: center; font-style: italic; margin-top: 2rem;">These partners are truly exceptional at what they do. We're honored to collaborate with them and value their expertise in the TCG community.</p>
+                    
+                    <div class="cta-section">
+                        <h2>Become a Hatake Partner</h2>
+                        <p>Join our network of premium retailers and benefit from our growing brand. Whether you're interested in carrying our products or investing in our future, we'd love to hear from you.</p>
+                        <a href="mailto:ernst@hatake.eu" class="btn-large">Contact Ernst at ernst@hatake.eu</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-title">About Hatake TCG</div>
+                <p>Hatake is a premium TCG accessories brand founded by passionate players who understand what collectors and competitors need.</p>
+                <p>This website was built by DeepSeek.</p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/HatakeCardShop/" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://discord.com/invite/Puq5ncSbjt" class="social-link"><i class="fab fa-discord"></i></a>
+                    <a href="https://instagram.com/hatakese" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="https://twitter.com" class="social-link"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <div class="footer-title">Quick Links</div>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="shop.html">Shop</a></li>
+                    <li><a href="events.html">Events</a></li>
+                    <li><a href="community.html">Community</a></li>
+                    <li><a href="deckbuilder.html">Deck Builder</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <div class="footer-title">Products</div>
+                <ul class="footer-links">
+                    <li><a href="shop.html?category=sleeves">Sleeves & Protectors</a></li>
+                    <li><a href="shop.html?category=binders">Binders & Portfolios</a></li>
+                    <li><a href="shop.html?category=deckboxes">Deck Boxes</a></li>
+                    <li><a href="shop.html?category=playmats">Playmats</a></li>
+                    <li><a href="shop.html?category=bags">Bags & Accessories</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <div class="footer-title">Contact Us</div>
+                <ul class="footer-links">
+                    <li><i class="fas fa-envelope"></i> ernst@hatake.eu</li>
+                    <li><i class="fas fa-phone"></i> +46 123 456 789</li>
+                    <li><i class="fas fa-map-marker-alt"></i> Falköping, Sweden</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            &copy; 2025 Hatake TCG. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Snipcart Configuration -->
+    <div hidden id="snipcart" data-api-key="ZDJjNmYwNTUtMmUwOC00MjBlLTk3YmQtNWFhNGQzNzE1NzhkNjM4ODUwOTE1MzE1MDMxMzQ0" data-config-modal-style="side"></div>
+
+    <script>
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+        
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const icon = darkModeToggle.querySelector('i');
+            
+            if (body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+        
+        // Simulate cart items
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.querySelector('.snipcart-items-count').textContent = '2';
+            }, 1000);
+        });
+        
+        // Initialize Snipcart
+        document.addEventListener('snipcart.ready', () => {
+            // Add coupon codes
+            Snipcart.api.coupons.add('MTGFB', {
+                discount: 5,
+                type: 'Percentage'
+            });
+            
+            Snipcart.api.coupons.add('214', {
+                discount: 30,
+                type: 'FixedAmount'
+            });
+        });
+    </script>
+</body>
+</html>
