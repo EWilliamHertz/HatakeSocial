@@ -4,11 +4,435 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hatake TCG Shop - Premium TCG Accessories</title>
-    <link rel="stylesheet" href="styles.css"> <!-- External CSS reference -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.snipcart.com/themes/v3.2.0/default/snipcart.js"></script>
     <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.2.0/default/snipcart.css">
     <style>
+        /* CSS Variables */
+        :root {
+            --primary: #1a365d;
+            --secondary: #2b6cb0;
+            --accent: #f6ad55;
+            --light: #f7fafc;
+            --dark: #1a202c;
+            --success: #48bb78;
+            --warning: #ecc94b;
+            --danger: #e53e3e;
+            --card-border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s ease;
+        }
+
+        .dark-mode {
+            --primary: #2d3748;
+            --secondary: #4a5568;
+            --light: #1a202c;
+            --dark: #f7fafc;
+            --card-border: #4a5568;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            height: 50px;
+            width: auto;
+            background: linear-gradient(135deg, #2b6cb0, #1a365d);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        nav a:hover, nav a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-container input {
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            border-radius: 20px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            width: 200px;
+        }
+
+        .search-container input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .action-icons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-icons div {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .action-icons .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--accent);
+            color: var(--dark);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f6ad55, #e53e3e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Shop Hero */
+        .shop-hero {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            text-align: center;
+            padding: 4rem 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .shop-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .shop-hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+
+        .cta-button {
+            background-color: var(--accent);
+            color: var(--dark);
+            border: none;
+            border-radius: 30px;
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cta-button:hover {
+            background-color: #ed8936;
+            transform: translateY(-2px);
+        }
+
+        /* Shop Content */
+        .shop-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem 3rem;
+        }
+
+        .shop-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .shop-title {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .product-filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background-color: var(--light);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 0.5rem 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* Fixed product grid layout */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        @media (max-width: 1200px) {
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .product-card {
+            background-color: var(--light);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-image-container {
+            height: 250px;
+            position: relative;
+            overflow: hidden;
+            background-color: #f8f9fa;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+
+        .product-tag {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background-color: var(--accent);
+            color: var(--dark);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+
+        .product-meta {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+        }
+
+        .product-meta div {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .product-description {
+            color: #4a5568;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .product-features {
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .feature-item i {
+            color: var(--accent);
+            margin-top: 0.2rem;
+        }
+
+        .snipcart-add-item {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: auto;
+        }
+
+        .snipcart-add-item:hover {
+            background-color: var(--secondary);
+        }
+
+        .view-more-btn {
+            width: 100%;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 0.6rem;
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .view-more-btn:hover {
+            background-color: #2a5f9e;
+        }
+
         /* MODAL STYLES */
         .gallery-modal {
             display: none;
@@ -58,26 +482,157 @@
         .modal-gallery-img:hover {
             transform: scale(1.05);
         }
-        
-        .view-more-btn {
-            width: 100%;
-            background-color: var(--secondary);
+
+        /* Footer Styles */
+        footer {
+            background-color: var(--primary);
             color: white;
-            border: none;
-            padding: 0.6rem;
-            border-radius: 5px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            margin-top: 10px;
+            padding: 2rem 1.5rem;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: space-between;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .footer-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #cbd5e0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            transition: background-color 0.2s;
         }
-        
-        .view-more-btn:hover {
-            background-color: #2a5f9e;
+
+        .social-link:hover {
+            background-color: var(--accent);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #a0aec0;
+            font-size: 0.9rem;
+        }
+
+        /* Dark mode toggle */
+        .dark-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 992px) {
+            nav ul {
+                gap: 0.8rem;
+            }
+            
+            .search-container input {
+                width: 150px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            
+            .logo-container {
+                order: 1;
+            }
+            
+            nav {
+                order: 3;
+                width: 100%;
+            }
+            
+            nav ul {
+                justify-content: center;
+            }
+            
+            .header-actions {
+                order: 2;
+            }
+            
+            .search-container input {
+                width: 120px;
+            }
+            
+            .shop-hero h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .product-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-section {
+                min-width: 100%;
+            }
+            
+            .shop-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .shop-hero p {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
@@ -183,7 +738,7 @@
                         data-item-name="Matte Sleeves"
                         data-item-description="Premium matte finish sleeves (100-pack, 66x91mm). Acid-free, tournament-ready, reduced glare."
                         data-item-image="https://images.unsplash.com/photo-1600003263720-95b45a4035d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-                        data-item-url="/">
+                        data-item-url="/shop.html">
                         <i class="fas fa-cart-plus"></i> Add to Cart
                     </button>
                     
@@ -225,7 +780,7 @@
                         data-item-name="480-Slot Binder"
                         data-item-description="Premium zippered binder with side-loading pockets. 480 card capacity, Nordic design."
                         data-item-image="https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-                        data-item-url="/">
+                        data-item-url="/shop.html">
                         <i class="fas fa-cart-plus"></i> Add to Cart
                     </button>
                     
@@ -267,7 +822,7 @@
                         data-item-name="35pt Top-Loaders"
                         data-item-description="Crystal-clear protection (25-pack). Rigid protection, precision-cut edges."
                         data-item-image="https://images.unsplash.com/photo-1553531384-411a247ccd73?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-                        data-item-url="/">
+                        data-item-url="/shop.html">
                         <i class="fas fa-cart-plus"></i> Add to Cart
                     </button>
                     
@@ -309,7 +864,7 @@
                         data-item-name="130pt Top-Loaders"
                         data-item-description="Extra-thick protection (10-pack). Maximum rigidity, oversized collectible compatible."
                         data-item-image="https://images.unsplash.com/photo-1553531384-cc64ac80b931?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-                        data-item-url="/">
+                        data-item-url="/shop.html">
                         <i class="fas fa-cart-plus"></i> Add to Cart
                     </button>
                     
@@ -351,7 +906,7 @@
                         data-item-name="PU DeckBox"
                         data-item-description="Premium leather deckbox (160+ card capacity). Magnetic closure, separate compartments, embossed logo."
                         data-item-image="https://images.unsplash.com/photo-1600003263720-95b45a4035d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-                        data-item-url="/">
+                        data-item-url="/shop.html">
                         <i class="fas fa-cart-plus"></i> Add to Cart
                     </button>
                     
@@ -393,7 +948,7 @@
                         data-item-name="Duffel Bag"
                         data-item-description="Tournament companion bag (47×28×55cm). Water-resistant, padded compartments, YKK zippers."
                         data-item-image="https://images.unsplash.com/photo-1546938576-6e6a64f317cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-                        data-item-url="/">
+                        data-item-url="/shop.html">
                         <i class="fas fa-cart-plus"></i> Add to Cart
                     </button>
                     
@@ -475,70 +1030,40 @@
         // Product gallery data
         const productGalleries = {
             '0.01': [ // Matte Sleeves
-                'images/66x91mm matte sleeves/IMG_9962.jpg',
-                'images/66x91mm matte sleeves/IMG_9958.jpg',
-                'images/66x91mm matte sleeves/IMG_9966.jpg',
-                'images/66x91mm matte sleeves/IMG_9967.jpg',
-                'images/66x91mm matte sleeves/IMG_9965.jpg',
-                'images/66x91mm matte sleeves/IMG_9963.jpg',
-                'images/66x91mm matte sleeves/IMG_9969.jpg',
-                'images/66x91mm matte sleeves/IMG_9956.jpg'
+                'https://images.unsplash.com/photo-1600003263720-95b45a4035d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
+                'https://images.unsplash.com/photo-1588666309990-d68f08e3d4a6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80',
+                'https://images.unsplash.com/photo-1588666309990-d68f08e3d4a6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80',
+                'https://images.unsplash.com/photo-1600003263720-95b45a4035d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80'
             ],
             '0.02': [ // 480-Slot Binder
-                'images/12 slots 3x4 Top-Loader Binder/IMG_9839.jpg',
-                'images/12 slots 3x4 Top-Loader Binder/IMG_9814.jpg',
-                'images/12 slots 3x4 Top-Loader Binder/IMG_9818.jpg',
-                'images/12 slots 3x4 Top-Loader Binder/IMG_9816.jpg',
-                'images/12 slots 3x4 Top-Loader Binder/IMG_9819.jpg',
-                'images/12 slots 3x4 Top-Loader Binder/IMG_9820.jpg',
-                'images/12 slots 3x4 Top-Loader Binder/IMG_9823.jpg',
-                'images/12 slots 3x4 Top-Loader Binder/IMG_9824.jpg',
-                'images/12 slots 3x4 Top-Loader Binder/IMG_9825.jpg',
-                'images/12 slots 3x4 Top-Loader Binder/IMG_9826.jpg',
-                'images/12 slots 3x4 Top-Loader Binder/IMG_9827.jpg'
+                'https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
+                'https://images.unsplash.com/photo-1512820790803-83ca734da794?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80',
+                'https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80',
+                'https://images.unsplash.com/photo-1512820790803-83ca734da794?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80'
             ],
             '0.031': [ // 35pt Top-Loaders
-                'images/35PT - 25x Top-Loaders/IMG_9971.jpg',
-                'images/35PT - 25x Top-Loaders/IMG_9970.jpg',
-                'images/35PT - 25x Top-Loaders/IMG_9972.jpg',
-                'images/35PT - 25x Top-Loaders/IMG_9973.jpg',
-                'images/35PT - 25x Top-Loaders/IMG_9974.jpg',
-                'images/35PT - 25x Top-Loaders/IMG_9975.jpg',
-                'images/35PT - 25x Top-Loaders/IMG_9976.jpg',
-                'images/35PT - 25x Top-Loaders/IMG_9978.jpg'
+                'https://images.unsplash.com/photo-1553531384-411a247ccd73?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
+                'https://images.unsplash.com/photo-1553531384-411a247ccd73?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80',
+                'https://images.unsplash.com/photo-1553531384-411a247ccd73?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80',
+                'https://images.unsplash.com/photo-1553531384-411a247ccd73?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80'
             ],
             '0.032': [ // 130pt Top-Loaders
-                'images/130PT - 10x Top-Loaders/IMG_9979.jpg',
-                'images/130PT - 10x Top-Loaders/IMG_9980.jpg',
-                'images/130PT - 10x Top-Loaders/IMG_9981.jpg',
-                'images/130PT - 10x Top-Loaders/IMG_9982.jpg',
-                'images/130PT - 10x Top-Loaders/IMG_9983.jpg',
-                'images/130PT - 10x Top-Loaders/IMG_9984.jpg',
-                'images/130PT - 10x Top-Loaders/IMG_9985.jpg',
-                'images/130PT - 10x Top-Loaders/IMG_9986.jpg',
-                'images/130PT - 10x Top-Loaders/IMG_9987.jpg'
+                'https://images.unsplash.com/photo-1553531384-cc64ac80b931?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
+                'https://images.unsplash.com/photo-1553531384-cc64ac80b931?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80',
+                'https://images.unsplash.com/photo-1553531384-cc64ac80b931?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80',
+                'https://images.unsplash.com/photo-1553531384-cc64ac80b931?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80'
             ],
             '0.4': [ // PU DeckBox
-                'images/PU 160+ Deckbox/IMG_9924.jpg',
-                'images/PU 160+ Deckbox/IMG_9895.jpg',
-                'images/PU 160+ Deckbox/IMG_9899.jpg',
-                'images/PU 160+ Deckbox/IMG_9900.jpg',
-                'images/PU 160+ Deckbox/IMG_9901.jpg',
-                'images/PU 160+ Deckbox/IMG_9903.jpg',
-                'images/PU 160+ Deckbox/IMG_9904.jpg',
-                'images/PU 160+ Deckbox/IMG_9912.jpg',
-                'images/PU 160+ Deckbox/IMG_9941.jpg',
-                'images/PU 160+ Deckbox/IMG_9943.jpg',
-                'images/PU 160+ Deckbox/IMG_9947.jpg',
-                'images/PU 160+ Deckbox/IMG_9948.jpg',
-                'images/PU 160+ Deckbox/IMG_9949.jpg',
-                'images/PU 160+ Deckbox/IMG_9951.jpg'
+                'https://images.unsplash.com/photo-1600003263720-95b45a4035d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
+                'https://images.unsplash.com/photo-1600003263720-95b45a4035d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80',
+                'https://images.unsplash.com/photo-1600003263720-95b45a4035d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80',
+                'https://images.unsplash.com/photo-1600003263720-95b45a4035d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80'
             ],
             '0.5': [ // Duffel Bag
-                'images/Duffel bag/IMG_3158.jpeg',
-                'images/Duffel bag/IMG_3157.jpeg',
-                'images/Duffel bag/IMG_3159.jpeg',
-                'images/Duffel bag/IMG_3156.jpeg'
+                'https://images.unsplash.com/photo-1546938576-6e6a64f317cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
+                'https://images.unsplash.com/photo-1546938576-6e6a64f317cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80',
+                'https://images.unsplash.com/photo-1546938576-6e6a64f317cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80',
+                'https://images.unsplash.com/photo-1546938576-6e6a64f317cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80'
             ]
         };
 
