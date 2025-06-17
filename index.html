@@ -3,144 +3,1104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hatake TCG - Home</title>
-    <link rel="stylesheet" href="/assets/css/styles.css">
-    <script src="https://cdn.snipcart.com/themes/v3.3.1/default/snipcart.js" defer></script>
-    <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.3.1/default/snipcart.css">
+    <title>Hatake TCG - Social Platform for Card Game Enthusiasts</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.snipcart.com/themes/v3.2.0/default/snipcart.js"></script>
+    <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.2.0/default/snipcart.css">
+    <style>
+        :root {
+            --primary: #1a365d;
+            --secondary: #2b6cb0;
+            --accent: #f6ad55;
+            --light: #f7fafc;
+            --dark: #1a202c;
+            --success: #48bb78;
+            --warning: #ecc94b;
+            --danger: #e53e3e;
+            --card-border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .dark-mode {
+            --primary: #2d3748;
+            --secondary: #4a5568;
+            --light: #1a202c;
+            --dark: #f7fafc;
+            --card-border: #4a5568;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            height: 50px;
+            width: auto;
+            background: linear-gradient(135deg, #2b6cb0, #1a365d);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        nav a:hover, nav a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-container input {
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            border-radius: 20px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            width: 200px;
+        }
+
+        .search-container input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .action-icons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-icons div {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .action-icons .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--accent);
+            color: var(--dark);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f6ad55, #e53e3e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Main Content Styles */
+        main {
+            display: flex;
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 1.5rem;
+            gap: 1.5rem;
+        }
+
+        .sidebar {
+            flex: 0 0 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .card {
+            background-color: var(--light);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent);
+            color: var(--primary);
+        }
+
+        .user-card {
+            text-align: center;
+        }
+
+        .cover-photo {
+            height: 80px;
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            border-radius: 10px 10px 0 0;
+            margin: -1.5rem -1.5rem 1rem -1.5rem;
+        }
+
+        .profile-pic {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid var(--light);
+            background: linear-gradient(135deg, #f6ad55, #e53e3e);
+            margin: -50px auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.8rem;
+        }
+
+        .user-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-bio {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 1rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #718096;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary);
+        }
+
+        .btn-accent {
+            background-color: var(--accent);
+            color: var(--dark);
+        }
+
+        .btn-accent:hover {
+            background-color: #ed8936;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 0;
+            cursor: pointer;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-item:hover {
+            color: var(--secondary);
+        }
+
+        .menu-item i {
+            width: 25px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .feed {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .create-post {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .post-input {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .post-input .user-avatar {
+            width: 50px;
+            height: 50px;
+            flex-shrink: 0;
+        }
+
+        .post-input input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border-radius: 30px;
+            border: 1px solid var(--card-border);
+            background-color: var(--light);
+            color: var(--dark);
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-around;
+            padding-top: 0.5rem;
+        }
+
+        .post-action {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #718096;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .post-action:hover {
+            background-color: rgba(113, 128, 150, 0.1);
+        }
+
+        .post {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .post-user {
+            font-weight: 600;
+        }
+
+        .post-time {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .post-content {
+            line-height: 1.5;
+        }
+
+        .post-image {
+            width: 100%;
+            border-radius: 10px;
+            max-height: 400px;
+            object-fit: cover;
+        }
+
+        .post-actions-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 0.5rem 0;
+            border-top: 1px solid var(--card-border);
+            border-bottom: 1px solid var(--card-border);
+            margin-top: 0.5rem;
+        }
+
+        .post-action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+
+        .post-action-btn:hover {
+            background-color: rgba(113, 128, 150, 0.1);
+        }
+
+        .reactions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .reaction {
+            background-color: var(--primary);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .shop-sidebar {
+            flex: 0 0 300px;
+        }
+
+        .shop-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .product-card {
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: var(--light);
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #e2e8f0, #cbd5e0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 3rem;
+        }
+
+        .product-info {
+            padding: 1rem;
+        }
+
+        .product-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .product-price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .product-meta {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 1rem;
+        }
+
+        .snipcart-add-item {
+            width: 100%;
+            background-color: var(--accent);
+            color: var(--dark);
+            border: none;
+            padding: 0.5rem;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .snipcart-add-item:hover {
+            background-color: #ed8936;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 2rem 1.5rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: space-between;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .footer-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #cbd5e0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .social-link:hover {
+            background-color: var(--accent);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #a0aec0;
+            font-size: 0.9rem;
+        }
+
+        /* Dark mode toggle */
+        .dark-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 992px) {
+            main {
+                flex-direction: column;
+            }
+            
+            .sidebar, .shop-sidebar {
+                flex: 1;
+                width: 100%;
+            }
+            
+            nav ul {
+                gap: 0.8rem;
+            }
+            
+            .search-container input {
+                width: 150px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            
+            .logo-container {
+                order: 1;
+            }
+            
+            nav {
+                order: 3;
+                width: 100%;
+            }
+            
+            nav ul {
+                justify-content: center;
+            }
+            
+            .header-actions {
+                order: 2;
+            }
+            
+            .search-container input {
+                width: 120px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .post-actions {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            
+            .post-action {
+                flex: 1;
+                justify-content: center;
+            }
+            
+            .shop-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-section {
+                min-width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div id="snipcart" data-config-modal-style="side" data-api-key="ZDJjNmYwNTUtMmUwOC00MjBlLTk3YmQtNWFhNGQzNzE1NzhkNjM4ODUwOTE1MzE1MDMxMzQ0" hidden></div>
-    
-    <header class="navbar">
-        <div class="logo">
-            <img src="/assets/images/hatake-logo.png" alt="Hatake Logo">
+    <!-- Header -->
+    <header>
+        <div class="logo-container">
+            <div class="logo">HATA<span>KE</span></div>
+            <button class="dark-toggle" id="darkModeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
         </div>
+        
         <nav>
             <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/shop.html">Shop</a></li>
-                <li><a href="/events.html">Events</a></li>
-                <li><a href="/about.html">About</a></li>
-                <li><a href="#" id="community-link">Community</a></li>
-                <li><a href="/partners.html">Partners</a></li>
+                <li><a href="#" class="active"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="#"><i class="fas fa-store"></i> Shop</a></li>
+                <li><a href="#"><i class="fas fa-calendar-alt"></i> Events</a></li>
+                <li><a href="#"><i class="fas fa-users"></i> Community</a></li>
+                <li><a href="#"><i class="fas fa-info-circle"></i> About</a></li>
+                <li><a href="#"><i class="fas fa-handshake"></i> Partners</a></li>
             </ul>
         </nav>
-        <div class="user-actions">
-            <a href="/login.html" class="login-btn">Login</a>
-            <button class="dark-mode-toggle">🌓</button>
-            <button class="snipcart-checkout">
-                <span class="snipcart-items-count">0</span> 🛒
-            </button>
+        
+        <div class="header-actions">
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search...">
+            </div>
+            
+            <div class="action-icons">
+                <div>
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </div>
+                <div>
+                    <i class="fas fa-comment-alt"></i>
+                    <span class="badge">5</span>
+                </div>
+                <div>
+                    <i class="fas fa-shopping-cart snipcart-checkout"></i>
+                    <span class="badge snipcart-items-count">2</span>
+                </div>
+            </div>
+            
+            <div class="user-avatar">JH</div>
         </div>
     </header>
 
+    <!-- Main Content -->
     <main>
-        <section class="hero">
-            <h1>Join the TCG Community</h1>
-            <p>Connect with fellow trading card game enthusiasts and get premium accessories</p>
-            <div class="cta-buttons">
-                <a href="/shop.html" class="btn-primary">Shop Now</a>
-                <a href="#" id="join-community" class="btn-secondary">Join Community</a>
-            </div>
-        </section>
-
-        <section class="activity-feed">
-            <h2>Recent Community Activity</h2>
-            <div class="feed-container" id="community-feed">
-                <!-- Feed items will be loaded via JS -->
-            </div>
-        </section>
-
-        <section class="featured-products">
-            <h2>Featured Products</h2>
-            <div class="products-grid">
-                <div class="product-card">
-                    <img src="/assets/images/duffel-bag.jpg" alt="Duffel Bag">
-                    <h3>Duffel Bag</h3>
-                    <p>300 SEK</p>
-                    <button class="snipcart-add-item"
-                        data-item-id="0.5"
-                        data-item-price="300.00"
-                        data-item-description="Tournament companion bag (47×28×55cm). Water-resistant, padded compartments, YKK zippers."
-                        data-item-image="/assets/images/duffel-bag.jpg"
-                        data-item-name="Duffel Bag">
-                        Add to Cart
-                    </button>
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="card user-card">
+                <div class="cover-photo"></div>
+                <div class="profile-pic">JH</div>
+                <div class="user-name">John Hattori</div>
+                <div class="user-bio">MTG Commander Player • Pokémon Collector</div>
+                
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-value">128</div>
+                        <div class="stat-label">Posts</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">542</div>
+                        <div class="stat-label">Friends</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">64</div>
+                        <div class="stat-label">Decks</div>
+                    </div>
                 </div>
-                <!-- More featured products -->
+                
+                <button class="btn"><i class="fas fa-edit"></i> Edit Profile</button>
             </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="footer-content">
-            <div class="footer-logo">
-                <img src="/assets/images/hatake-logo.png" alt="Hatake Logo">
+            
+            <div class="card">
+                <div class="card-title">Shortcuts</div>
+                <div class="menu-item">
+                    <i class="fas fa-users"></i>
+                    <span>Groups</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-store"></i>
+                    <span>Marketplace</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Events</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-book"></i>
+                    <span>Deck Builder</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-history"></i>
+                    <span>Memories</span>
+                </div>
             </div>
-            <div class="footer-links">
-                <h3>Quick Links</h3>
-                <ul>
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/shop.html">Shop</a></li>
-                    <li><a href="/events.html">Events</a></li>
-                    <li><a href="/about.html">About</a></li>
-                    <li><a href="#">Community</a></li>
-                    <li><a href="/partners.html">Partners</a></li>
-                </ul>
-            </div>
-            <div class="footer-social">
-                <h3>Connect With Us</h3>
-                <div class="social-icons">
-                    <a href="https://www.facebook.com/HatakeCardShop/"><img src="/assets/images/facebook-icon.png" alt="Facebook"></a>
-                    <a href="https://discord.com/invite/Puq5ncSbjt"><img src="/assets/images/discord-icon.png" alt="Discord"></a>
-                    <a href="https://instagram.com/hatakese"><img src="/assets/images/instagram-icon.png" alt="Instagram"></a>
+            
+            <div class="card">
+                <div class="card-title">Your Communities</div>
+                <div class="menu-item">
+                    <i class="fas fa-dragon" style="color: #e53e3e;"></i>
+                    <span>MTG Commander</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-bolt" style="color: #f6ad55;"></i>
+                    <span>Pokémon Trading</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-shield-alt" style="color: #48bb78;"></i>
+                    <span>Yu-Gi-Oh! Duelists</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Discover More</span>
                 </div>
             </div>
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Hatake TCG. All rights reserved.</p>
+        
+        <!-- Main Feed -->
+        <div class="feed">
+            <div class="card create-post">
+                <div class="post-input">
+                    <div class="user-avatar">JH</div>
+                    <input type="text" placeholder="What's on your mind, John?">
+                </div>
+                
+                <div class="post-actions">
+                    <div class="post-action">
+                        <i class="fas fa-video" style="color: #e53e3e;"></i>
+                        <span>Live Video</span>
+                    </div>
+                    <div class="post-action">
+                        <i class="fas fa-images" style="color: #48bb78;"></i>
+                        <span>Photo/Video</span>
+                    </div>
+                    <div class="post-action">
+                        <i class="fas fa-smile" style="color: #f6ad55;"></i>
+                        <span>Feeling/Activity</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card post">
+                <div class="post-header">
+                    <div class="user-avatar" style="background: linear-gradient(135deg, #2b6cb0, #1a365d);">MS</div>
+                    <div>
+                        <div class="post-user">Maria Sanchez</div>
+                        <div class="post-time">2 hrs ago · <i class="fas fa-globe-americas"></i></div>
+                    </div>
+                </div>
+                
+                <div class="post-content">
+                    Just pulled this amazing Charizard from a booster pack! So excited to add it to my collection 🔥
+                </div>
+                
+                <div class="post-image">
+                    <div style="background: linear-gradient(to right, #f6e05e, #f6ad55); height: 100%; display: flex; align-items: center; justify-content: center; color: #1a202c; font-size: 2rem;">
+                        <i class="fas fa-dragon"></i> Charizard Card
+                    </div>
+                </div>
+                
+                <div class="reactions">
+                    <div class="reaction" style="background-color: #2b6cb0;">👍</div>
+                    <div class="reaction" style="background-color: #e53e3e;">❤️</div>
+                    <span>42</span>
+                </div>
+                
+                <div class="post-actions-bar">
+                    <div class="post-action-btn">
+                        <i class="far fa-thumbs-up"></i>
+                        <span>Like</span>
+                    </div>
+                    <div class="post-action-btn">
+                        <i class="far fa-comment"></i>
+                        <span>Comment</span>
+                    </div>
+                    <div class="post-action-btn">
+                        <i class="fas fa-share"></i>
+                        <span>Share</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card post">
+                <div class="post-header">
+                    <div class="user-avatar" style="background: linear-gradient(135deg, #48bb78, #2f855a);">TJ</div>
+                    <div>
+                        <div class="post-user">Thomas Johnson</div>
+                        <div class="post-time">5 hrs ago · <i class="fas fa-user-friends"></i></div>
+                    </div>
+                </div>
+                
+                <div class="post-content">
+                    Looking for advice on my new Commander deck. Any suggestions for improving the mana curve? Here's my current deck list:
+                </div>
+                
+                <div class="post-image">
+                    <div style="background: linear-gradient(to right, #48bb78, #2f855a); height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                        <i class="fas fa-scroll"></i> Deck List
+                    </div>
+                </div>
+                
+                <div class="reactions">
+                    <div class="reaction" style="background-color: #f6ad55;">🃏</div>
+                    <div class="reaction" style="background-color: #2b6cb0;">👍</div>
+                    <span>28</span>
+                </div>
+                
+                <div class="post-actions-bar">
+                    <div class="post-action-btn">
+                        <i class="far fa-thumbs-up"></i>
+                        <span>Like</span>
+                    </div>
+                    <div class="post-action-btn">
+                        <i class="far fa-comment"></i>
+                        <span>Comment</span>
+                    </div>
+                    <div class="post-action-btn">
+                        <i class="fas fa-share"></i>
+                        <span>Share</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Sidebar (Shop) -->
+        <div class="shop-sidebar">
+            <div class="card">
+                <div class="card-title">Featured Products</div>
+                <div class="shop-container">
+                    <!-- Product 1 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">Matte Sleeves</div>
+                            <div class="product-price">89 SEK</div>
+                            <div class="product-meta">100-pack • 66x91mm</div>
+                            <button class="snipcart-add-item"
+                                data-item-id="0.01"
+                                data-item-price="89.00"
+                                data-item-name="Matte Sleeves"
+                                data-item-description="Premium matte finish sleeves. Acid-free, tournament-ready, reduced glare."
+                                data-item-image=""
+                                data-item-url="/">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Product 2 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">480-Slot Binder</div>
+                            <div class="product-price">360 SEK</div>
+                            <div class="product-meta">Premium zippered binder</div>
+                            <button class="snipcart-add-item"
+                                data-item-id="0.02"
+                                data-item-price="360.00"
+                                data-item-name="480-Slot Binder"
+                                data-item-description="Premium zippered binder with side-loading pockets. 480 card capacity, Nordic design."
+                                data-item-image=""
+                                data-item-url="/">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Product 3 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">35pt Top-Loaders</div>
+                            <div class="product-price">30 SEK</div>
+                            <div class="product-meta">25-pack • Crystal-clear</div>
+                            <button class="snipcart-add-item"
+                                data-item-id="0.031"
+                                data-item-price="30.00"
+                                data-item-name="35pt Top-Loaders"
+                                data-item-description="Crystal-clear protection. Rigid protection, precision-cut edges."
+                                data-item-image=""
+                                data-item-url="/">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Product 4 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <i class="fas fa-gem"></i>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">PU DeckBox</div>
+                            <div class="product-price">300 SEK</div>
+                            <div class="product-meta">160+ card capacity</div>
+                            <button class="snipcart-add-item"
+                                data-item-id="0.4"
+                                data-item-price="300.00"
+                                data-item-name="PU DeckBox"
+                                data-item-description="Premium leather deckbox. Magnetic closure, separate compartments, embossed logo."
+                                data-item-image=""
+                                data-item-url="/">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Upcoming Events</div>
+                <div class="menu-item">
+                    <i class="fas fa-calendar-day" style="color: #e53e3e;"></i>
+                    <div>
+                        <div style="font-weight: 600;">Need to be Geek Convention</div>
+                        <div style="font-size: 0.9rem; color: #718096;">Sept 27, 2025 • Skara</div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-calendar-alt" style="color: #2b6cb0;"></i>
+                    <div>
+                        <div style="font-weight: 600;">SweCard Expo</div>
+                        <div style="font-size: 0.9rem; color: #718096;">Oct 11, 2025 • Svedala</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-title">About Hatake TCG</div>
+                <p>Hatake is a premium TCG accessories brand founded by passionate players who understand what collectors and competitors need.</p>
+                <p>This website was built by DeepSeek.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <div class="footer-title">Quick Links</div>
+                <ul class="footer-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Shop</a></li>
+                    <li><a href="#">Events</a></li>
+                    <li><a href="#">Community</a></li>
+                    <li><a href="#">Deck Builder</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <div class="footer-title">Products</div>
+                <ul class="footer-links">
+                    <li><a href="#">Sleeves & Protectors</a></li>
+                    <li><a href="#">Binders & Portfolios</a></li>
+                    <li><a href="#">Deck Boxes</a></li>
+                    <li><a href="#">Playmats</a></li>
+                    <li><a href="#">Bags & Accessories</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <div class="footer-title">Contact Us</div>
+                <ul class="footer-links">
+                    <li><i class="fas fa-envelope"></i> support@hatake.eu</li>
+                    <li><i class="fas fa-phone"></i> +46 123 456 789</li>
+                    <li><i class="fas fa-map-marker-alt"></i> Falköping, Sweden</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            &copy; 2025 Hatake TCG. All rights reserved.
         </div>
     </footer>
 
-    <!-- Hatake Plus Overlay (hidden by default) -->
-    <div id="hatake-plus-overlay" class="overlay">
-        <div class="overlay-content">
-            <button class="close-overlay">✕</button>
-            <div class="overlay-tabs">
-                <button class="tab-button active" data-tab="public">Public 🃏</button>
-                <button class="tab-button" data-tab="profile">Profile 👤</button>
-                <button class="tab-button" data-tab="friends">Friends 👥</button>
-                <button class="tab-button" data-tab="decks">Decks ♠️</button>
-            </div>
-            <div class="tab-content active" id="public-tab">
-                <h2>Community Feed</h2>
-                <div class="post-form">
-                    <textarea placeholder="Share your TCG thoughts..."></textarea>
-                    <div class="post-actions">
-                        <button class="emoji-btn">🃏</button>
-                        <button class="photo-btn">📷</button>
-                        <button class="post-btn">Post</button>
-                    </div>
-                </div>
-                <div class="feed-posts" id="community-posts">
-                    <!-- Posts will be loaded here -->
-                </div>
-            </div>
-            <div class="tab-content" id="profile-tab">
-                <h2>Your Profile</h2>
-                <!-- Profile content -->
-            </div>
-            <div class="tab-content" id="friends-tab">
-                <h2>Friends & Chat</h2>
-                <!-- Friends content -->
-            </div>
-            <div class="tab-content" id="decks-tab">
-                <h2>Deck Builder</h2>
-                <!-- Deck builder content -->
-            </div>
-        </div>
-    </div>
+    <!-- Snipcart Configuration -->
+    <div hidden id="snipcart" data-api-key="ZDJjNmYwNTUtMmUwOC00MjBlLTk3YmQtNWFhNGQzNzE1NzhkNjM4ODUwOTE1MzE1MDMxMzQ0" data-config-modal-style="side"></div>
 
-    <script src="/assets/js/main.js"></script>
+    <script>
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+        
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const icon = darkModeToggle.querySelector('i');
+            
+            if (body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+        
+        // Simulate cart items
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.querySelector('.snipcart-items-count').textContent = '2';
+            }, 1000);
+        });
+        
+        // Initialize Snipcart
+        document.addEventListener('snipcart.ready', () => {
+            // Add coupon codes
+            Snipcart.api.coupons.add('MTGFB', {
+                discount: 5,
+                type: 'Percentage'
+            });
+            
+            Snipcart.api.coupons.add('214', {
+                discount: 30,
+                type: 'FixedAmount'
+            });
+        });
+    </script>
 </body>
 </html>
