@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hatake TCG - Shop</title>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <script src="https://cdn.snipcart.com/themes/v3.3.1/default/snipcart.js" defer></script>
+    <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.3.1/default/snipcart.css">
+</head>
+<body>
+    <!-- Same header as index.html -->
+    
+    <main class="shop-main">
+        <h1>Hatake TCG Shop</h1>
+        <div class="shop-filters">
+            <select id="category-filter">
+                <option value="all">All Categories</option>
+                <option value="sleeves">Sleeves</option>
+                <option value="binder">Binders</option>
+                <option value="top-loaders">Top Loaders</option>
+                <option value="deckbox">Deck Boxes</option>
+                <option value="bag">Bags</option>
+                <option value="playmat">Playmats</option>
+            </select>
+            <div class="search-box">
+                <input type="text" placeholder="Search products...">
+                <button>🔍</button>
+            </div>
+        </div>
+
+        <div class="products-grid">
+            <!-- Matte Sleeves -->
+            <div class="product-card" data-category="sleeves">
+                <img src="/assets/images/matte-sleeves.jpg" alt="Matte Sleeves">
+                <h3>Matte Sleeves</h3>
+                <p class="price">89 SEK</p>
+                <p class="description">Premium matte finish sleeves (100-pack, 66x91mm)</p>
+                <p class="features">Acid-free, tournament-ready, reduced glare</p>
+                <p class="stock">Pre-order: Ships October 15, 2025 (1000 units available)</p>
+                <button class="snipcart-add-item"
+                    data-item-id="0.01"
+                    data-item-price="89.00"
+                    data-item-description="Premium matte finish sleeves (100-pack, 66x91mm). Acid-free, tournament-ready, reduced glare."
+                    data-item-image="/assets/images/matte-sleeves.jpg"
+                    data-item-name="Matte Sleeves">
+                    Add to Cart
+                </button>
+            </div>
+
+            <!-- 480-Slot Binder -->
+            <div class="product-card" data-category="binder">
+                <img src="/assets/images/480-slot-binder.jpg" alt="480-Slot Binder">
+                <h3>480-Slot Binder</h3>
+                <p class="price">360 SEK</p>
+                <p class="description">Premium zippered binder with side-loading pockets</p>
+                <p class="features">480 card capacity, Nordic design, reinforced construction</p>
+                <p class="stock">Pre-order: Ships October 15, 2025 (100 units available)</p>
+                <button class="snipcart-add-item"
+                    data-item-id="0.02"
+                    data-item-price="360.00"
+                    data-item-description="Premium zippered binder with side-loading pockets. 480 card capacity, Nordic design, reinforced construction."
+                    data-item-image="/assets/images/480-slot-binder.jpg"
+                    data-item-name="480-Slot Binder">
+                    Add to Cart
+                </button>
+            </div>
+
+            <!-- PetDragon Playmat (SKU updated to 0.6) -->
+            <div class="product-card" data-category="playmat">
+                <img src="/assets/images/petdragon-playmat.jpg" alt="PetDragon Playmat">
+                <h3>PetDragon Playmat</h3>
+                <p class="price">120 SEK</p>
+                <p class="description">Limited edition collaboration design</p>
+                <p class="features">14×24 inches, ships in protective tube</p>
+                <p class="stock">50 units available</p>
+                <button class="snipcart-add-item"
+                    data-item-id="0.6"
+                    data-item-price="120.00"
+                    data-item-description="Limited edition collaboration design (14×24 inches). Ships in protective tube, features PetDragon and Hatake logos."
+                    data-item-image="/assets/images/petdragon-playmat.jpg"
+                    data-item-name="PetDragon Playmat">
+                    Add to Cart
+                </button>
+            </div>
+            
+            <!-- More products... -->
+        </div>
+
+        <div class="coupon-notice">
+            <p>Use coupon code <strong>MTGFB</strong> for 5% discount or <strong>214</strong> for retail pricing</p>
+        </div>
+    </main>
+
+    <!-- Same footer as index.html -->
+    
+    <script src="/assets/js/shop.js"></script>
+</body>
+</html>
