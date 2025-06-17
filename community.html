@@ -1569,7 +1569,7 @@
         </div>
     </footer>
 
-    <script>
+  <script>
         // Initialize Supabase
         const supabaseUrl = 'https://llukovlzjhflfhacajps.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxsdWtvdmx6amhmbGZoY2FqcHMiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc1MDAwNjc3MiwiZXhwIjoyMDY1NTgyNzcyfQ.kbaftEOsGUriJOxMlTOFkXUGhLcKBaHwfVLG9S60gpU';
@@ -1612,12 +1612,8 @@
         const signupError = document.getElementById('signupError');
         const tabBtns = document.querySelectorAll('.tab-btn');
         
-        // Chat messages array (will be replaced with Supabase data)
-        let chatHistory = [
-            { sender: "Maria Sanchez", message: "Anyone going to the tournament this weekend?", time: "10:24 AM" },
-            { sender: "You", message: "I'll be there! Bringing my new Commander deck", time: "10:26 AM" },
-            { sender: "Thomas Johnson", message: "Looking forward to seeing everyone! I'll have some cards for trade too", time: "10:28 AM" }
-        ];
+        // Initialize chatHistory
+        let chatHistory = [];
         
         // Check for saved dark mode preference
         if (localStorage.getItem('darkMode') === 'true') {
@@ -1642,30 +1638,46 @@
             }
         });
         
-        // Check if user is logged in
-        function checkAuthState() {
-            const user = JSON.parse(localStorage.getItem('user'));
+        // Check authentication state
+        async function checkAuthState() {
+            const { data: { user } } = await supabase.auth.getUser();
             if (user) {
-                updateProfileUI(user);
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single();
+                
+                if (profile) {
+                    localStorage.setItem('user', JSON.stringify(profile));
+                    updateProfileUI(profile);
+                } else {
+                    const newProfile = { id: user.id, name: user.email.split('@')[0], bio: "", avatar: 0 };
+                    const { error } = await supabase.from('profiles').insert([newProfile]);
+                    if (!error) {
+                        localStorage.setItem('user', JSON.stringify(newProfile));
+                        updateProfileUI(newProfile);
+                    }
+                }
                 logoutBtn.style.display = 'block';
-                authMessage.textContent = `Welcome back, ${user.name}!`;
+                authMessage.textContent = `Welcome back, ${user.email.split('@')[0]}!`;
                 googleSignInBtn.style.display = 'none';
+                loadChatMessages();
             } else {
                 logoutBtn.style.display = 'none';
                 googleSignInBtn.style.display = 'flex';
                 authMessage.textContent = 'Sign in to access all community features.';
+                updateProfileUI({ name: "Guest User", bio: "Join our TCG community!", avatar: 0 });
             }
         }
         
         // Update UI with user data
         function updateProfileUI(user) {
-            // Set profile info
-            profileName.textContent = user.name;
-            profileBio.textContent = user.bio || 'Join our TCG community!';
-            mainProfileName.textContent = user.name;
-            mainProfileBio.textContent = user.bio || 'Join our TCG community to connect with other players!';
+            profileName.textContent = user.name || "Guest User";
+            profileBio.textContent = user.bio || "Join our TCG community!";
+            mainProfileName.textContent = user.name || "Guest User";
+            mainProfileBio.textContent = user.bio || "Join our TCG community to connect with other players!";
             
-            // Set avatar
             const avatarColors = ['#f6ad55', '#2b6cb0', '#48bb78', '#e53e3e'];
             const avatarIndex = user.avatar || 0;
             const avatarColor = avatarColors[avatarIndex];
@@ -1674,13 +1686,11 @@
             profilePic.style.background = `linear-gradient(135deg, ${avatarColor}, ${darkenColor(avatarColor, 20)})`;
             mainProfilePic.style.background = `linear-gradient(135deg, ${avatarColor}, ${darkenColor(avatarColor, 20)})`;
             
-            // Set avatar initials
             const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
             userAvatar.textContent = initials;
             profilePic.textContent = initials;
             mainProfilePic.textContent = initials;
             
-            // Update stats with random numbers
             document.getElementById('postCount').textContent = Math.floor(Math.random() * 100);
             document.getElementById('friendsCount').textContent = Math.floor(Math.random() * 500);
             document.getElementById('groupsCount').textContent = Math.floor(Math.random() * 20);
@@ -1703,46 +1713,31 @@
         async function signInWithGoogle() {
             try {
                 const { data, error } = await supabase.auth.signInWithOAuth({
-                    provider: 'google'
+                    provider: 'google',
+                    options: { redirectTo: window.location.origin + '/community.html' }
                 });
-                
                 if (error) throw error;
-                
-                // Simulate user data (in a real app, we would get this from Supabase)
-                const user = {
-                    name: "John Player",
-                    email: "john.player@example.com",
-                    avatar: 0,
-                    bio: "Passionate MTG Commander player and collector"
-                };
-                
-                localStorage.setItem('user', JSON.stringify(user));
-                checkAuthState();
-                closeAuthModal();
-                
             } catch (error) {
                 console.error('Error signing in:', error.message);
-                loginError.textContent = 'Failed to sign in. Please try again.';
+                loginError.textContent = 'Failed to sign in with Google. Please try again.';
             }
         }
         
         // Logout
-        function logout() {
+        async function logout() {
+            const { error } = await supabase.auth.signOut();
+            if (error) console.error('Error logging out:', error.message);
             localStorage.removeItem('user');
             checkAuthState();
-            // In a real app, we would call supabase.auth.signOut()
         }
         
         // Profile Modal
         editProfileBtn.addEventListener('click', () => {
             profileModal.style.display = 'flex';
-            
-            // Load current profile data
             const user = JSON.parse(localStorage.getItem('user')) || {};
             document.getElementById('editName').value = user.name || '';
             document.getElementById('editBio').value = user.bio || '';
             
-            // Select current avatar
             const avatarOptions = document.querySelectorAll('.avatar-option');
             avatarOptions.forEach(option => {
                 option.classList.remove('selected');
@@ -1760,34 +1755,60 @@
         // Avatar selection
         document.querySelectorAll('.avatar-option').forEach(option => {
             option.addEventListener('click', () => {
-                document.querySelectorAll('.avatar-option').forEach(opt => {
-                    opt.classList.remove('selected');
-                });
+                document.querySelectorAll('.avatar-option').forEach(opt => opt.classList.remove('selected'));
                 option.classList.add('selected');
             });
         });
         
         // Save profile
-        saveProfile.addEventListener('click', () => {
-            const name = document.getElementById('editName').value;
-            const bio = document.getElementById('editBio').value;
+        saveProfile.addEventListener('click', async () => {
+            const name = document.getElementById('editName').value.trim();
+            const bio = document.getElementById('editBio').value.trim();
             const selectedAvatar = document.querySelector('.avatar-option.selected');
             const avatar = selectedAvatar ? parseInt(selectedAvatar.dataset.avatar) : 0;
             
-            const user = JSON.parse(localStorage.getItem('user')) || {};
-            user.name = name || "Guest User";
-            user.bio = bio || "";
-            user.avatar = avatar;
+            if (!name) {
+                alert('Please enter a display name');
+                return;
+            }
             
-            localStorage.setItem('user', JSON.stringify(user));
-            updateProfileUI(user);
-            closeProfileModal();
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                const { error } = await supabase
+                    .from('profiles')
+                    .update({ name, bio, avatar })
+                    .eq('id', user.id);
+                if (error) {
+                    console.error('Error updating profile:', error.message);
+                } else {
+                    const updatedProfile = { id: user.id, name, bio, avatar };
+                    localStorage.setItem('user', JSON.stringify(updatedProfile));
+                    updateProfileUI(updatedProfile);
+                    closeProfileModal();
+                }
+            }
         });
         
         // Chat functionality
+        async function loadChatMessages() {
+            const { data: messages, error } = await supabase
+                .from('messages')
+                .select('*')
+                .order('created_at', { ascending: true });
+            if (error) {
+                console.error('Error loading messages:', error.message);
+            } else {
+                chatHistory = messages.map(msg => ({
+                    sender: msg.user_id === (JSON.parse(localStorage.getItem('user')) || {}).id ? "You" : "Someone",
+                    message: msg.message,
+                    time: new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                }));
+                renderChatMessages();
+            }
+        }
+        
         function renderChatMessages() {
             chatMessages.innerHTML = '';
-            
             chatHistory.forEach(msg => {
                 const messageElement = document.createElement('div');
                 const isCurrentUser = msg.sender === "You";
@@ -1805,59 +1826,50 @@
                         <div class="message-time">${msg.time}</div>
                     `;
                 }
-                
                 chatMessages.appendChild(messageElement);
             });
-            
-            // Scroll to bottom
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
         
-        function addMessage(message, sender = "You") {
-            const now = new Date();
-            const time = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        async function addMessage(message, senderId) {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
             
-            chatHistory.push({
-                sender: sender,
-                message: message,
-                time: time
-            });
-            
-            // In a real app, we would save this to Supabase
-            renderChatMessages();
+            const { error } = await supabase
+                .from('messages')
+                .insert([{ user_id: user.id, message }]);
+            if (error) {
+                console.error('Error sending message:', error.message);
+            } else {
+                loadChatMessages();
+            }
         }
         
-        sendMessageBtn.addEventListener('click', () => {
+        sendMessageBtn.addEventListener('click', async () => {
             const message = chatInput.value.trim();
             if (message) {
-                addMessage(message);
+                await addMessage(message);
                 chatInput.value = '';
             }
         });
         
-        chatInput.addEventListener('keypress', (e) => {
+        chatInput.addEventListener('keypress', async (e) => {
             if (e.key === 'Enter') {
-                sendMessageBtn.click();
+                const message = chatInput.value.trim();
+                if (message) {
+                    await addMessage(message);
+                    chatInput.value = '';
+                }
             }
         });
         
         // Auth Modal Tabs
         tabBtns.forEach(btn => {
             btn.addEventListener('click', () => {
-                // Remove active class from all tabs
                 tabBtns.forEach(b => b.classList.remove('active'));
-                
-                // Add active class to clicked tab
                 btn.classList.add('active');
-                
-                // Hide all tab content
-                document.querySelectorAll('.tab-content').forEach(tab => {
-                    tab.classList.remove('active');
-                });
-                
-                // Show the selected tab content
-                const tabId = btn.dataset.tab;
-                document.getElementById(`${tabId}Tab`).classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                document.getElementById(`${btn.dataset.tab}Tab`).classList.add('active');
             });
         });
         
@@ -1883,18 +1895,13 @@
                 return;
             }
             
-            // In a real app, we would call supabase.auth.signInWithPassword()
-            // For demo purposes, we simulate login
-            const user = {
-                name: email.split('@')[0],
-                email: email,
-                avatar: Math.floor(Math.random() * 4),
-                bio: "TCG enthusiast"
-            };
-            
-            localStorage.setItem('user', JSON.stringify(user));
-            checkAuthState();
-            authModal.style.display = 'none';
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) {
+                loginError.textContent = error.message;
+            } else {
+                checkAuthState();
+                authModal.style.display = 'none';
+            }
         }
         
         // Sign Up with Email
@@ -1919,18 +1926,27 @@
                 return;
             }
             
-            // In a real app, we would call supabase.auth.signUp()
-            // For demo purposes, we simulate signup
-            const user = {
-                name: name,
-                email: email,
-                avatar: Math.floor(Math.random() * 4),
-                bio: "New TCG player"
-            };
+            const { data, error } = await supabase.auth.signUp({
+                email,
+                password,
+                options: { data: { name } }
+            });
             
-            localStorage.setItem('user', JSON.stringify(user));
-            checkAuthState();
-            authModal.style.display = 'none';
+            if (error) {
+                signupError.textContent = error.message;
+            } else {
+                if (data.user) {
+                    const newProfile = { id: data.user.id, name, bio: "", avatar: 0 };
+                    const { error: profileError } = await supabase.from('profiles').insert([newProfile]);
+                    if (profileError) {
+                        signupError.textContent = 'Profile creation failed: ' + profileError.message;
+                    } else {
+                        localStorage.setItem('user', JSON.stringify(newProfile));
+                        checkAuthState();
+                        authModal.style.display = 'none';
+                    }
+                }
+            }
         }
         
         // Event listeners
@@ -1944,9 +1960,7 @@
         
         // Close modals when clicking outside
         window.addEventListener('click', (e) => {
-            if (e.target === profileModal) {
-                closeProfileModal();
-            }
+            if (e.target === profileModal) closeProfileModal();
             if (e.target === authModal) {
                 authModal.style.display = 'none';
                 loginError.textContent = '';
@@ -1956,17 +1970,6 @@
         
         // Initialize page
         checkAuthState();
-        renderChatMessages();
-        
-        // Simulate user data if not logged in
-        if (!localStorage.getItem('user')) {
-            const guestUser = {
-                name: "Guest User",
-                bio: "Join our TCG community!",
-                avatar: 0
-            };
-            updateProfileUI(guestUser);
-        }
     </script>
 </body>
 </html>
