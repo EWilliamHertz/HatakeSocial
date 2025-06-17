@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Hatake TCG - Premium TCG Accessories</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary: #1a365d;
+            --secondary: #2b6cb0;
+            --accent: #f6ad55;
+            --light: #f7fafc;
+            --dark: #1a202c;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --text: #2d3748;
+            --text-light: #718096;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .dark-mode {
+            --primary: #2d3748;
+            --secondary: #4a5568;
+            --light: #1a202c;
+            --dark: #f7fafc;
+            --card-bg: #2d3748;
+            --card-border: #4a5568;
+            --text: #e2e8f0;
+            --text-light: #a0aec0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            height: 50px;
+            width: auto;
+            background: linear-gradient(135deg, #2b6cb0, #1a365d);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        nav a:hover, nav a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-container input {
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            border-radius: 20px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            width: 200px;
+        }
+
+        .search-container input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .action-icons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-icons div {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .action-icons .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--accent);
+            color: var(--dark);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f6ad55, #e53e3e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* About Hero Section */
+        .about-hero {
+            background: linear-gradient(rgba(26, 54, 93, 0.8), rgba(43, 108, 176, 0.8)), url('https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2000&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 6rem 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .about-hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .about-hero p {
+            font-size: 1.4rem;
+            max-width: 800px;
+            margin: 0 auto;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+
+        /* Section Styles */
+        .section {
+            max-width: 1200px;
+            margin: 0 auto 4rem;
+            padding: 0 1.5rem;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--primary);
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .section-content {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--card-border);
+        }
+
+        /* Our Story */
+        .story-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .story-content h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--secondary);
+        }
+
+        .story-content p {
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        .founders-quote {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+            position: relative;
+        }
+
+        .founders-quote:before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 5rem;
+            color: rgba(255,255,255,0.2);
+            font-family: Georgia, serif;
+        }
+
+        .founders-quote p {
+            font-style: italic;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .founders-quote .author {
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .story-image {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            height: 400px;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 1.2rem;
+        }
+
+        /* Brand Identity */
+        .brand-identity {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+
+        .brand-logo-container {
+            flex: 0 0 300px;
+            background-color: var(--light);
+            border-radius: 10px;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+        }
+
+        .brand-logo {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .brand-info h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--secondary);
+        }
+
+        .brand-info p {
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        /* Our Mission */
+        .mission-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .mission-card {
+            background-color: var(--light);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--card-border);
+            transition: transform 0.3s;
+        }
+
+        .mission-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .mission-card h3 {
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .mission-card h3 i {
+            color: var(--accent);
+            font-size: 1.5rem;
+        }
+
+        .mission-card p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+
+        .social-platform {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .social-platform h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .social-platform p {
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+            font-size: 1.1rem;
+        }
+
+        .platform-features {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .platform-feature {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 200px;
+        }
+
+        .platform-feature i {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .platform-feature span {
+            font-weight: 600;
+        }
+
+        /* Why Choose Us */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .feature-card {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 10px;
+            background-color: var(--light);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--card-border);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            flex: 0 0 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .feature-content h3 {
+            color: var(--secondary);
+            margin-bottom: 0.8rem;
+        }
+
+        .feature-content p {
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Team Section */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .team-member {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--card-border);
+            transition: transform 0.3s;
+            text-align: center;
+        }
+
+        .team-member:hover {
+            transform: translateY(-10px);
+        }
+
+        .member-photo {
+            height: 250px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .member-info {
+            padding: 1.5rem;
+        }
+
+        .member-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .member-role {
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .member-bio {
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 2rem 1.5rem;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: space-between;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .footer-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #cbd5e0;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .social-link:hover {
+            background-color: var(--accent);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #a0aec0;
+            font-size: 0.9rem;
+        }
+
+        /* Dark mode toggle */
+        .dark-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 992px) {
+            .story-grid,
+            .mission-grid,
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .brand-identity {
+                flex-direction: column;
+            }
+            
+            .brand-logo-container {
+                margin: 0 auto 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            
+            .logo-container {
+                order: 1;
+            }
+            
+            nav {
+                order: 3;
+                width: 100%;
+            }
+            
+            nav ul {
+                justify-content: center;
+            }
+            
+            .header-actions {
+                order: 2;
+            }
+            
+            .search-container input {
+                width: 120px;
+            }
+            
+            .about-hero h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .section-content {
+                padding: 1.5rem;
+            }
+            
+            .platform-features {
+                flex-direction: column;
+                align-items: center;
+                gap: 1.5rem;
+            }
+            
+            .about-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .about-hero p {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo-container">
+            <div class="logo">HATA<span>KE</span></div>
+            <button class="dark-toggle" id="darkModeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+        
+        <nav>
+            <ul>
+                <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="shop.html"><i class="fas fa-store"></i> Shop</a></li>
+                <li><a href="events.html"><i class="fas fa-calendar-alt"></i> Events</a></li>
+                <li><a href="community.html"><i class="fas fa-users"></i> Community</a></li>
+                <li><a href="about.html" class="active"><i class="fas fa-info-circle"></i> About</a></li>
+                <li><a href="partners.html"><i class="fas fa-handshake"></i> Partners</a></li>
+            </ul>
+        </nav>
+        
+        <div class="header-actions">
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search...">
+            </div>
+            
+            <div class="action-icons">
+                <div>
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </div>
+                <div>
+                    <i class="fas fa-comment-alt"></i>
+                    <span class="badge">5</span>
+                </div>
+                <div>
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="badge">2</span>
+                </div>
+            </div>
+            
+            <div class="user-avatar">EH</div>
+        </div>
+    </header>
+
+    <!-- About Hero -->
+    <section class="about-hero">
+        <h1>About Hatake TCG</h1>
+        <p>Premium TCG accessories brand founded by passionate players who understand what collectors and competitors need.</p>
+    </section>
+
+    <!-- Our Story -->
+    <section class="section">
+        <h2 class="section-title">Our Story, Mission, and Values</h2>
+        <div class="section-content">
+            <div class="story-grid">
+                <div class="story-content">
+                    <h3>Our Story</h3>
+                    <p><strong>Founded in 2025</strong></p>
+                    <p>Hatake TCG was founded by Ernst-William Hertz, Mark Jensen, and Virre, passionate TCG enthusiasts and entrepreneurs committed to creating premium, sustainable accessories. Our journey began in Falköping, Sweden, with a vision to revolutionize TCG gear while supporting Nordic industry.</p>
+                    
+                    <div class="founders-quote">
+                        <p>Hatake TCG isn't just about products; it's about building a legacy. Virre, Mark, and Ernst-William are dedicated to crafting gear that protects and inspires, all while fostering a community where every player feels at home.</p>
+                        <p class="author">- The Hatake Founders</p>
+                    </div>
+                </div>
+                
+                <div class="story-image" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80'); background-size: cover; background-position: center;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Brand Identity -->
+    <section class="section">
+        <h2 class="section-title">Our Brand Identity</h2>
+        <div class="section-content">
+            <div class="brand-identity">
+                <div class="brand-logo-container">
+                    <div class="brand-logo">HATA<span style="color: #f6ad55;">KE</span></div>
+                </div>
+                
+                <div class="brand-info">
+                    <h3>Hatake TCG Logo</h3>
+                    <p><strong>Designed by Richard Moreau</strong></p>
+                    <p>Our distinctive logo perfectly captures the essence of our brand's Nordic heritage and commitment to quality.</p>
+                    <p>The Hatake name and visual identity reflect our dedication to craftsmanship, durability, and elegant design. Our minimalist aesthetic draws inspiration from Scandinavian design principles, emphasizing clean lines, functional beauty, and sustainable materials.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Mission -->
+    <section class="section">
+        <h2 class="section-title">Our Mission</h2>
+        <div class="section-content">
+            <div class="mission-grid">
+                <div class="mission-card">
+                    <h3><i class="fas fa-globe-europe"></i> Ethical Manufacturing</h3>
+                    <p>We combine Swedish design with ethical manufacturing, currently partnering with a trusted Chinese supplier who shares our commitment to fair labor practices and sustainability.</p>
+                </div>
+                
+                <div class="mission-card">
+                    <h3><i class="fas fa-gem"></i> Premium Quality</h3>
+                    <p>Our mission is to challenge the greedy, monopolized TCG accessory market by offering premium products at accessible prices, ensuring every player can enjoy high-quality gear without breaking the bank.</p>
+                </div>
+            </div>
+            
+            <div class="mission-card" style="margin-top: 2rem;">
+                <h3><i class="fas fa-leaf"></i> Sustainable Future</h3>
+                <p>We're working toward full Nordic production to further reduce our environmental impact, blending innovation with tradition to create accessories that embody the elegance and durability of Scandinavian craftsmanship.</p>
+            </div>
+            
+            <div class="social-platform">
+                <h3><i class="fas fa-users"></i> Connecting Players Worldwide</h3>
+                <p>Beyond physical products, we're building a social platform designed to unite TCG collectors and players across the globe. Our vision is to create a space where players from Sweden to China can connect, share strategies, and even play together using integrated tools like SpellTable.</p>
+                <p>Imagine a Chinese player challenging a Swedish opponent to a match, with real-time translation and seamless gameplay integration. That's the future we're building at Hatake.</p>
+                
+                <div class="platform-features">
+                    <div class="platform-feature">
+                        <i class="fas fa-globe"></i>
+                        <span>Global Community</span>
+                    </div>
+                    <div class="platform-feature">
+                        <i class="fas fa-comments"></i>
+                        <span>Real-time Translation</span>
+                    </div>
+                    <div class="platform-feature">
+                        <i class="fas fa-gamepad"></i>
+                        <span>SpellTable Integration</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="section">
+        <h2 class="section-title">Why Choose Hatake</h2>
+        <div class="section-content">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Premium Quality</h3>
+                        <p>Matching Dragon Shield/KMC quality standards with unique Nordic-designed products.</p>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Ethical Manufacturing</h3>
+                        <p>Committed to fair labor practices and sustainable production methods.</p>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-flag"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Supporting Swedish Industry</h3>
+                        <p>Working towards full Nordic production to support local industry and reduce environmental impact.</p>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Competitive Retailer Margins</h3>
+                        <p>Offering excellent profit margins for our retail partners while keeping prices accessible for players.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Team -->
+    <section class="section">
+        <h2 class="section-title">Our Team</h2>
+        <div class="section-content">
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-photo" style="background-image: url('https://i.imgur.com/OuR93Xt.jpeg');"></div>
+                    <div class="member-info">
+                        <div class="member-name">Ernst-William Hertz</div>
+                        <span class="member-role">Founder</span>
+                        <p class="member-bio">Active Magic: The Gathering player from 2007-2017, took a break and returned in 2023 with renewed passion for the game. Ernst-William's deep understanding of player needs drives Hatake's product development and community focus.</p>
+                    </div>
+                </div>
+                
+                <div class="team-member">
+                    <div class="member-photo" style="background-image: url('https://i.imgur.com/WWQq1xK.jpeg');"></div>
+                    <div class="member-info">
+                        <div class="member-name">Patricia Andersson</div>
+                        <span class="member-role">CEO</span>
+                        <p class="member-bio">Mother of Ernst-William and studied business economics. Works as a prison officer in Ystad and raised two Magic: The Gathering playing children. Patricia brings business acumen and strong leadership to Hatake's operations.</p>
+                    </div>
+                </div>
+                
+                <div class="team-member">
+                    <div class="member-photo" style="background-image: url('https://i.imgur.com/xtJymhN.jpeg');"></div>
+                    <div class="member-info">
+                        <div class="member-name">Mark Jensen</div>
+                        <span class="member-role">Co-founder</span>
+                        <p class="member-bio">Avid gamer and great moral support to the team. Mark's gaming expertise and positive energy help guide Hatake's product vision and maintain the company's player-focused culture.</p>
+                    </div>
+                </div>
+                
+                <div class="team-member">
+                    <div class="member-photo" style="background-image: url('https://i.imgur.com/1y52CBJ.jpeg');"></div>
+                    <div class="member-info">
+                        <div class="member-name">Virre Van Zarate Abreu</div>
+                        <span class="member-role">Co-founder & Convention Manager</span>
+                        <p class="member-bio">Co-founder and convention manager who brings extensive event management experience to Hatake. Virre's expertise in organizing and managing conventions helps Hatake maintain a strong presence at gaming events and connect with the TCG community.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final Statement -->
+    <section class="section">
+        <div class="section-content">
+            <div style="text-align: center; padding: 3rem;">
+                <h2 style="font-size: 2rem; margin-bottom: 1.5rem; color: var(--primary);">Our Vision</h2>
+                <p style="font-size: 1.2rem; max-width: 800px; margin: 0 auto; line-height: 1.7;">
+                    At Hatake TCG, we're more than just a brand - we're a movement. We're creating premium accessories that protect your valuable cards while building a global community that connects players across continents. From our ethically manufactured products to our upcoming social platform, every aspect of Hatake is designed with passion, integrity, and the spirit of gaming at its core.
+                </p>
+                <p style="font-size: 1.2rem; max-width: 800px; margin: 1.5rem auto 0; line-height: 1.7; font-weight: 600; color: var(--secondary);">
+                    Join us as we revolutionize the TCG experience.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-title">About Hatake TCG</div>
+                <p>Hatake is a premium TCG accessories brand founded by passionate players who understand what collectors and competitors need.</p>
+                <p>This website was built by DeepSeek.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <div class="footer-title">Quick Links</div>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="shop.html">Shop</a></li>
+                    <li><a href="events.html">Events</a></li>
+                    <li><a href="community.html">Community</a></li>
+                    <li><a href="deckbuilder.html">Deck Builder</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <div class="footer-title">Products</div>
+                <ul class="footer-links">
+                    <li><a href="shop.html?category=sleeves">Sleeves & Protectors</a></li>
+                    <li><a href="shop.html?category=binders">Binders & Portfolios</a></li>
+                    <li><a href="shop.html?category=deckboxes">Deck Boxes</a></li>
+                    <li><a href="shop.html?category=playmats">Playmats</a></li>
+                    <li><a href="shop.html?category=bags">Bags & Accessories</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <div class="footer-title">Contact Us</div>
+                <ul class="footer-links">
+                    <li><i class="fas fa-envelope"></i> support@hatake.eu</li>
+                    <li><i class="fas fa-phone"></i> +46 123 456 789</li>
+                    <li><i class="fas fa-map-marker-alt"></i> Falköping, Sweden</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            &copy; 2025 Hatake TCG. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+        
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const icon = darkModeToggle.querySelector('i');
+            
+            if (body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+    </script>
+</body>
+</html>
