@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hatake TCG - Home</title>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <script src="https://cdn.snipcart.com/themes/v3.3.1/default/snipcart.js" defer></script>
+    <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.3.1/default/snipcart.css">
+</head>
+<body>
+    <div id="snipcart" data-config-modal-style="side" data-api-key="ZDJjNmYwNTUtMmUwOC00MjBlLTk3YmQtNWFhNGQzNzE1NzhkNjM4ODUwOTE1MzE1MDMxMzQ0" hidden></div>
+    
+    <header class="navbar">
+        <div class="logo">
+            <img src="/assets/images/hatake-logo.png" alt="Hatake Logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/shop.html">Shop</a></li>
+                <li><a href="/events.html">Events</a></li>
+                <li><a href="/about.html">About</a></li>
+                <li><a href="#" id="community-link">Community</a></li>
+                <li><a href="/partners.html">Partners</a></li>
+            </ul>
+        </nav>
+        <div class="user-actions">
+            <a href="/login.html" class="login-btn">Login</a>
+            <button class="dark-mode-toggle">🌓</button>
+            <button class="snipcart-checkout">
+                <span class="snipcart-items-count">0</span> 🛒
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>Join the TCG Community</h1>
+            <p>Connect with fellow trading card game enthusiasts and get premium accessories</p>
+            <div class="cta-buttons">
+                <a href="/shop.html" class="btn-primary">Shop Now</a>
+                <a href="#" id="join-community" class="btn-secondary">Join Community</a>
+            </div>
+        </section>
+
+        <section class="activity-feed">
+            <h2>Recent Community Activity</h2>
+            <div class="feed-container" id="community-feed">
+                <!-- Feed items will be loaded via JS -->
+            </div>
+        </section>
+
+        <section class="featured-products">
+            <h2>Featured Products</h2>
+            <div class="products-grid">
+                <div class="product-card">
+                    <img src="/assets/images/duffel-bag.jpg" alt="Duffel Bag">
+                    <h3>Duffel Bag</h3>
+                    <p>300 SEK</p>
+                    <button class="snipcart-add-item"
+                        data-item-id="0.5"
+                        data-item-price="300.00"
+                        data-item-description="Tournament companion bag (47×28×55cm). Water-resistant, padded compartments, YKK zippers."
+                        data-item-image="/assets/images/duffel-bag.jpg"
+                        data-item-name="Duffel Bag">
+                        Add to Cart
+                    </button>
+                </div>
+                <!-- More featured products -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="/assets/images/hatake-logo.png" alt="Hatake Logo">
+            </div>
+            <div class="footer-links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/shop.html">Shop</a></li>
+                    <li><a href="/events.html">Events</a></li>
+                    <li><a href="/about.html">About</a></li>
+                    <li><a href="#">Community</a></li>
+                    <li><a href="/partners.html">Partners</a></li>
+                </ul>
+            </div>
+            <div class="footer-social">
+                <h3>Connect With Us</h3>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/HatakeCardShop/"><img src="/assets/images/facebook-icon.png" alt="Facebook"></a>
+                    <a href="https://discord.com/invite/Puq5ncSbjt"><img src="/assets/images/discord-icon.png" alt="Discord"></a>
+                    <a href="https://instagram.com/hatakese"><img src="/assets/images/instagram-icon.png" alt="Instagram"></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Hatake TCG. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Hatake Plus Overlay (hidden by default) -->
+    <div id="hatake-plus-overlay" class="overlay">
+        <div class="overlay-content">
+            <button class="close-overlay">✕</button>
+            <div class="overlay-tabs">
+                <button class="tab-button active" data-tab="public">Public 🃏</button>
+                <button class="tab-button" data-tab="profile">Profile 👤</button>
+                <button class="tab-button" data-tab="friends">Friends 👥</button>
+                <button class="tab-button" data-tab="decks">Decks ♠️</button>
+            </div>
+            <div class="tab-content active" id="public-tab">
+                <h2>Community Feed</h2>
+                <div class="post-form">
+                    <textarea placeholder="Share your TCG thoughts..."></textarea>
+                    <div class="post-actions">
+                        <button class="emoji-btn">🃏</button>
+                        <button class="photo-btn">📷</button>
+                        <button class="post-btn">Post</button>
+                    </div>
+                </div>
+                <div class="feed-posts" id="community-posts">
+                    <!-- Posts will be loaded here -->
+                </div>
+            </div>
+            <div class="tab-content" id="profile-tab">
+                <h2>Your Profile</h2>
+                <!-- Profile content -->
+            </div>
+            <div class="tab-content" id="friends-tab">
+                <h2>Friends & Chat</h2>
+                <!-- Friends content -->
+            </div>
+            <div class="tab-content" id="decks-tab">
+                <h2>Deck Builder</h2>
+                <!-- Deck builder content -->
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/main.js"></script>
+</body>
+</html>
