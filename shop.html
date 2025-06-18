@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hatake TCG Shop - Premium TCG Accessories</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.snipcart.com/themes/v3.2.0/default/snipcart.js"></script>
     <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.2.0/default/snipcart.css">
     <style>
@@ -18,18 +19,25 @@
             --success: #48bb78;
             --warning: #ecc94b;
             --danger: #e53e3e;
+            --card-bg: #ffffff;
             --card-border: #e2e8f0;
+            --text: #2d3748;
+            --text-light: #718096;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --transition: all 0.3s ease;
         }
 
-        .dark-mode {
-            --primary: #2d3748;
-            --secondary: #4a5568;
+        [data-theme="dark"] {
+            --primary: #4a5568;
+            --secondary: #2d3748;
+            --accent: #f6ad55;
             --light: #1a202c;
             --dark: #f7fafc;
+            --card-bg: #2d3748;
             --card-border: #4a5568;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+            --text: #e2e8f0;
+            --text-light: #a0aec0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
         }
 
         /* Base Styles */
@@ -38,28 +46,28 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            transition: background-color 0.3s, color 0.3s;
         }
 
         body {
             background-color: var(--light);
-            color: var(--dark);
+            color: var(--text);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            transition: all 0.3s ease;
         }
 
         /* Header Styles */
         header {
             background-color: var(--primary);
             color: white;
-            padding: 0.8rem 1.5rem;
+            padding: 1rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
             box-shadow: var(--shadow);
         }
 
@@ -69,20 +77,24 @@
             gap: 1rem;
         }
 
-        .logo {
-            height: 50px;
+        .logo-img {
+            height: 40px;
             width: auto;
-            background: none;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 5px;
         }
 
-        .logo img {
-            height: 100%;
-            width: auto;
+        .dark-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        .dark-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
         nav ul {
@@ -95,13 +107,17 @@
             color: white;
             text-decoration: none;
             font-weight: 500;
-            padding: 0.5rem;
-            border-radius: 4px;
-            transition: background-color 0.2s;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         nav a:hover, nav a.active {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
         }
 
         .header-actions {
@@ -116,11 +132,18 @@
 
         .search-container input {
             padding: 0.5rem 1rem 0.5rem 2.5rem;
-            border-radius: 20px;
+            border-radius: 25px;
             border: none;
             background-color: rgba(255, 255, 255, 0.2);
             color: white;
-            width: 200px;
+            width: 250px;
+            transition: all 0.3s;
+        }
+
+        .search-container input:focus {
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.3);
+            width: 300px;
         }
 
         .search-container input::placeholder {
@@ -143,12 +166,19 @@
         .action-icons div {
             position: relative;
             cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        .action-icons div:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
         .action-icons .badge {
             position: absolute;
-            top: -5px;
-            right: -5px;
+            top: -2px;
+            right: -2px;
             background-color: var(--accent);
             color: var(--dark);
             border-radius: 50%;
@@ -159,6 +189,13 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
         .user-avatar {
@@ -172,11 +209,16 @@
             color: white;
             font-weight: bold;
             cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1);
         }
 
         /* Shop Hero */
         .shop-hero {
-            background: linear-gradient(to right, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
             text-align: center;
             padding: 4rem 1rem;
@@ -186,12 +228,14 @@
         .shop-hero h1 {
             font-size: 3rem;
             margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .shop-hero p {
             font-size: 1.2rem;
             max-width: 800px;
             margin: 0 auto 2rem;
+            opacity: 0.9;
         }
 
         .cta-button {
@@ -203,7 +247,7 @@
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s, background-color 0.2s;
+            transition: all 0.3s;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
@@ -212,6 +256,7 @@
         .cta-button:hover {
             background-color: #ed8936;
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
         }
 
         /* Shop Content */
@@ -242,45 +287,35 @@
         }
 
         .filter-btn {
-            background-color: var(--light);
+            background-color: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 20px;
             padding: 0.5rem 1.2rem;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
+            color: var(--text);
         }
 
         .filter-btn.active, .filter-btn:hover {
             background-color: var(--primary);
             color: white;
+            transform: translateY(-2px);
         }
 
-        /* Fixed product grid layout */
+        /* Product Grid */
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 2rem;
         }
 
-        @media (max-width: 1200px) {
-            .products-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .products-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
         .product-card {
-            background-color: var(--light);
+            background-color: var(--card-bg);
             border: 1px solid var(--card-border);
-            border-radius: 10px;
+            border-radius: 12px;
             overflow: hidden;
             box-shadow: var(--shadow);
-            transition: transform 0.3s;
+            transition: all 0.3s;
             display: flex;
             flex-direction: column;
             height: 100%;
@@ -288,6 +323,7 @@
 
         .product-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         }
 
         .product-image-container {
@@ -353,12 +389,14 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            color: var(--text-light);
         }
 
         .product-description {
-            color: #4a5568;
+            color: var(--text-light);
             margin-bottom: 1.5rem;
             flex-grow: 1;
+            line-height: 1.6;
         }
 
         .product-features {
@@ -382,6 +420,7 @@
             align-items: flex-start;
             gap: 0.5rem;
             font-size: 0.9rem;
+            color: var(--text);
         }
 
         .feature-item i {
@@ -389,83 +428,97 @@
             margin-top: 0.2rem;
         }
 
-        .snipcart-add-item {
-            width: 100%;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.8rem;
-            border-radius: 5px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
+        .product-actions {
             display: flex;
-            align-items: center;
-            justify-content: center;
             gap: 0.5rem;
             margin-top: auto;
         }
 
-        .snipcart-add-item:hover {
-            background-color: var(--secondary);
-        }
-
-        .view-more-btn {
-            width: 100%;
-            background-color: var(--secondary);
+        .snipcart-add-item {
+            flex: 1;
+            background-color: var(--primary);
             color: white;
             border: none;
-            padding: 0.6rem;
-            border-radius: 5px;
-            font-weight: 500;
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s;
-            margin-top: 10px;
+            transition: all 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
         }
-        
-        .view-more-btn:hover {
-            background-color: #2a5f9e;
+
+        .snipcart-add-item:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
         }
 
-        /* MODAL STYLES */
+        .view-more-btn {
+            background-color: var(--accent);
+            color: var(--dark);
+            border: none;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .view-more-btn:hover {
+            background-color: #ed8936;
+            transform: translateY(-2px);
+        }
+
+        /* Modal Styles */
         .gallery-modal {
             display: none;
             position: fixed;
-            z-index: 1000;
+            z-index: 2000;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
             background-color: rgba(0,0,0,0.9);
+            animation: fadeIn 0.3s ease-out;
         }
         
         .modal-content {
             position: relative;
-            margin: auto;
-            padding: 20px;
+            margin: 2rem auto;
+            padding: 2rem;
             width: 90%;
             max-width: 1200px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         
         .close-modal {
             position: absolute;
-            top: 15px;
-            right: 35px;
-            color: #f1f1f1;
-            font-size: 40px;
+            top: 1rem;
+            right: 1.5rem;
+            color: var(--text);
+            font-size: 2rem;
             font-weight: bold;
             cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: var(--accent);
         }
         
         .modal-gallery-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
+            gap: 1rem;
+            margin-top: 2rem;
         }
         
         .modal-gallery-img {
@@ -475,10 +528,148 @@
             border-radius: 8px;
             cursor: pointer;
             transition: transform 0.3s;
+            border: 2px solid var(--card-border);
         }
         
         .modal-gallery-img:hover {
             transform: scale(1.05);
+            border-color: var(--accent);
+        }
+
+        /* Messenger Widget */
+        .messenger-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .messenger-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), #e53e3e);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .messenger-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .messenger-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .messenger-panel {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 350px;
+            height: 500px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--card-border);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .messenger-panel.active {
+            display: flex;
+        }
+
+        .messenger-header {
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .messenger-close {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .messenger-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 0.5rem;
+        }
+
+        .chat-item:hover {
+            background-color: rgba(246, 173, 85, 0.1);
+        }
+
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4299e1, #9f7aea);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .chat-info h4 {
+            color: var(--text);
+            margin-bottom: 0.2rem;
+        }
+
+        .chat-preview {
+            color: var(--text-light);
+            font-size: 0.8rem;
+        }
+
+        .unread-badge {
+            background-color: var(--accent);
+            color: var(--dark);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-left: auto;
         }
 
         /* Footer Styles */
@@ -558,23 +749,10 @@
             font-size: 0.9rem;
         }
 
-        /* Dark mode toggle */
-        .dark-toggle {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-
         /* Responsive styles */
-        @media (max-width: 992px) {
-            nav ul {
-                gap: 0.8rem;
-            }
-            
-            .search-container input {
-                width: 150px;
+        @media (max-width: 1200px) {
+            .products-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             }
         }
 
@@ -582,6 +760,7 @@
             header {
                 flex-wrap: wrap;
                 gap: 1rem;
+                padding: 1rem;
             }
             
             .logo-container {
@@ -595,6 +774,8 @@
             
             nav ul {
                 justify-content: center;
+                flex-wrap: wrap;
+                gap: 0.5rem;
             }
             
             .header-actions {
@@ -602,15 +783,32 @@
             }
             
             .search-container input {
-                width: 120px;
+                width: 150px;
+            }
+            
+            .search-container input:focus {
+                width: 200px;
             }
             
             .shop-hero h1 {
                 font-size: 2.5rem;
             }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .messenger-panel {
+                width: calc(100vw - 40px);
+                right: -10px;
+            }
         }
 
-        @media (max-width: 576px) {
+        @media (max-width: 480px) {
+            .shop-container {
+                padding: 0 1rem 2rem;
+            }
+            
             .product-meta {
                 flex-direction: column;
                 gap: 0.5rem;
@@ -620,10 +818,6 @@
                 grid-template-columns: 1fr;
             }
             
-            .footer-section {
-                min-width: 100%;
-            }
-            
             .shop-hero h1 {
                 font-size: 2rem;
             }
@@ -631,14 +825,64 @@
             .shop-hero p {
                 font-size: 1rem;
             }
+
+            .product-actions {
+                flex-direction: column;
+            }
+        }
+
+        /* Animation Classes */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Smooth Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--text-light);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text);
         }
     </style>
 </head>
 <body>
+    <!-- Snipcart Configuration -->
+    <div hidden id="snipcart" data-api-key="ZDJjNmYwNTUtMmUwOC00MjBlLTk3YmQtNWFhNGQzNzE1NzhkNjM4ODUwOTE1MzE1MDMxMzQ0"></div>
+
     <!-- Header -->
     <header>
         <div class="logo-container">
-            <div class="logo"><img src="https://i.imgur.com/2z21nQW.png" alt="Hatake Logo"></div>
+            <img src="https://i.imgur.com/B06rBhI.png" alt="Hatake TCG Logo" class="logo-img">
             <button class="dark-toggle" id="darkModeToggle">
                 <i class="fas fa-moon"></i>
             </button>
@@ -658,356 +902,446 @@
         <div class="header-actions">
             <div class="search-container">
                 <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search products...">
+                <input type="text" placeholder="Search products..." id="searchInput">
             </div>
             
             <div class="action-icons">
-                <div>
+                <div id="notificationsBtn">
                     <i class="fas fa-bell"></i>
                     <span class="badge">3</span>
                 </div>
-                <div>
+                <div id="messagesBtn">
                     <i class="fas fa-comment-alt"></i>
                     <span class="badge">5</span>
                 </div>
-                <div>
-                    <i class="fas fa-shopping-cart snipcart-checkout"></i>
-                    <span class="badge snipcart-items-count">2</span>
+                <div class="snipcart-checkout">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="snipcart-items-count badge"></span>
                 </div>
             </div>
             
-            <div class="user-avatar">JH</div>
+            <div class="user-avatar" id="userAvatar">EH</div>
         </div>
     </header>
 
     <!-- Shop Hero -->
     <section class="shop-hero">
         <h1>Premium TCG Accessories</h1>
-        <p>Discover Hatake's premium collection of TCG accessories designed for collectors and players. Pre-order now for October 2025 release!</p>
-        <button class="cta-button">
-            <i class="fas fa-fire"></i> Pre-order Now
+        <p>Discover our collection of high-quality card sleeves, binders, deck boxes, and more. Everything you need to protect and organize your valuable trading card collection.</p>
+        <button class="cta-button" onclick="document.querySelector('.products-grid').scrollIntoView({behavior: 'smooth'})">
+            <i class="fas fa-shopping-bag"></i>
+            Shop Now
         </button>
     </section>
 
     <!-- Shop Content -->
-    <main class="shop-container">
+    <div class="shop-container">
         <div class="shop-header">
             <h2 class="shop-title">Our Products</h2>
             <div class="product-filters">
-                <button class="filter-btn active">All Products</button>
-                <button class="filter-btn">Sleeves</button>
-                <button class="filter-btn">Binders</button>
-                <button class="filter-btn">Top-Loaders</button>
-                <button class="filter-btn">Deck Boxes</button>
-                <button class="filter-btn">Bags</button>
-                <button class="filter-btn">Playmats</button>
+                <button class="filter-btn active" data-filter="all">All Products</button>
+                <button class="filter-btn" data-filter="sleeves">Card Sleeves</button>
+                <button class="filter-btn" data-filter="binders">Binders</button>
+                <button class="filter-btn" data-filter="toploader">Top-Loaders</button>
+                <button class="filter-btn" data-filter="deckbox">Deck Boxes</button>
+                <button class="filter-btn" data-filter="accessories">Accessories</button>
             </div>
         </div>
-        
+
         <div class="products-grid">
-            <!-- Matte Sleeves -->
-            <div class="product-card">
+            <!-- 66x91mm Matte Sleeves -->
+            <div class="product-card" data-category="sleeves">
                 <div class="product-image-container">
-                    <img src="/images/products/66x91mm matte sleeves/IMG_9962.jpg" alt="Matte Sleeves" class="product-image">
-                    <div class="product-tag">Pre-order</div>
+                    <img src="images/products/66x91mm matte sleeves/IMG_9952.jpg" alt="66x91mm Matte Sleeves" class="product-image">
+                    <div class="product-tag">Premium</div>
                 </div>
                 <div class="product-info">
-                    <h3 class="product-name">Matte Sleeves</h3>
+                    <h3 class="product-name">66x91mm Matte Sleeves</h3>
                     <div class="product-price">89 SEK</div>
                     <div class="product-meta">
-                        <div><i class="fas fa-box"></i> SKU: 0.01</div>
-                        <div><i class="fas fa-layer-group"></i> Category: Sleeves</div>
-                        <div><i class="fas fa-warehouse"></i> Units: 1000</div>
+                        <div><i class="fas fa-shield-alt"></i> Premium Protection</div>
+                        <div><i class="fas fa-layer-group"></i> 100 Count</div>
+                        <div><i class="fas fa-star"></i> Matte Finish</div>
                     </div>
-                    <p class="product-description">Premium matte finish sleeves for reduced glare and improved shuffling. 100-pack, 66x91mm.</p>
-                    
+                    <p class="product-description">
+                        High-quality matte finish card sleeves designed for standard trading cards. 
+                        Provides excellent protection against wear and shuffling damage.
+                    </p>
                     <div class="product-features">
-                        <h4 class="feature-title">Features:</h4>
+                        <div class="feature-title">Features:</div>
                         <div class="features-grid">
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Acid-free materials</div>
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Tournament-ready</div>
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Reduced glare</div>
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Durable construction</div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Anti-glare matte finish</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Acid-free materials</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Perfect fit for standard cards</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Easy shuffling</span>
+                            </div>
                         </div>
                     </div>
-                    
-                    <button class="snipcart-add-item"
-                        data-item-id="0.01"
-                        data-item-price="89.00"
-                        data-item-name="Matte Sleeves"
-                        data-item-description="Premium matte finish sleeves (100-pack, 66x91mm). Acid-free, tournament-ready, reduced glare."
-                        data-item-image="/images/products/66x91mm matte sleeves/IMG_9962.jpg"
-                        data-item-url="/shop.html">
-                        <i class="fas fa-cart-plus"></i> Add to Cart
-                    </button>
-                    
-                    <button class="view-more-btn" data-sku="0.01">
-                        <i class="fas fa-images"></i> View More
-                    </button>
+                    <div class="product-actions">
+                        <button class="snipcart-add-item"
+                                data-item-id="matte-sleeves-66x91"
+                                data-item-price="89"
+                                data-item-url="/shop.html"
+                                data-item-description="Premium 66x91mm matte finish card sleeves, 100 count"
+                                data-item-image="images/products/66x91mm matte sleeves/IMG_9952.jpg"
+                                data-item-name="66x91mm Matte Sleeves">
+                            <i class="fas fa-cart-plus"></i>
+                            Add to Cart
+                        </button>
+                        <button class="view-more-btn" onclick="openGallery('66x91mm matte sleeves')">
+                            <i class="fas fa-images"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
-            
-            <!-- 480-Slot Binder -->
-            <div class="product-card">
+
+            <!-- 12 Slots 3x4 Top-Loader Binder -->
+            <div class="product-card" data-category="binders">
                 <div class="product-image-container">
-                    <img src="/images/products/12 slots 3x4 Top-Loader Binder/IMG_9839.jpg" alt="480-Slot Binder" class="product-image">
-                    <div class="product-tag">Pre-order</div>
+                    <img src="images/products/12 slots 3x4 Top-Loader Binder/IMG_9952.jpg" alt="12 Slots 3x4 Top-Loader Binder" class="product-image">
+                    <div class="product-tag">Popular</div>
                 </div>
                 <div class="product-info">
-                    <h3 class="product-name">480-Slot Binder</h3>
+                    <h3 class="product-name">12 Slots 3x4 Top-Loader Binder</h3>
                     <div class="product-price">360 SEK</div>
                     <div class="product-meta">
-                        <div><i class="fas fa-box"></i> SKU: 0.02</div>
-                        <div><i class="fas fa-layer-group"></i> Category: Binder</div>
-                        <div><i class="fas fa-warehouse"></i> Units: 100</div>
+                        <div><i class="fas fa-book"></i> 20 Pages</div>
+                        <div><i class="fas fa-grip"></i> 12 Slots per Page</div>
+                        <div><i class="fas fa-shield-alt"></i> Top-Loader Compatible</div>
                     </div>
-                    <p class="product-description">Premium zippered binder with side-loading pockets to keep your valuable cards secure and protected.</p>
-                    
+                    <p class="product-description">
+                        Professional-grade binder designed specifically for top-loader protected cards. 
+                        Perfect for displaying and organizing your most valuable cards.
+                    </p>
                     <div class="product-features">
-                        <h4 class="feature-title">Features:</h4>
+                        <div class="feature-title">Features:</div>
                         <div class="features-grid">
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> 480 card capacity</div>
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Nordic design</div>
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Reinforced construction</div>
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Side-loading pockets</div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Fits standard top-loaders</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Durable construction</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Clear viewing windows</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Easy card insertion</span>
+                            </div>
                         </div>
                     </div>
-                    
-                    <button class="snipcart-add-item"
-                        data-item-id="0.02"
-                        data-item-price="360.00"
-                        data-item-name="480-Slot Binder"
-                        data-item-description="Premium zippered binder with side-loading pockets. 480 card capacity, Nordic design."
-                        data-item-image="/images/products/12 slots 3x4 Top-Loader Binder/IMG_9839.jpg"
-                        data-item-url="/shop.html">
-                        <i class="fas fa-cart-plus"></i> Add to Cart
-                    </button>
-                    
-                    <button class="view-more-btn" data-sku="0.02">
-                        <i class="fas fa-images"></i> View More
-                    </button>
+                    <div class="product-actions">
+                        <button class="snipcart-add-item"
+                                data-item-id="binder-12slot-3x4"
+                                data-item-price="360"
+                                data-item-url="/shop.html"
+                                data-item-description="12 slots 3x4 top-loader binder with 20 pages"
+                                data-item-image="images/products/12 slots 3x4 Top-Loader Binder/IMG_9952.jpg"
+                                data-item-name="12 Slots 3x4 Top-Loader Binder">
+                            <i class="fas fa-cart-plus"></i>
+                            Add to Cart
+                        </button>
+                        <button class="view-more-btn" onclick="openGallery('12 slots 3x4 Top-Loader Binder')">
+                            <i class="fas fa-images"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
-            
-            <!-- 35pt Top-Loaders -->
-            <div class="product-card">
+
+            <!-- 130PT - 10x Top-Loaders -->
+            <div class="product-card" data-category="toploader">
                 <div class="product-image-container">
-                    <img src="/images/products/35PT - 25x Top-Loaders/IMG_9971.jpg" alt="35pt Top-Loaders" class="product-image">
-                    <div class="product-tag">Pre-order</div>
+                    <img src="images/products/130PT - 10x Top-Loaders/IMG_9952.jpg" alt="130PT - 10x Top-Loaders" class="product-image">
+                    <div class="product-tag">Essential</div>
                 </div>
                 <div class="product-info">
-                    <h3 class="product-name">35pt Top-Loaders (25-pack)</h3>
-                    <div class="product-price">30 SEK</div>
+                    <h3 class="product-name">130PT - 10x Top-Loaders</h3>
+                    <div class="product-price">33 SEK</div>
                     <div class="product-meta">
-                        <div><i class="fas fa-box"></i> SKU: 0.031</div>
-                        <div><i class="fas fa-layer-group"></i> Category: Top-Loaders</div>
-                        <div><i class="fas fa-warehouse"></i> Units: 550</div>
+                        <div><i class="fas fa-layer-group"></i> 10 Count</div>
+                        <div><i class="fas fa-ruler"></i> 130PT Thickness</div>
+                        <div><i class="fas fa-shield-alt"></i> Rigid Protection</div>
                     </div>
-                    <p class="product-description">Crystal-clear protection for your most valuable standard-sized trading cards. 25-pack.</p>
-                    
+                    <p class="product-description">
+                        Ultra-thick 130PT top-loaders for maximum protection of your most valuable cards. 
+                        Perfect for graded cards and high-value collectibles.
+                    </p>
                     <div class="product-features">
-                        <h4 class="feature-title">Features:</h4>
+                        <div class="feature-title">Features:</div>
                         <div class="features-grid">
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> 35pt thickness</div>
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Rigid protection</div>
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Precision-cut edges</div>
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Acid-free materials</div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>130PT ultra-thick</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Crystal clear visibility</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Archival safe materials</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Secure card fit</span>
+                            </div>
                         </div>
                     </div>
-                    
-                    <button class="snipcart-add-item"
-                        data-item-id="0.031"
-                        data-item-price="30.00"
-                        data-item-name="35pt Top-Loaders"
-                        data-item-description="Crystal-clear protection (25-pack). Rigid protection, precision-cut edges."
-                        data-item-image="/images/products/35PT - 25x Top-Loaders/IMG_9971.jpg"
-                        data-item-url="/shop.html">
-                        <i class="fas fa-cart-plus"></i> Add to Cart
-                    </button>
-                    
-                    <button class="view-more-btn" data-sku="0.031">
-                        <i class="fas fa-images"></i> View More
-                    </button>
+                    <div class="product-actions">
+                        <button class="snipcart-add-item"
+                                data-item-id="toploader-130pt-10x"
+                                data-item-price="33"
+                                data-item-url="/shop.html"
+                                data-item-description="130PT ultra-thick top-loaders, 10 count pack"
+                                data-item-image="images/products/130PT - 10x Top-Loaders/IMG_9952.jpg"
+                                data-item-name="130PT - 10x Top-Loaders">
+                            <i class="fas fa-cart-plus"></i>
+                            Add to Cart
+                        </button>
+                        <button class="view-more-btn" onclick="openGallery('130PT - 10x Top-Loaders')">
+                            <i class="fas fa-images"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
-            
-            <!-- 130pt Top-Loaders -->
-            <div class="product-card">
+
+            <!-- PU 160+ Deckbox -->
+            <div class="product-card" data-category="deckbox">
                 <div class="product-image-container">
-                    <img src="/images/products/130PT - 10x Top-Loaders/IMG_9979.jpg" alt="130pt Top-Loaders" class="product-image">
-                    <div class="product-tag">Pre-order</div>
+                    <img src="images/products/PU 160+ Deckbox/IMG_9952.jpg" alt="PU 160+ Deckbox" class="product-image">
+                    <div class="product-tag">New</div>
                 </div>
                 <div class="product-info">
-                    <h3 class="product-name">130pt Top-Loaders (10-pack)</h3>
-                    <div class="product-price">35 SEK</div>
+                    <h3 class="product-name">PU 160+ Deckbox</h3>
+                    <div class="product-price">250 SEK</div>
                     <div class="product-meta">
-                        <div><i class="fas fa-box"></i> SKU: 0.032</div>
-                        <div><i class="fas fa-layer-group"></i> Category: Top-Loaders</div>
-                        <div><i class="fas fa-warehouse"></i> Units: 200</div>
+                        <div><i class="fas fa-box"></i> 160+ Card Capacity</div>
+                        <div><i class="fas fa-lock"></i> Magnetic Closure</div>
+                        <div><i class="fas fa-gem"></i> Premium PU Leather</div>
                     </div>
-                    <p class="product-description">Extra-thick, crystal-clear rigid sleeves that provide superior protection for multiple cards or oversized collectibles.</p>
-                    
+                    <p class="product-description">
+                        Premium PU leather deck box with magnetic closure. Holds 160+ sleeved cards 
+                        and features a luxurious design perfect for tournament play.
+                    </p>
                     <div class="product-features">
-                        <h4 class="feature-title">Features:</h4>
+                        <div class="feature-title">Features:</div>
                         <div class="features-grid">
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> 130pt thickness</div>
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Maximum rigidity</div>
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Oversized compatible</div>
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Precision-cut edges</div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Premium PU leather</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Strong magnetic closure</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Soft interior lining</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Compact design</span>
+                            </div>
                         </div>
                     </div>
-                    
-                    <button class="snipcart-add-item"
-                        data-item-id="0.032"
-                        data-item-price="35.00"
-                        data-item-name="130pt Top-Loaders"
-                        data-item-description="Extra-thick protection (10-pack). Maximum rigidity, oversized collectible compatible."
-                        data-item-image="/images/products/130PT - 10x Top-Loaders/IMG_9979.jpg"
-                        data-item-url="/shop.html">
-                        <i class="fas fa-cart-plus"></i> Add to Cart
-                    </button>
-                    
-                    <button class="view-more-btn" data-sku="0.032">
-                        <i class="fas fa-images"></i> View More
-                    </button>
+                    <div class="product-actions">
+                        <button class="snipcart-add-item"
+                                data-item-id="deckbox-pu-160"
+                                data-item-price="250"
+                                data-item-url="/shop.html"
+                                data-item-description="Premium PU leather deck box with magnetic closure, 160+ card capacity"
+                                data-item-image="images/products/PU 160+ Deckbox/IMG_9952.jpg"
+                                data-item-name="PU 160+ Deckbox">
+                            <i class="fas fa-cart-plus"></i>
+                            Add to Cart
+                        </button>
+                        <button class="view-more-btn" onclick="openGallery('PU 160+ Deckbox')">
+                            <i class="fas fa-images"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
-            
-            <!-- PU DeckBox -->
-            <div class="product-card">
-                <div class="product-image-container">
-                    <img src="/images/products/PU 160+ Deckbox/IMG_9924.jpg" alt="PU DeckBox" class="product-image">
-                    <div class="product-tag">Pre-order</div>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-name">PU DeckBox</h3>
-                    <div class="product-price">300 SEK</div>
-                    <div class="product-meta">
-                        <div><i class="fas fa-box"></i> SKU: 0.4</div>
-                        <div><i class="fas fa-layer-group"></i> Category: Deckbox</div>
-                        <div><i class="fas fa-warehouse"></i> Units: 100</div>
-                    </div>
-                    <p class="product-description">Premium leather deckbox with magnetic closure and separate compartments. 160+ card capacity.</p>
-                    
-                    <div class="product-features">
-                        <h4 class="feature-title">Features:</h4>
-                        <div class="features-grid">
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Magnetic closure</div>
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Separate compartments</div>
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Embossed logo</div>
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Premium PU leather</div>
-                        </div>
-                    </div>
-                    
-                    <button class="snipcart-add-item"
-                        data-item-id="0.4"
-                        data-item-price="300.00"
-                        data-item-name="PU DeckBox"
-                        data-item-description="Premium leather deckbox (160+ card capacity). Magnetic closure, separate compartments, embossed logo."
-                        data-item-image="/images/products/PU 160+ Deckbox/IMG_9924.jpg"
-                        data-item-url="/shop.html">
-                        <i class="fas fa-cart-plus"></i> Add to Cart
-                    </button>
-                    
-                    <button class="view-more-btn" data-sku="0.4">
-                        <i class="fas fa-images"></i> View More
-                    </button>
-                </div>
-            </div>
-            
+
             <!-- Duffel Bag -->
-            <div class="product-card">
+            <div class="product-card" data-category="accessories">
                 <div class="product-image-container">
-                    <img src="/images/products/Duffel bag/IMG_3158.jpeg" alt="Duffel Bag" class="product-image">
-                    <div class="product-tag">Pre-order</div>
+                    <img src="images/products/Duffel bag/IMG_9952.jpg" alt="Duffel Bag" class="product-image">
+                    <div class="product-tag">Limited</div>
                 </div>
                 <div class="product-info">
-                    <h3 class="product-name">Tournament Duffel Bag</h3>
+                    <h3 class="product-name">TCG Duffel Bag</h3>
                     <div class="product-price">300 SEK</div>
                     <div class="product-meta">
-                        <div><i class="fas fa-box"></i> SKU: 0.5</div>
-                        <div><i class="fas fa-layer-group"></i> Category: Bag</div>
-                        <div><i class="fas fa-warehouse"></i> Units: 22</div>
+                        <div><i class="fas fa-suitcase"></i> Large Capacity</div>
+                        <div><i class="fas fa-water"></i> Water Resistant</div>
+                        <div><i class="fas fa-hand-holding"></i> Multiple Compartments</div>
                     </div>
-                    <p class="product-description">Ultimate tournament companion bag with padded compartments for all your TCG essentials.</p>
-                    
+                    <p class="product-description">
+                        Professional TCG tournament bag with multiple compartments for cards, accessories, 
+                        and personal items. Perfect for competitive players and collectors.
+                    </p>
                     <div class="product-features">
-                        <h4 class="feature-title">Features:</h4>
+                        <div class="feature-title">Features:</div>
                         <div class="features-grid">
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Water-resistant</div>
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Padded compartments</div>
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> YKK zippers</div>
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Adjustable straps</div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Water-resistant material</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Padded compartments</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Adjustable straps</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Durable construction</span>
+                            </div>
                         </div>
                     </div>
-                    
-                    <button class="snipcart-add-item"
-                        data-item-id="0.5"
-                        data-item-price="300.00"
-                        data-item-name="Duffel Bag"
-                        data-item-description="Tournament companion bag (47×28×55cm). Water-resistant, padded compartments, YKK zippers."
-                        data-item-image="/images/products/Duffel bag/IMG_3158.jpeg"
-                        data-item-url="/shop.html">
-                        <i class="fas fa-cart-plus"></i> Add to Cart
-                    </button>
-                    
-                    <button class="view-more-btn" data-sku="0.5">
-                        <i class="fas fa-images"></i> View More
-                    </button>
+                    <div class="product-actions">
+                        <button class="snipcart-add-item"
+                                data-item-id="duffel-bag-tcg"
+                                data-item-price="300"
+                                data-item-url="/shop.html"
+                                data-item-description="Professional TCG tournament duffel bag with multiple compartments"
+                                data-item-image="images/products/Duffel bag/IMG_9952.jpg"
+                                data-item-name="TCG Duffel Bag">
+                            <i class="fas fa-cart-plus"></i>
+                            Add to Cart
+                        </button>
+                        <button class="view-more-btn" onclick="openGallery('Duffel bag')">
+                            <i class="fas fa-images"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
-            
+
             <!-- Playmat -->
-            <div class="product-card">
+            <div class="product-card" data-category="accessories">
                 <div class="product-image-container">
-                    <img src="/images/products/playmat/IMG_3786.PNG" alt="Playmat" class="product-image">
-                    <div class="product-tag">Pre-order</div>
+                    <img src="images/products/playmat/petdragon-playmat.PNG" alt="Premium Playmat" class="product-image">
+                    <div class="product-tag">Exclusive</div>
                 </div>
                 <div class="product-info">
-                    <h3 class="product-name">PetDragon’s Playmat</h3>
-                    <div class="product-price">120 SEK</div>
+                    <h3 class="product-name">Premium Gaming Playmat</h3>
+                    <div class="product-price">199 SEK</div>
                     <div class="product-meta">
-                        <div><i class="fas fa-box"></i> SKU: 0.6</div>
-                        <div><i class="fas fa-layer-group"></i> Category: Playmat</div>
-                        <div><i class="fas fa-warehouse"></i> Units: 50</div>
+                        <div><i class="fas fa-expand"></i> Large Size</div>
+                        <div><i class="fas fa-paint-brush"></i> Custom Design</div>
+                        <div><i class="fas fa-hand-paper"></i> Non-Slip Base</div>
                     </div>
-                    <p class="product-description">High-quality playmat with non-slip backing and vibrant design for enhanced gameplay experience. 14*24 inches shipped inside of a useable tube. A unique playmat designed by Discus, CEO from our partnered website selling high quality Commander decks. PetDragon and Hatake logo.</p>
-                    
+                    <p class="product-description">
+                        High-quality gaming playmat with exclusive artwork. Features a smooth surface 
+                        for easy card movement and a non-slip rubber base.
+                    </p>
                     <div class="product-features">
-                        <h4 class="feature-title">Features:</h4>
+                        <div class="feature-title">Features:</div>
                         <div class="features-grid">
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Non-slip backing</div>
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Vibrant colors</div>
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Durable stitching</div>
-                            <div class="feature-item"><i class="fas fa-check-circle"></i> Portable design</div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Exclusive artwork</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Smooth playing surface</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Non-slip rubber base</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Easy to clean</span>
+                            </div>
                         </div>
                     </div>
-                    
-                    <button class="snipcart-add-item"
-                        data-item-id="0.6"
-                        data-item-price="120.00"
-                        data-item-name="PetDragon’s Playmat"
-                        data-item-description="High-quality playmat with non-slip backing and vibrant design. 14*24 inches shipped inside of a useable tube. A unique playmat designed by Discus, CEO from our partnered website selling high quality Commander decks. PetDragon and Hatake logo."
-                        data-item-image="/images/products/playmat/IMG_3786.PNG"
-                        data-item-url="/shop.html">
-                        <i class="fas fa-cart-plus"></i> Add to Cart
-                    </button>
-                    
-                    <button class="view-more-btn" data-sku="0.6">
-                        <i class="fas fa-images"></i> View More
-                    </button>
+                    <div class="product-actions">
+                        <button class="snipcart-add-item"
+                                data-item-id="playmat-premium"
+                                data-item-price="199"
+                                data-item-url="/shop.html"
+                                data-item-description="Premium gaming playmat with exclusive artwork and non-slip base"
+                                data-item-image="images/products/playmat/petdragon-playmat.PNG"
+                                data-item-name="Premium Gaming Playmat">
+                            <i class="fas fa-cart-plus"></i>
+                            Add to Cart
+                        </button>
+                        <button class="view-more-btn" onclick="openGallery('playmat')">
+                            <i class="fas fa-images"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 
     <!-- Gallery Modal -->
     <div id="galleryModal" class="gallery-modal">
         <div class="modal-content">
-            <span class="close-modal">×</span>
-            <h3 class="modal-title">Product Gallery</h3>
-            <div class="modal-gallery-grid" id="modalGalleryGrid">
-                <!-- Images will be populated here by JavaScript -->
+            <span class="close-modal" onclick="closeGallery()">&times;</span>
+            <h2 id="modalTitle">Product Gallery</h2>
+            <div id="modalGallery" class="modal-gallery-grid">
+                <!-- Images will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Messenger Widget -->
+    <div class="messenger-widget">
+        <button class="messenger-toggle" id="messengerToggle">
+            <i class="fas fa-comment-alt"></i>
+            <span class="messenger-badge">3</span>
+        </button>
+        
+        <div class="messenger-panel" id="messengerPanel">
+            <div class="messenger-header">
+                <h3>Messages</h3>
+                <button class="messenger-close" id="messengerClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="messenger-content">
+                <div class="chat-item">
+                    <div class="chat-avatar">MS</div>
+                    <div class="chat-info">
+                        <h4>Maria Sanchez</h4>
+                        <div class="chat-preview">Hey! Want to trade some cards?</div>
+                    </div>
+                    <div class="unread-badge">2</div>
+                </div>
+                <div class="chat-item">
+                    <div class="chat-avatar">TJ</div>
+                    <div class="chat-info">
+                        <h4>Thomas Johnson</h4>
+                        <div class="chat-preview">Thanks for the deck advice!</div>
+                    </div>
+                    <div class="unread-badge">1</div>
+                </div>
+                <div class="chat-item">
+                    <div class="chat-avatar">AL</div>
+                    <div class="chat-info">
+                        <h4>Alex Liu</h4>
+                        <div class="chat-preview">See you at the tournament!</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1016,225 +1350,265 @@
     <footer>
         <div class="footer-content">
             <div class="footer-section">
-                <div class="footer-title">About Hatake TCG</div>
-                <p>Hatake is a premium TCG accessories brand founded by passionate players who understand what collectors and competitors need.</p>
-                <p>This website was built by DeepSeek.</p>
+                <h3 class="footer-title">Hatake TCG</h3>
+                <p>Your premier destination for high-quality TCG accessories and community engagement.</p>
                 <div class="social-links">
                     <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
-                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
                     <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
                 </div>
             </div>
-            
             <div class="footer-section">
-                <div class="footer-title">Quick Links</div>
+                <h3 class="footer-title">Quick Links</h3>
                 <ul class="footer-links">
                     <li><a href="index.html">Home</a></li>
                     <li><a href="shop.html">Shop</a></li>
                     <li><a href="events.html">Events</a></li>
                     <li><a href="community.html">Community</a></li>
-                    <li><a href="deckbuilder.html">Deck Builder</a></li>
+                    <li><a href="about.html">About</a></li>
                 </ul>
             </div>
-            
             <div class="footer-section">
-                <div class="footer-title">Products</div>
+                <h3 class="footer-title">Customer Service</h3>
                 <ul class="footer-links">
-                    <li><a href="shop.html?category=sleeves">Sleeves & Protectors</a></li>
-                    <li><a href="shop.html?category=binders">Binders & Portfolios</a></li>
-                    <li><a href="shop.html?category=deckboxes">Deck Boxes</a></li>
-                    <li><a href="shop.html?category=playmats">Playmats</a></li>
-                    <li><a href="shop.html?category=bags">Bags & Accessories</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Shipping Info</a></li>
+                    <li><a href="#">Returns</a></li>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Support</a></li>
                 </ul>
             </div>
-            
             <div class="footer-section">
-                <div class="footer-title">Contact Us</div>
-                <ul class="footer-links">
-                    <li><i class="fas fa-envelope"></i> support@hatake.eu</li>
-                    <li><i class="fas fa-phone"></i> +46 123 456 789</li>
-                    <li><i class="fas fa-map-marker-alt"></i> Falköping, Sweden</li>
-                </ul>
+                <h3 class="footer-title">Newsletter</h3>
+                <p>Stay updated with our latest products and events.</p>
+                <div style="margin-top: 1rem;">
+                    <input type="email" placeholder="Enter your email" style="padding: 0.5rem; border-radius: 4px; border: none; margin-right: 0.5rem;">
+                    <button style="padding: 0.5rem 1rem; background-color: var(--accent); border: none; border-radius: 4px; cursor: pointer;">Subscribe</button>
+                </div>
             </div>
         </div>
-        
         <div class="copyright">
-            © 2025 Hatake TCG. All rights reserved.
+            <p>&copy; 2025 Hatake TCG. All rights reserved.</p>
         </div>
     </footer>
 
-    <!-- Snipcart Configuration -->
-    <div hidden id="snipcart" data-api-key="ZDJjNmYwNTUtMmUwOC00MjBlLTk3YmQtNWFhNGQzNzE1NzhkNjM4ODUwOTE1MzE1MDMxMzQ0" data-config-modal-style="side"></div>
-
     <script>
-        // Product gallery data
-        const productGalleries = {
-            '0.01': [ // Matte Sleeves
-                '/images/products/66x91mm matte sleeves/IMG_9962.jpg',
-                '/images/products/66x91mm matte sleeves/IMG_9958.jpg',
-                '/images/products/66x91mm matte sleeves/IMG_9966.jpg',
-                '/images/products/66x91mm matte sleeves/IMG_9967.jpg',
-                '/images/products/66x91mm matte sleeves/IMG_9965.jpg',
-                '/images/products/66x91mm matte sleeves/IMG_9963.jpg',
-                '/images/products/66x91mm matte sleeves/IMG_9969.jpg',
-                '/images/products/66x91mm matte sleeves/IMG_9956.jpg'
-            ],
-            '0.02': [ // 480-Slot Binder
-                '/images/products/12 slots 3x4 Top-Loader Binder/IMG_9839.jpg',
-                '/images/products/12 slots 3x4 Top-Loader Binder/IMG_9814.jpg',
-                '/images/products/12 slots 3x4 Top-Loader Binder/IMG_9818.jpg',
-                '/images/products/12 slots 3x4 Top-Loader Binder/IMG_9816.jpg',
-                '/images/products/12 slots 3x4 Top-Loader Binder/IMG_9819.jpg',
-                '/images/products/12 slots 3x4 Top-Loader Binder/IMG_9820.jpg',
-                '/images/products/12 slots 3x4 Top-Loader Binder/IMG_9823.jpg',
-                '/images/products/12 slots 3x4 Top-Loader Binder/IMG_9824.jpg',
-                '/images/products/12 slots 3x4 Top-Loader Binder/IMG_9825.jpg',
-                '/images/products/12 slots 3x4 Top-Loader Binder/IMG_9826.jpg',
-                '/images/products/12 slots 3x4 Top-Loader Binder/IMG_9827.jpg'
-            ],
-            '0.031': [ // 35pt Top-Loaders
-                '/images/products/35PT - 25x Top-Loaders/IMG_9971.jpg',
-                '/images/products/35PT - 25x Top-Loaders/IMG_9970.jpg',
-                '/images/products/35PT - 25x Top-Loaders/IMG_9972.jpg',
-                '/images/products/35PT - 25x Top-Loaders/IMG_9973.jpg',
-                '/images/products/35PT - 25x Top-Loaders/IMG_9974.jpg',
-                '/images/products/35PT - 25x Top-Loaders/IMG_9975.jpg',
-                '/images/products/35PT - 25x Top-Loaders/IMG_9976.jpg',
-                '/images/products/35PT - 25x Top-Loaders/IMG_9978.jpg'
-            ],
-            '0.032': [ // 130pt Top-Loaders
-                '/images/products/130PT - 10x Top-Loaders/IMG_9979.jpg',
-                '/images/products/130PT - 10x Top-Loaders/IMG_9980.jpg',
-                '/images/products/130PT - 10x Top-Loaders/IMG_9981.jpg',
-                '/images/products/130PT - 10x Top-Loaders/IMG_9982.jpg',
-                '/images/products/130PT - 10x Top-Loaders/IMG_9983.jpg',
-                '/images/products/130PT - 10x Top-Loaders/IMG_9984.jpg',
-                '/images/products/130PT - 10x Top-Loaders/IMG_9985.jpg',
-                '/images/products/130PT - 10x Top-Loaders/IMG_9986.jpg',
-                '/images/products/130PT - 10x Top-Loaders/IMG_9987.jpg'
-            ],
-            '0.4': [ // PU DeckBox
-                '/images/products/PU 160+ Deckbox/IMG_9924.jpg',
-                '/images/products/PU 160+ Deckbox/IMG_9895.jpg',
-                '/images/products/PU 160+ Deckbox/IMG_9899.jpg',
-                '/images/products/PU 160+ Deckbox/IMG_9900.jpg',
-                '/images/products/PU 160+ Deckbox/IMG_9901.jpg',
-                '/images/products/PU 160+ Deckbox/IMG_9903.jpg',
-                '/images/products/PU 160+ Deckbox/IMG_9904.jpg',
-                '/images/products/PU 160+ Deckbox/IMG_9912.jpg',
-                '/images/products/PU 160+ Deckbox/IMG_9941.jpg',
-                '/images/products/PU 160+ Deckbox/IMG_9943.jpg',
-                '/images/products/PU 160+ Deckbox/IMG_9947.jpg',
-                '/images/products/PU 160+ Deckbox/IMG_9948.jpg',
-                '/images/products/PU 160+ Deckbox/IMG_9949.jpg',
-                '/images/products/PU 160+ Deckbox/IMG_9951.jpg'
-            ],
-            '0.5': [ // Duffel Bag
-                '/images/products/Duffel bag/IMG_3158.jpeg',
-                '/images/products/Duffel bag/IMG_3157.jpeg',
-                '/images/products/Duffel bag/IMG_3159.jpeg',
-                '/images/products/Duffel bag/IMG_3156.jpeg'
-            ],
-            '0.6': [ // Playmat
-                '/images/products/playmat/IMG_3786.PNG'
-            ]
-        };
+        // Supabase Configuration
+        const supabaseUrl = 'https://llukovlzjhflhfhcajps.supabase.co/';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxsdWtvdmx6amhmbGhmaGNhanBzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAwMDY3NzIsImV4cCI6MjA2NTU4Mjc3Mn0.kbaftEOsGUriJOxMlTOFkXUGhLcKBaHwfVLG9S60gpU';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Dark Mode Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        body.setAttribute('data-theme', currentTheme);
+        
+        // Update toggle icon based on current theme
+        updateToggleIcon(currentTheme);
+        
+        darkModeToggle.addEventListener('click', () => {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateToggleIcon(newTheme);
+        });
+        
+        function updateToggleIcon(theme) {
+            const icon = darkModeToggle.querySelector('i');
+            icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        // Product Filtering
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const productCards = document.querySelectorAll('.product-card');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                const filter = button.getAttribute('data-filter');
+                
+                productCards.forEach(card => {
+                    if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                        card.style.display = 'block';
+                        card.classList.add('animate-fade-in');
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Search Functionality
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            
+            productCards.forEach(card => {
+                const productName = card.querySelector('.product-name').textContent.toLowerCase();
+                const productDescription = card.querySelector('.product-description').textContent.toLowerCase();
+                
+                if (productName.includes(query) || productDescription.includes(query)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
 
         // Gallery Modal Functions
-        function openGallery(sku) {
-            const galleryGrid = document.getElementById('modalGalleryGrid');
-            galleryGrid.innerHTML = '';
+        function openGallery(productFolder) {
+            const modal = document.getElementById('galleryModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalGallery = document.getElementById('modalGallery');
             
-            if (productGalleries[sku]) {
-                productGalleries[sku].forEach(imgSrc => {
-                    const img = document.createElement('img');
-                    img.src = imgSrc;
-                    img.alt = "Product image";
-                    img.className = "modal-gallery-img";
-                    galleryGrid.appendChild(img);
-                });
-            } else {
-                galleryGrid.innerHTML = '<p>No additional images available for this product.</p>';
-            }
+            modalTitle.textContent = productFolder + ' Gallery';
             
-            document.getElementById('galleryModal').style.display = 'block';
+            // Clear previous images
+            modalGallery.innerHTML = '';
+            
+            // Sample images for each product (you can expand this)
+            const productImages = {
+                '66x91mm matte sleeves': [
+                    'images/products/66x91mm matte sleeves/IMG_9952.jpg',
+                    'images/products/66x91mm matte sleeves/IMG_9954.jpg',
+                    'images/products/66x91mm matte sleeves/IMG_9956.jpg'
+                ],
+                '12 slots 3x4 Top-Loader Binder': [
+                    'images/products/12 slots 3x4 Top-Loader Binder/IMG_9952.jpg',
+                    'images/products/12 slots 3x4 Top-Loader Binder/IMG_9954.jpg',
+                    'images/products/12 slots 3x4 Top-Loader Binder/IMG_9956.jpg'
+                ],
+                '130PT - 10x Top-Loaders': [
+                    'images/products/130PT - 10x Top-Loaders/IMG_9952.jpg',
+                    'images/products/130PT - 10x Top-Loaders/IMG_9954.jpg',
+                    'images/products/130PT - 10x Top-Loaders/IMG_9956.jpg'
+                ],
+                'PU 160+ Deckbox': [
+                    'images/products/PU 160+ Deckbox/IMG_9952.jpg',
+                    'images/products/PU 160+ Deckbox/IMG_9954.jpg',
+                    'images/products/PU 160+ Deckbox/IMG_9956.jpg'
+                ],
+                'Duffel bag': [
+                    'images/products/Duffel bag/IMG_9952.jpg',
+                    'images/products/Duffel bag/IMG_9954.jpg',
+                    'images/products/Duffel bag/IMG_9956.jpg'
+                ],
+                'playmat': [
+                    'images/products/playmat/petdragon-playmat.PNG',
+                    'images/products/playmat/IMG_9954.jpg',
+                    'images/products/playmat/IMG_9956.jpg'
+                ]
+            };
+            
+            const images = productImages[productFolder] || [];
+            
+            images.forEach(imageSrc => {
+                const img = document.createElement('img');
+                img.src = imageSrc;
+                img.alt = productFolder;
+                img.className = 'modal-gallery-img';
+                img.onclick = () => window.open(imageSrc, '_blank');
+                modalGallery.appendChild(img);
+            });
+            
+            modal.style.display = 'block';
         }
 
         function closeGallery() {
             document.getElementById('galleryModal').style.display = 'none';
         }
 
-        // Set up event listeners
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('galleryModal');
+            if (event.target === modal) {
+                closeGallery();
+            }
+        }
+
+        // Messenger Widget
+        const messengerToggle = document.getElementById('messengerToggle');
+        const messengerPanel = document.getElementById('messengerPanel');
+        const messengerClose = document.getElementById('messengerClose');
+        
+        messengerToggle.addEventListener('click', () => {
+            messengerPanel.classList.toggle('active');
+        });
+        
+        messengerClose.addEventListener('click', () => {
+            messengerPanel.classList.remove('active');
+        });
+        
+        // Close messenger when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!messengerToggle.contains(e.target) && !messengerPanel.contains(e.target)) {
+                messengerPanel.classList.remove('active');
+            }
+        });
+
+        // Notification Handlers
+        document.getElementById('notificationsBtn').addEventListener('click', () => {
+            alert('Notifications feature coming soon!');
+        });
+        
+        document.getElementById('messagesBtn').addEventListener('click', () => {
+            messengerPanel.classList.toggle('active');
+        });
+        
+        // User Avatar Click
+        document.getElementById('userAvatar').addEventListener('click', () => {
+            alert('Profile menu coming soon!');
+        });
+
+        // Auto-detect system theme preference
+        if (window.matchMedia && !localStorage.getItem('theme')) {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = prefersDark ? 'dark' : 'light';
+            body.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            updateToggleIcon(theme);
+        }
+        
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (!localStorage.getItem('theme')) {
+                const theme = e.matches ? 'dark' : 'light';
+                body.setAttribute('data-theme', theme);
+                updateToggleIcon(theme);
+            }
+        });
+
+        // Initialize page
         document.addEventListener('DOMContentLoaded', () => {
-            // View More buttons
-            document.querySelectorAll('.view-more-btn').forEach(button => {
-                button.addEventListener('click', () => {
-                    const sku = button.getAttribute('data-sku');
-                    openGallery(sku);
-                });
-            });
+            console.log('HatakeSocial Shop Loaded');
             
-            // Close modal
-            document.querySelector('.close-modal').addEventListener('click', closeGallery);
-            
-            // Close modal when clicking outside
-            window.addEventListener('click', (event) => {
-                if (event.target === document.getElementById('galleryModal')) {
-                    closeGallery();
-                }
-            });
-            
-            // Dark mode toggle
-            const darkModeToggle = document.getElementById('darkModeToggle');
-            const body = document.body;
-            
-            darkModeToggle.addEventListener('click', () => {
-                body.classList.toggle('dark-mode');
-                const icon = darkModeToggle.querySelector('i');
-                
-                if (body.classList.contains('dark-mode')) {
-                    icon.classList.remove('fa-moon');
-                    icon.classList.add('fa-sun');
-                } else {
-                    icon.classList.remove('fa-sun');
-                    icon.classList.add('fa-moon');
-                }
-            });
-            
-            // Simulate cart items
-            setTimeout(() => {
-                document.querySelector('.snipcart-items-count').textContent = '2';
-            }, 1000);
-            
-            // Initialize Snipcart
-            document.addEventListener('snipcart.ready', () => {
-                // Add coupon codes
-                Snipcart.api.coupons.add('MTGFB', {
-                    discount: 5,
-                    type: 'Percentage'
-                });
-                
-                Snipcart.api.coupons.add('214', {
-                    discount: 30,
-                    type: 'FixedAmount'
-                });
-            });
-            
-            // Filter products
-            const filterButtons = document.querySelectorAll('.filter-btn');
-            filterButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    // Remove active class from all buttons
-                    filterButtons.forEach(btn => btn.classList.remove('active'));
-                    
-                    // Add active class to clicked button
-                    button.classList.add('active');
-                    
-                    // In a real implementation, you would filter products here
+            // Add loading states to buttons
+            document.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (!this.classList.contains('loading')) {
+                        const originalText = this.innerHTML;
+                        this.classList.add('loading');
+                        this.innerHTML = '<span class="loading"></span>';
+                        
+                        setTimeout(() => {
+                            this.classList.remove('loading');
+                            this.innerHTML = originalText;
+                        }, 1000);
+                    }
                 });
             });
         });
     </script>
 </body>
 </html>
+
