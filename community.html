@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hatake TCG - Community</title>
+    <title>Hatake TCG - Community Platform</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -18,18 +18,25 @@
             --text: #2d3748;
             --text-light: #718096;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --dark-primary: #2d3748;
+            --dark-secondary: #4a5568;
+            --dark-card-bg: #2d3748;
+            --dark-card-border: #4a5568;
+            --dark-text: #e2e8f0;
+            --dark-text-light: #a0aec0;
+            --dark-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
         }
 
         .dark-mode {
-            --primary: #2d3748;
-            --secondary: #4a5568;
-            --light: #1a202c;
-            --dark: #f7fafc;
-            --card-bg: #2d3748;
-            --card-border: #4a5568;
-            --text: #e2e8f0;
-            --text-light: #a0aec0;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+            --primary: var(--dark-primary);
+            --secondary: var(--dark-secondary);
+            --light: var(--dark);
+            --dark: var(--light);
+            --card-bg: var(--dark-card-bg);
+            --card-border: var(--dark-card-border);
+            --text: var(--dark-text);
+            --text-light: var(--dark-text-light);
+            --shadow: var(--dark-shadow);
         }
 
         * {
@@ -37,7 +44,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            transition: background-color 0.3s, color 0.3s;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
         }
 
         body {
@@ -163,800 +170,380 @@
             background-size: cover;
             background-position: center;
         }
-
-        /* Main Layout */
-        main {
-            display: flex;
+        
+        /* Platform Analytics Dashboard */
+        .dashboard {
             max-width: 1400px;
-            margin: 1.5rem auto;
-            gap: 1.5rem;
+            margin: 2rem auto;
             padding: 0 1.5rem;
-            flex: 1;
         }
-
-        .sidebar {
-            flex: 0 0 280px;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .feed {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .shop-sidebar {
-            flex: 0 0 280px;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        /* Card Styles */
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            border: 1px solid var(--card-border);
-        }
-
-        .card-title {
-            padding: 1rem 1.5rem;
-            font-size: 1.2rem;
-            font-weight: 600;
-            border-bottom: 1px solid var(--card-border);
-            color: var(--text);
-        }
-
-        /* User Card */
-        .user-card {
+        
+        .dashboard-header {
             text-align: center;
-            position: relative;
-        }
-
-        .cover-photo {
-            height: 80px;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-        }
-
-        .profile-pic {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #f6ad55, #e53e3e);
-            margin: -40px auto 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.8rem;
-            font-weight: bold;
-            border: 3px solid var(--card-bg);
-            background-size: cover;
-            background-position: center;
-        }
-
-        .user-name {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .user-bio {
-            color: var(--text-light);
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-        }
-
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 1.5rem;
-        }
-
-        .stat {
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .stat-label {
-            font-size: 0.85rem;
-            color: var(--text-light);
-        }
-
-        .btn {
-            width: calc(100% - 3rem);
-            margin: 0 1.5rem 1.5rem;
-            padding: 0.7rem;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .btn:hover {
-            background-color: var(--secondary);
-        }
-
-        /* Menu Items */
-        .menu-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem 1.5rem;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            color: var(--text);
-            text-decoration: none;
-        }
-
-        .menu-item:hover {
-            background-color: rgba(0, 0, 0, 0.05);
-        }
-
-        .menu-item i {
-            font-size: 1.2rem;
-            width: 24px;
-            text-align: center;
-        }
-
-        /* Community Page Specific Styles */
-        .community-hero {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 3rem 2rem;
-            text-align: center;
-            border-radius: 10px 10px 0 0;
             margin-bottom: 2rem;
         }
         
-        .community-hero h1 {
+        .dashboard-header h1 {
             font-size: 2.5rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
         }
         
-        .community-hero p {
-            font-size: 1.1rem;
+        .dashboard-header p {
+            color: var(--text-light);
             max-width: 800px;
             margin: 0 auto;
             line-height: 1.6;
         }
         
-        .groups-container {
+        .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1.5rem;
-            padding: 1.5rem;
+            margin-bottom: 3rem;
         }
         
-        .group-card {
+        .dashboard-card {
             background-color: var(--card-bg);
             border-radius: 10px;
-            overflow: hidden;
             box-shadow: var(--shadow);
+            padding: 1.5rem;
+            border: 1px solid var(--card-border);
+        }
+        
+        .dashboard-card h3 {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+        }
+        
+        .card-content {
+            padding: 1rem 0;
+        }
+        
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--card-border);
+        }
+        
+        .metric:last-child {
+            border-bottom: none;
+        }
+        
+        .metric-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .metric-label {
+            color: var(--text-light);
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .feature-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
             border: 1px solid var(--card-border);
             transition: transform 0.3s;
         }
         
-        .group-card:hover {
+        .feature-card:hover {
             transform: translateY(-5px);
         }
         
-        .group-header {
-            padding: 1.5rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            text-align: center;
-        }
-        
-        .group-icon {
-            font-size: 2.5rem;
+        .feature-card h3 {
             margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
         }
         
-        .group-title {
-            font-size: 1.5rem;
+        .feature-list {
+            list-style: none;
+        }
+        
+        .feature-list li {
+            padding: 0.7rem 0;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.7rem;
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .feature-list li i {
+            color: var(--accent);
+            margin-top: 3px;
+        }
+        
+        .roadmap {
+            margin-bottom: 3rem;
+        }
+        
+        .roadmap-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .roadmap-header h2 {
+            font-size: 2rem;
             margin-bottom: 0.5rem;
-        }
-        
-        .group-members {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-        
-        .group-content {
-            padding: 1.5rem;
-        }
-        
-        .group-description {
-            margin-bottom: 1.5rem;
-            color: var(--text-light);
-        }
-        
-        .group-stats {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-        }
-        
-        .group-stat {
-            text-align: center;
-        }
-        
-        .group-stat-value {
-            font-weight: 700;
             color: var(--primary);
         }
         
-        .group-stat-label {
-            font-size: 0.8rem;
-            color: var(--text-light);
-        }
-        
-        .group-actions {
+        .phase-container {
             display: flex;
-            gap: 0.5rem;
+            flex-direction: column;
+            gap: 2rem;
         }
         
-        .group-btn {
-            flex: 1;
-            padding: 0.7rem;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        
-        .group-btn:hover {
-            background-color: var(--secondary);
-        }
-        
-        /* Auth Section */
-        .auth-section {
-            padding: 2rem;
-            text-align: center;
-        }
-        
-        .auth-section h2 {
-            margin-bottom: 1.5rem;
-            color: var(--primary);
-        }
-        
-        .auth-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-        
-        .auth-btn {
-            padding: 0.8rem 1.5rem;
-            border-radius: 5px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .google-btn {
-            background-color: #4285F4;
-            color: white;
-        }
-        
-        .logout-btn {
-            background-color: #e53e3e;
-            color: white;
-        }
-        
-        .email-btn {
-            background-color: #2b6cb0;
-            color: white;
-        }
-        
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .modal-content {
+        .phase {
             background-color: var(--card-bg);
             border-radius: 10px;
-            width: 90%;
-            max-width: 500px;
             box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-        
-        .modal-header {
-            padding: 1rem 1.5rem;
-            background-color: var(--primary);
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .modal-close {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-        
-        .modal-body {
-            padding: 1.5rem;
-        }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--text);
-        }
-        
-        .form-group input, 
-        .form-group textarea {
-            width: 100%;
-            padding: 0.8rem;
-            border-radius: 5px;
-            border: 1px solid var(--card-border);
-            background-color: var(--card-bg);
-            color: var(--text);
-        }
-        
-        .avatar-options {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .avatar-option {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: border-color 0.2s;
-        }
-        
-        .avatar-option:hover, .avatar-option.selected {
-            border-color: var(--accent);
-        }
-        
-        .modal-footer {
-            padding: 1rem 1.5rem;
-            background-color: rgba(0, 0, 0, 0.05);
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.5rem;
-        }
-        
-        .modal-btn {
-            padding: 0.7rem 1.5rem;
-            border-radius: 5px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        
-        .cancel-btn {
-            background-color: var(--text-light);
-            color: white;
-        }
-        
-        .save-btn {
-            background-color: var(--primary);
-            color: white;
-        }
-        
-        /* Continent Groups */
-        .continent-section {
-            margin: 2rem 0;
-            padding: 0 1.5rem;
-        }
-        
-        .continent-section h2 {
-            margin-bottom: 1.5rem;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .continent-groups {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .continent-group {
-            background-color: var(--card-bg);
-            border-radius: 8px;
             padding: 1.5rem;
             border: 1px solid var(--card-border);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            transition: transform 0.2s;
-        }
-        
-        .continent-group:hover {
-            transform: translateY(-3px);
-        }
-        
-        .continent-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-        }
-        
-        .continent-info h3 {
-            margin-bottom: 0.25rem;
-        }
-        
-        .continent-info p {
-            color: var(--text-light);
-            font-size: 0.9rem;
-        }
-        
-        /* User Profile Section */
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1.5rem;
-        }
-        
-        .user-profile .profile-pic {
-            margin: 0;
-            width: 100px;
-            height: 100px;
-        }
-        
-        .user-details {
-            flex: 1;
-        }
-        
-        .user-details h2 {
-            margin-bottom: 0.5rem;
-        }
-        
-        .user-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-        
-        .user-tag {
-            background-color: rgba(246, 173, 85, 0.2);
-            color: var(--accent);
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-        }
-        
-        /* Chat Section */
-        .chat-container {
-            display: flex;
-            flex-direction: column;
-            height: 500px;
-            border: 1px solid var(--card-border);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        
-        .chat-header {
-            background-color: var(--primary);
-            color: white;
-            padding: 1rem;
-            font-weight: 600;
-        }
-        
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .message {
-            max-width: 80%;
-            padding: 0.8rem 1rem;
-            border-radius: 18px;
             position: relative;
+            overflow: hidden;
         }
         
-        .received {
-            background-color: var(--card-border);
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-        }
-        
-        .sent {
-            background-color: var(--secondary);
-            color: white;
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-        }
-        
-        .message-sender {
-            font-weight: 600;
-            margin-bottom: 0.3rem;
-            font-size: 0.9rem;
-        }
-        
-        .message-time {
-            font-size: 0.7rem;
-            opacity: 0.7;
-            text-align: right;
-            margin-top: 0.3rem;
-        }
-        
-        .chat-input {
-            display: flex;
-            padding: 1rem;
-            border-top: 1px solid var(--card-border);
-            background-color: var(--card-bg);
-        }
-        
-        .chat-input input {
-            flex: 1;
-            padding: 0.8rem;
-            border-radius: 20px;
-            border: 1px solid var(--card-border);
-            background-color: var(--card-bg);
-            color: var(--text);
-        }
-        
-        .chat-input button {
-            margin-left: 0.5rem;
-            padding: 0.8rem 1.5rem;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-        }
-        
-        /* Order History */
-        .order-history {
-            padding: 1.5rem;
-        }
-        
-        .order-card {
-            background-color: var(--card-bg);
-            border-radius: 8px;
-            border: 1px solid var(--card-border);
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            transition: transform 0.2s;
-        }
-        
-        .order-card:hover {
-            transform: translateY(-3px);
-        }
-        
-        .order-header {
+        .phase-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 1rem;
+            align-items: center;
+            margin-bottom: 1.5rem;
             padding-bottom: 1rem;
             border-bottom: 1px solid var(--card-border);
         }
         
-        .order-id {
-            font-weight: 600;
+        .phase-title {
+            font-size: 1.5rem;
             color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
-        .order-date {
-            color: var(--text-light);
-        }
-        
-        .order-status {
+        .phase-priority {
             padding: 0.3rem 0.8rem;
             border-radius: 20px;
             font-size: 0.85rem;
-            background-color: rgba(72, 187, 120, 0.2);
-            color: #48bb78;
+            font-weight: 600;
         }
         
-        .order-items {
+        .priority-critical {
+            background-color: rgba(229, 62, 62, 0.2);
+            color: #e53e3e;
+        }
+        
+        .priority-high {
+            background-color: rgba(246, 173, 85, 0.2);
+            color: #f6ad55;
+        }
+        
+        .priority-medium {
+            background-color: rgba(66, 153, 225, 0.2);
+            color: #4299e1;
+        }
+        
+        .phase-content {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
         }
         
-        .order-item {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-        
-        .order-item-image {
-            width: 60px;
-            height: 60px;
+        .feature-item {
+            padding: 1rem;
             border-radius: 8px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
+            background-color: rgba(0, 0, 0, 0.03);
+            border-left: 4px solid var(--accent);
         }
         
-        .order-item-details {
-            flex: 1;
+        .feature-item h4 {
+            margin-bottom: 0.5rem;
+            color: var(--text);
         }
         
-        .order-item-name {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-        
-        .order-item-price {
-            color: var(--secondary);
-            font-weight: 600;
-        }
-        
-        /* Games Container */
-        .games-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-top: 0.5rem;
-        }
-        
-        .game-option {
-            background-color: var(--card-border);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: background-color 0.2s;
+        .feature-item p {
+            color: var(--text-light);
             font-size: 0.9rem;
         }
         
-        .game-option:hover, .game-option.selected {
-            background-color: var(--accent);
-            color: white;
+        .metrics-section {
+            margin-bottom: 3rem;
         }
         
-        /* Auth Tabs */
-        .tabs {
-            display: flex;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid var(--card-border);
+        .metrics-header {
+            text-align: center;
+            margin-bottom: 2rem;
         }
         
-        .tab-btn {
-            padding: 0.8rem 1.5rem;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--text-light);
-            position: relative;
-        }
-        
-        .tab-btn.active {
+        .metrics-header h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
             color: var(--primary);
         }
         
-        .tab-btn.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background-color: var(--primary);
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
         }
         
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        .auth-error {
-            color: #e53e3e;
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
+        .metric-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            border: 1px solid var(--card-border);
             text-align: center;
+            transition: transform 0.3s;
         }
         
-        .divider {
-            text-align: center;
-            margin: 1.5rem 0;
-            position: relative;
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .metric-value-lg {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 1rem 0;
+            color: var(--primary);
+        }
+        
+        .metric-label-lg {
             color: var(--text-light);
+            font-size: 1.1rem;
         }
         
-        .divider::before, .divider::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            width: 40%;
-            height: 1px;
-            background-color: var(--card-border);
+        .metric-target {
+            margin-top: 0.5rem;
+            font-weight: 600;
+            color: var(--accent);
         }
         
-        .divider::before {
-            left: 0;
+        .monetization-section {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 10px;
+            margin-bottom: 3rem;
         }
         
-        .divider::after {
-            right: 0;
+        .monetization-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .monetization-header h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .monetization-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .monetization-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .monetization-card h3 {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .monetization-list {
+            list-style: none;
+        }
+        
+        .monetization-list li {
+            padding: 0.7rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.7rem;
+        }
+        
+        .monetization-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .monetization-list li i {
+            margin-top: 3px;
+        }
+        
+        .conclusion-section {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 2.5rem;
+            border: 1px solid var(--card-border);
+            margin-bottom: 3rem;
+        }
+        
+        .conclusion-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .conclusion-header h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .success-factors {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .factor-card {
+            background-color: rgba(246, 173, 85, 0.1);
+            border-radius: 8px;
+            padding: 1.5rem;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .factor-card h4 {
+            margin-bottom: 0.5rem;
+            color: var(--primary);
         }
         
         /* Responsive styles */
-        @media (max-width: 1200px) {
-            .shop-sidebar {
-                display: none;
-            }
-        }
-
         @media (max-width: 992px) {
-            .sidebar {
-                display: none;
-            }
-            
-            nav ul {
-                gap: 0.8rem;
-            }
-            
-            .search-container input {
-                width: 150px;
-            }
-            
-            .groups-container {
+            .dashboard-grid, .feature-grid, .metrics-grid, .monetization-grid {
                 grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+            
+            .phase-content {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -977,6 +564,7 @@
             
             nav ul {
                 justify-content: center;
+                flex-wrap: wrap;
             }
             
             .header-actions {
@@ -986,32 +574,15 @@
             .search-container input {
                 width: 120px;
             }
-            
-            .groups-container {
-                grid-template-columns: 1fr;
-            }
         }
         
         @media (max-width: 480px) {
-            .auth-buttons {
-                flex-direction: column;
+            .dashboard-grid, .feature-grid, .metrics-grid, .monetization-grid {
+                grid-template-columns: 1fr;
             }
             
-            .group-actions {
-                flex-direction: column;
-            }
-            
-            .user-profile {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .user-tags {
-                justify-content: center;
-            }
-            
-            .chat-input button {
-                padding: 0.8rem;
+            .dashboard-header h1 {
+                font-size: 2rem;
             }
         }
     </style>
@@ -1062,465 +633,335 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main>
-        <!-- Left Sidebar -->
-        <div class="sidebar">
-            <div class="card user-card">
-                <div class="cover-photo"></div>
-                <div class="profile-pic" id="profilePic">?</div>
-                <div class="user-name" id="profileName">Guest User</div>
-                <div class="user-bio" id="profileBio">Join our TCG community!</div>
-                
-                <div class="stats">
-                    <div class="stat">
-                        <div class="stat-value" id="postCount">0</div>
-                        <div class="stat-label">Posts</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value" id="friendsCount">0</div>
-                        <div class="stat-label">Friends</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value" id="groupsCount">0</div>
-                        <div class="stat-label">Groups</div>
-                    </div>
-                </div>
-                
-                <button class="btn" id="editProfileBtn"><i class="fas fa-edit"></i> Edit Profile</button>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">My Communities</div>
-                <a href="#" class="menu-item">
-                    <i class="fas fa-dragon" style="color: #e53e3e;"></i>
-                    <span>MTG Commander</span>
-                </a>
-                <a href="#" class="menu-item">
-                    <i class="fas fa-crown" style="color: #f6ad55;"></i>
-                    <span>MTG cEDH</span>
-                </a>
-                <a href="#" class="menu-item">
-                    <i class="fas fa-shield-alt" style="color: #48bb78;"></i>
-                    <span>MTG Legacy</span>
-                </a>
-                <a href="#" class="menu-item">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>Discover More</span>
-                </a>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Regional Groups</div>
-                <a href="#" class="menu-item">
-                    <i class="fas fa-globe-europe" style="color: #2b6cb0;"></i>
-                    <span>Europe</span>
-                </a>
-                <a href="#" class="menu-item">
-                    <i class="fas fa-globe-americas" style="color: #e53e3e;"></i>
-                    <span>North America</span>
-                </a>
-                <a href="#" class="menu-item">
-                    <i class="fas fa-globe-asia" style="color: #f6ad55;"></i>
-                    <span>Asia</span>
-                </a>
-                <a href="#" class="menu-item">
-                    <i class="fas fa-globe-africa" style="color: #48bb78;"></i>
-                    <span>Africa</span>
-                </a>
+    <!-- Platform Analysis & Recommendations -->
+    <div class="dashboard">
+        <div class="dashboard-header">
+            <h1>HatakeSocial Platform Analysis & Recommendations</h1>
+            <p>Transforming HatakeSocial into the premier TCG-focused social platform for collectors and players worldwide</p>
+        </div>
+        
+        <!-- Executive Summary -->
+        <div class="dashboard-card">
+            <h3><i class="fas fa-file-alt"></i> Executive Summary</h3>
+            <div class="card-content">
+                <p>HatakeSocial is a promising TCG-focused social platform with a solid foundation featuring multi-page architecture, basic community features, and e-commerce integration. However, several critical improvements are needed to transform it into a competitive social media platform for TCG collectors and players.</p>
             </div>
         </div>
         
-        <!-- Main Feed -->
-        <div class="feed">
-            <div class="card community-hero">
-                <h1>Join the Hatake TCG Community</h1>
-                <p>Connect with fellow TCG enthusiasts, share strategies, trade cards, and participate in events. Whether you're into MTG, Pokémon, Yu-Gi-Oh!, or other trading card games, you'll find your tribe here.</p>
-            </div>
-            
-            <div class="card" id="userProfileSection">
-                <div class="user-profile">
-                    <div class="profile-pic" id="mainProfilePic">?</div>
-                    <div class="user-details">
-                        <h2 id="mainProfileName">Guest User</h2>
-                        <div id="mainProfileBio">Join our TCG community to connect with other players!</div>
-                        <div class="user-tags">
-                            <span class="user-tag">MTG Commander</span>
-                            <span class="user-tag">Pokémon TCG</span>
-                            <span class="user-tag">Collector</span>
-                        </div>
+        <!-- Strengths & Critical Fixes -->
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <h3><i class="fas fa-thumbs-up"></i> Current Platform Strengths</h3>
+                <div class="card-content">
+                    <div class="metric">
+                        <span class="metric-label">Multi-page Architecture</span>
+                        <span class="metric-value"><i class="fas fa-check-circle" style="color: #48bb78;"></i></span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">TCG-Focused Design</span>
+                        <span class="metric-value"><i class="fas fa-check-circle" style="color: #48bb78;"></i></span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">E-commerce Integration</span>
+                        <span class="metric-value"><i class="fas fa-check-circle" style="color: #48bb78;"></i></span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Community Structure</span>
+                        <span class="metric-value"><i class="fas fa-check-circle" style="color: #48bb78;"></i></span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Event Management</span>
+                        <span class="metric-value"><i class="fas fa-check-circle" style="color: #48bb78;"></i></span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Basic Social Features</span>
+                        <span class="metric-value"><i class="fas fa-check-circle" style="color: #48bb78;"></i></span>
                     </div>
                 </div>
             </div>
             
-            <div class="card">
-                <div class="auth-section" id="authSection">
-                    <h2>Join Our Community</h2>
-                    <p id="authMessage">Sign in to access all community features, join groups, and connect with other TCG players.</p>
-                    <div class="auth-buttons">
-                        <button class="auth-btn google-btn" id="googleSignInBtn">
-                            <i class="fab fa-google"></i> Sign in with Google
-                        </button>
-                        <button class="auth-btn email-btn" id="emailAuthBtn">
-                            <i class="fas fa-envelope"></i> Register/Login with Email
-                        </button>
-                        <button class="auth-btn logout-btn" id="logoutBtn" style="display: none;">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </button>
+            <div class="dashboard-card">
+                <h3><i class="fas fa-exclamation-triangle"></i> Critical Fixes Required</h3>
+                <div class="card-content">
+                    <div class="metric">
+                        <span class="metric-label">Technical Infrastructure</span>
+                        <span class="metric-value"><i class="fas fa-wrench" style="color: #e53e3e;"></i></span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">User Experience</span>
+                        <span class="metric-value"><i class="fas fa-wrench" style="color: #e53e3e;"></i></span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Security & Authentication</span>
+                        <span class="metric-value"><i class="fas fa-wrench" style="color: #e53e3e;"></i></span>
                     </div>
                 </div>
             </div>
+        </div>
+        
+        <!-- Requested Features -->
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3><i class="fas fa-comments"></i> Messenger Widget</h3>
+                <ul class="feature-list">
+                    <li><i class="fas fa-check-circle"></i> Private Messaging System</li>
+                    <li><i class="fas fa-check-circle"></i> Group Chat Functionality</li>
+                    <li><i class="fas fa-check-circle"></i> Message Notifications</li>
+                    <li><i class="fas fa-check-circle"></i> File Sharing</li>
+                    <li><i class="fas fa-check-circle"></i> Online Status Indicators</li>
+                </ul>
+            </div>
             
-            <div class="card">
-                <div class="continent-section">
-                    <h2><i class="fas fa-globe"></i> Regional Communities</h2>
-                    <div class="continent-groups">
-                        <div class="continent-group">
-                            <div class="continent-icon" style="background: linear-gradient(135deg, #2b6cb0, #1a365d);">
-                                <i class="fas fa-globe-europe"></i>
-                            </div>
-                            <div class="continent-info">
-                                <h3>Europe</h3>
-                                <p>Connect with players across Europe</p>
-                            </div>
+            <div class="feature-card">
+                <h3><i class="fas fa-moon"></i> Dark Mode</h3>
+                <ul class="feature-list">
+                    <li><i class="fas fa-check-circle"></i> Theme Toggle</li>
+                    <li><i class="fas fa-check-circle"></i> System Preference Detection</li>
+                    <li><i class="fas fa-check-circle"></i> localStorage Persistence</li>
+                    <li><i class="fas fa-check-circle"></i> Smooth Transitions</li>
+                    <li><i class="fas fa-check-circle"></i> Comprehensive Coverage</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <h3><i class="fas fa-user-lock"></i> Persistent Login</h3>
+                <ul class="feature-list">
+                    <li><i class="fas fa-check-circle"></i> Session Management</li>
+                    <li><i class="fas fa-check-circle"></i> localStorage Integration</li>
+                    <li><i class="fas fa-check-circle"></i> Auto-refresh Tokens</li>
+                    <li><i class="fas fa-check-circle"></i> Cross-page Consistency</li>
+                    <li><i class="fas fa-check-circle"></i> Session Timeout Warnings</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <h3><i class="fas fa-sign-in-alt"></i> Social Login</h3>
+                <ul class="feature-list">
+                    <li><i class="fas fa-check-circle"></i> Facebook Login</li>
+                    <li><i class="fas fa-check-circle"></i> Google Login</li>
+                    <li><i class="fas fa-check-circle"></i> Profile Import</li>
+                    <li><i class="fas fa-check-circle"></i> Account Linking</li>
+                    <li><i class="fas fa-check-circle"></i> Privacy Controls</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Implementation Roadmap -->
+        <div class="roadmap">
+            <div class="roadmap-header">
+                <h2><i class="fas fa-road"></i> Implementation Roadmap</h2>
+                <p>Systematic approach to transforming HatakeSocial into a premier TCG platform</p>
+            </div>
+            
+            <div class="phase-container">
+                <div class="phase">
+                    <div class="phase-header">
+                        <div class="phase-title"><i class="fas fa-hard-hat"></i> Phase 1: Foundation</div>
+                        <div class="phase-priority priority-critical">Priority: Critical</div>
+                    </div>
+                    <div class="phase-content">
+                        <div class="feature-item">
+                            <h4>Technical Infrastructure</h4>
+                            <p>Fix mobile responsiveness and cross-browser compatibility</p>
                         </div>
-                        <div class="continent-group">
-                            <div class="continent-icon" style="background: linear-gradient(135deg, #e53e3e, #c53030);">
-                                <i class="fas fa-globe-americas"></i>
-                            </div>
-                            <div class="continent-info">
-                                <h3>North America</h3>
-                                <p>Players from USA and Canada</p>
-                            </div>
+                        <div class="feature-item">
+                            <h4>Dark Mode</h4>
+                            <p>Implement with localStorage persistence</p>
                         </div>
-                        <div class="continent-group">
-                            <div class="continent-icon" style="background: linear-gradient(135deg, #f6ad55, #dd6b20);">
-                                <i class="fas fa-globe-asia"></i>
-                            </div>
-                            <div class="continent-info">
-                                <h3>Asia</h3>
-                                <p>TCG communities across Asia</p>
-                            </div>
+                        <div class="feature-item">
+                            <h4>Social Login</h4>
+                            <p>Add Facebook login alongside Google OAuth</p>
                         </div>
-                        <div class="continent-group">
-                            <div class="continent-icon" style="background: linear-gradient(135deg, #48bb78, #2f855a);">
-                                <i class="fas fa-globe-africa"></i>
-                            </div>
-                            <div class="continent-info">
-                                <h3>Africa</h3>
-                                <p>Growing TCG scene in Africa</p>
-                            </div>
+                        <div class="feature-item">
+                            <h4>Messenger Widget</h4>
+                            <p>Develop basic messenger for friend communication</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4>Session Management</h4>
+                            <p>Enhance for persistent login across pages</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4>Security Measures</h4>
+                            <p>Implement basic security and input validation</p>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title" style="padding: 1.5rem;">Featured TCG Groups</div>
-                <div class="groups-container">
-                    <!-- MTG Commander Group -->
-                    <div class="group-card">
-                        <div class="group-header">
-                            <div class="group-icon"><i class="fas fa-dragon"></i></div>
-                            <h3 class="group-title">MTG Commander</h3>
-                            <div class="group-members">12.5k members</div>
-                        </div>
-                        <div class="group-content">
-                            <p class="group-description">The ultimate format for multiplayer Magic. Share your decks, strategies, and epic plays.</p>
-                            <div class="group-stats">
-                                <div class="group-stat">
-                                    <div class="group-stat-value">245</div>
-                                    <div class="group-stat-label">Online</div>
-                                </div>
-                                <div class="group-stat">
-                                    <div class="group-stat-value">78</div>
-                                    <div class="group-stat-label">Events</div>
-                                </div>
-                                <div class="group-stat">
-                                    <div class="group-stat-value">1.2k</div>
-                                    <div class="group-stat-label">Decks</div>
-                                </div>
-                            </div>
-                            <div class="group-actions">
-                                <button class="group-btn">Join Group</button>
-                                <button class="group-btn">View Events</button>
-                            </div>
-                        </div>
+                
+                <div class="phase">
+                    <div class="phase-header">
+                        <div class="phase-title"><i class="fas fa-users"></i> Phase 2: Social Features</div>
+                        <div class="phase-priority priority-high">Priority: High</div>
                     </div>
-                    
-                    <!-- MTG cEDH Group -->
-                    <div class="group-card">
-                        <div class="group-header">
-                            <div class="group-icon"><i class="fas fa-crown"></i></div>
-                            <h3 class="group-title">MTG cEDH</h3>
-                            <div class="group-members">8.3k members</div>
+                    <div class="phase-content">
+                        <div class="feature-item">
+                            <h4>Friend System</h4>
+                            <p>Complete with requests and management</p>
                         </div>
-                        <div class="group-content">
-                            <p class="group-description">Competitive EDH at its finest. Discuss the meta, tournament strategies, and top-tier decks.</p>
-                            <div class="group-stats">
-                                <div class="group-stat">
-                                    <div class="group-stat-value">189</div>
-                                    <div class="group-stat-label">Online</div>
-                                </div>
-                                <div class="group-stat">
-                                    <div class="group-stat-value">32</div>
-                                    <div class="group-stat-label">Events</div>
-                                </div>
-                                <div class="group-stat">
-                                    <div class="group-stat-value">850</div>
-                                    <div class="group-stat-label">Decks</div>
-                                </div>
-                            </div>
-                            <div class="group-actions">
-                                <button class="group-btn">Join Group</button>
-                                <button class="group-btn">Tournaments</button>
-                            </div>
+                        <div class="feature-item">
+                            <h4>Advanced Messaging</h4>
+                            <p>Group chats and file sharing</p>
                         </div>
-                    </div>
-                    
-                    <!-- Pokémon TCG Group -->
-                    <div class="group-card">
-                        <div class="group-header">
-                            <div class="group-icon"><i class="fas fa-bolt"></i></div>
-                            <h3 class="group-title">Pokémon TCG</h3>
-                            <div class="group-members">15.2k members</div>
+                        <div class="feature-item">
+                            <h4>User Profiles</h4>
+                            <p>Enhance with collection showcases</p>
                         </div>
-                        <div class="group-content">
-                            <p class="group-description">For Pokémon Trading Card Game players. Deck building, tournaments, and trading.</p>
-                            <div class="group-stats">
-                                <div class="group-stat">
-                                    <div class="group-stat-value">324</div>
-                                    <div class="group-stat-label">Online</div>
-                                </div>
-                                <div class="group-stat">
-                                    <div class="group-stat-value">56</div>
-                                    <div class="group-stat-label">Events</div>
-                                </div>
-                                <div class="group-stat">
-                                    <div class="group-stat-value">2.1k</div>
-                                    <div class="group-stat-label">Decks</div>
-                                </div>
-                            </div>
-                            <div class="group-actions">
-                                <button class="group-btn">Join Group</button>
-                                <button class="group-btn">Trade Cards</button>
-                            </div>
+                        <div class="feature-item">
+                            <h4>Activity Feed</h4>
+                            <p>Personalized feed and notification system</p>
                         </div>
-                    </div>
-                    
-                    <!-- Yu-Gi-Oh! Duelists Group -->
-                    <div class="group-card">
-                        <div class="group-header">
-                            <div class="group-icon"><i class="fas fa-hat-wizard"></i></div>
-                            <h3 class="group-title">Yu-Gi-Oh! Duelists</h3>
-                            <div class="group-members">9.7k members</div>
+                        <div class="feature-item">
+                            <h4>Trading System</h4>
+                            <p>Basic trading with trade proposals</p>
                         </div>
-                        <div class="group-content">
-                            <p class="group-description">For Yu-Gi-Oh! TCG players. Master new strategies and participate in tournaments.</p>
-                            <div class="group-stats">
-                                <div class="group-stat">
-                                    <div class="group-stat-value">156</div>
-                                    <div class="group-stat-label">Online</div>
-                                </div>
-                                <div class="group-stat">
-                                    <div class="group-stat-value">41</div>
-                                    <div class="group-stat-label">Events</div>
-                                </div>
-                                <div class="group-stat">
-                                    <div class="group-stat-value">980</div>
-                                    <div class="group-stat-label">Decks</div>
-                                </div>
-                            </div>
-                            <div class="group-actions">
-                                <button class="group-btn">Join Group</button>
-                                <button class="group-btn">Duel Now</button>
-                            </div>
+                        <div class="feature-item">
+                            <h4>Mobile Design</h4>
+                            <p>Responsive design improvements</p>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title" style="padding: 1.5rem;">Chat with Friends</div>
-                <div class="chat-container">
-                    <div class="chat-header">
-                        <i class="fas fa-comments"></i> Community Chat
+                
+                <div class="phase">
+                    <div class="phase-header">
+                        <div class="phase-title"><i class="fas fa-dragon"></i> Phase 3: TCG-Specific Tools</div>
+                        <div class="phase-priority priority-medium">Priority: Medium</div>
                     </div>
-                    <div class="chat-messages" id="chatMessages">
-                        <div class="message received">
-                            <div class="message-sender">Maria Sanchez</div>
-                            <div>Anyone going to the tournament this weekend?</div>
-                            <div class="message-time">10:24 AM</div>
+                    <div class="phase-content">
+                        <div class="feature-item">
+                            <h4>Collection Management</h4>
+                            <p>Digital collection tracker and wishlist system</p>
                         </div>
-                        <div class="message sent">
-                            <div>I'll be there! Bringing my new Commander deck</div>
-                            <div class="message-time">10:26 AM</div>
+                        <div class="feature-item">
+                            <h4>Deck Builder</h4>
+                            <p>Advanced builder with analysis tools</p>
                         </div>
-                        <div class="message received">
-                            <div class="message-sender">Thomas Johnson</div>
-                            <div>Looking forward to seeing everyone! I'll have some cards for trade too</div>
-                            <div class="message-time">10:28 AM</div>
+                        <div class="feature-item">
+                            <h4>Tournament System</h4>
+                            <p>Creation and management tools</p>
                         </div>
-                    </div>
-                    <div class="chat-input">
-                        <input type="text" placeholder="Type your message..." id="chatInput">
-                        <button id="sendMessageBtn"><i class="fas fa-paper-plane"></i></button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title" style="padding: 1.5rem;">Your Order History</div>
-                <div class="order-history">
-                    <div class="order-card">
-                        <div class="order-header">
-                            <div class="order-id">Order #HT-2025-00142</div>
-                            <div class="order-date">June 12, 2025</div>
-                            <div class="order-status">Delivered</div>
+                        <div class="feature-item">
+                            <h4>Card Database</h4>
+                            <p>Integration with real-time pricing</p>
                         </div>
-                        <div class="order-items">
-                            <div class="order-item">
-                                <div class="order-item-image">
-                                    <i class="fas fa-box-open"></i>
-                                </div>
-                                <div class="order-item-details">
-                                    <div class="order-item-name">Matte Sleeves</div>
-                                    <div class="order-item-price">89 SEK</div>
-                                </div>
-                            </div>
-                            <div class="order-item">
-                                <div class="order-item-image">
-                                    <i class="fas fa-box"></i>
-                                </div>
-                                <div class="order-item-details">
-                                    <div class="order-item-name">35pt Top-Loaders</div>
-                                    <div class="order-item-price">30 SEK</div>
-                                </div>
-                            </div>
+                        <div class="feature-item">
+                            <h4>Trade Matching</h4>
+                            <p>AI-powered recommendation engine</p>
                         </div>
-                    </div>
-                    <div class="order-card">
-                        <div class="order-header">
-                            <div class="order-id">Order #HT-2025-00098</div>
-                            <div class="order-date">May 28, 2025</div>
-                            <div class="order-status">Delivered</div>
-                        </div>
-                        <div class="order-items">
-                            <div class="order-item">
-                                <div class="order-item-image">
-                                    <i class="fas fa-book"></i>
-                                </div>
-                                <div class="order-item-details">
-                                    <div class="order-item-name">480-Slot Binder</div>
-                                    <div class="order-item-price">360 SEK</div>
-                                </div>
-                            </div>
+                        <div class="feature-item">
+                            <h4>Search Capabilities</h4>
+                            <p>Enhanced search and filtering</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
-
-    <!-- Edit Profile Modal -->
-    <div class="modal" id="profileModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Edit Profile</h3>
-                <button class="modal-close" id="closeModal">×</button>
+        
+        <!-- Success Metrics -->
+        <div class="metrics-section">
+            <div class="metrics-header">
+                <h2><i class="fas fa-chart-line"></i> Success Metrics & KPIs</h2>
+                <p>Key performance indicators to measure platform success</p>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="editName">Display Name</label>
-                    <input type="text" id="editName" placeholder="Enter your name">
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <i class="fas fa-users fa-2x"></i>
+                    <div class="metric-value-lg">10,000+</div>
+                    <div class="metric-label-lg">Daily Active Users</div>
+                    <div class="metric-target">First Year Target</div>
                 </div>
-                <div class="form-group">
-                    <label for="editBio">Bio</label>
-                    <textarea id="editBio" rows="3" placeholder="Tell us about yourself"></textarea>
+                
+                <div class="metric-card">
+                    <i class="fas fa-sync-alt fa-2x"></i>
+                    <div class="metric-value-lg">70%+</div>
+                    <div class="metric-label-lg">Weekly Return Rate</div>
+                    <div class="metric-target">User Retention</div>
                 </div>
-                <div class="form-group">
-                    <label>Profile Picture</label>
-                    <div class="avatar-options">
-                        <div class="avatar-option" style="background-color: #f6ad55;" data-avatar="1"></div>
-                        <div class="avatar-option" style="background-color: #2b6cb0;" data-avatar="2"></div>
-                        <div class="avatar-option" style="background-color: #48bb78;" data-avatar="3"></div>
-                        <div class="avatar-option" style="background-color: #e53e3e;" data-avatar="4"></div>
-                    </div>
+                
+                <div class="metric-card">
+                    <i class="fas fa-trade fa-2x"></i>
+                    <div class="metric-value-lg">500+</div>
+                    <div class="metric-label-lg">Monthly Trades</div>
+                    <div class="metric-target">Trading Activity</div>
                 </div>
-                <div class="form-group">
-                    <label>Favorite Games</label>
-                    <div class="games-container">
-                        <label class="game-option">
-                            <input type="checkbox" name="games" value="mtg"> MTG
-                        </label>
-                        <label class="game-option">
-                            <input type="checkbox" name="games" value="pokemon"> Pokémon
-                        </label>
-                        <label class="game-option">
-                            <input type="checkbox" name="games" value="yugioh"> Yu-Gi-Oh!
-                        </label>
-                        <label class="game-option">
-                            <input type="checkbox" name="games" value="flesh"> Flesh and Blood
-                        </label>
-                    </div>
+                
+                <div class="metric-card">
+                    <i class="fas fa-trophy fa-2x"></i>
+                    <div class="metric-value-lg">50+</div>
+                    <div class="metric-label-lg">Monthly Tournaments</div>
+                    <div class="metric-target">Event Participation</div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button class="modal-btn cancel-btn" id="cancelEdit">Cancel</button>
-                <button class="modal-btn save-btn" id="saveProfile">Save Changes</button>
             </div>
         </div>
-    </div>
-
-    <!-- Auth Modal -->
-    <div class="modal" id="authModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Sign In / Sign Up</h3>
-                <button class="modal-close" id="closeAuthModal">×</button>
+        
+        <!-- Monetization Strategies -->
+        <div class="monetization-section">
+            <div class="monetization-header">
+                <h2><i class="fas fa-money-bill-wave"></i> Monetization Strategies</h2>
+                <p>Sustainable revenue models for platform growth</p>
             </div>
-            <div class="modal-body">
-                <div class="tabs">
-                    <button class="tab-btn active" data-tab="login">Login</button>
-                    <button class="tab-btn" data-tab="signup">Sign Up</button>
+            
+            <div class="monetization-grid">
+                <div class="monetization-card">
+                    <h3><i class="fas fa-crown"></i> Premium Subscriptions</h3>
+                    <ul class="monetization-list">
+                        <li><i class="fas fa-circle"></i> Hatake Pro: Advanced features</li>
+                        <li><i class="fas fa-circle"></i> Creator Subscriptions</li>
+                        <li><i class="fas fa-circle"></i> Tournament Organizer Tools</li>
+                        <li><i class="fas fa-circle"></i> Advanced Analytics</li>
+                        <li><i class="fas fa-circle"></i> Ad-Free Experience</li>
+                    </ul>
                 </div>
                 
-                <div class="tab-content active" id="loginTab">
-                    <div class="form-group">
-                        <label for="loginEmail">Email</label>
-                        <input type="email" id="loginEmail" placeholder="Enter your email">
-                    </div>
-                    <div class="form-group">
-                        <label for="loginPassword">Password</label>
-                        <input type="password" id="loginPassword" placeholder="Enter your password">
-                    </div>
-                    <div id="loginError" class="auth-error"></div>
-                    <button class="btn" id="loginBtn">Login</button>
-                    <div class="divider">or</div>
-                    <button class="auth-btn google-btn" id="googleSignInModalBtn">
-                        <i class="fab fa-google"></i> Sign in with Google
-                    </button>
+                <div class="monetization-card">
+                    <h3><i class="fas fa-exchange-alt"></i> Transaction-Based</h3>
+                    <ul class="monetization-list">
+                        <li><i class="fas fa-circle"></i> Trading Fees (high-value)</li>
+                        <li><i class="fas fa-circle"></i> Marketplace Commission</li>
+                        <li><i class="fas fa-circle"></i> Event Registration Fees</li>
+                        <li><i class="fas fa-circle"></i> Premium Listings</li>
+                        <li><i class="fas fa-circle"></i> Escrow Services</li>
+                    </ul>
                 </div>
                 
-                <div class="tab-content" id="signupTab">
-                    <div class="form-group">
-                        <label for="signupName">Full Name</label>
-                        <input type="text" id="signupName" placeholder="Enter your full name">
-                    </div>
-                    <div class="form-group">
-                        <label for="signupEmail">Email</label>
-                        <input type="email" id="signupEmail" placeholder="Enter your email">
-                    </div>
-                    <div class="form-group">
-                        <label for="signupPassword">Password</label>
-                        <input type="password" id="signupPassword" placeholder="Create a password (min 6 characters)">
-                    </div>
-                    <div class="form-group">
-                        <label for="signupConfirmPassword">Confirm Password</label>
-                        <input type="password" id="signupConfirmPassword" placeholder="Confirm your password">
-                    </div>
-                    <div id="signupError" class="auth-error"></div>
-                    <button class="btn" id="signupBtn">Create Account</button>
+                <div class="monetization-card">
+                    <h3><i class="fas fa-handshake"></i> Partnerships & Ads</h3>
+                    <ul class="monetization-list">
+                        <li><i class="fas fa-circle"></i> Sponsored Content</li>
+                        <li><i class="fas fa-circle"></i> Affiliate Marketing</li>
+                        <li><i class="fas fa-circle"></i> Event Sponsorships</li>
+                        <li><i class="fas fa-circle"></i> Targeted Advertising</li>
+                        <li><i class="fas fa-circle"></i> Data Insights</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Conclusion -->
+        <div class="conclusion-section">
+            <div class="conclusion-header">
+                <h2>Conclusion</h2>
+                <p>HatakeSocial has strong potential to become the premier social platform for TCG collectors and players. The current foundation provides a solid starting point, but significant development is needed to compete with established social platforms while serving the unique needs of the TCG community.</p>
+            </div>
+            
+            <div class="success-factors">
+                <div class="factor-card">
+                    <h4><i class="fas fa-mobile-alt"></i> Mobile Experience</h4>
+                    <p>Prioritizing mobile experience from the beginning to reach wider audience</p>
+                </div>
+                
+                <div class="factor-card">
+                    <h4><i class="fas fa-tools"></i> Robust Tools</h4>
+                    <p>Building robust trading and collection management tools as platform differentiators</p>
+                </div>
+                
+                <div class="factor-card">
+                    <h4><i class="fas fa-users"></i> Community Features</h4>
+                    <p>Creating strong community features that encourage engagement and retention</p>
+                </div>
+                
+                <div class="factor-card">
+                    <h4><i class="fas fa-shield-alt"></i> Security & Trust</h4>
+                    <p>Maintaining security and trust in all transactions to build user confidence</p>
                 </div>
             </div>
         </div>
@@ -1573,64 +1014,44 @@
         </div>
         
         <div class="copyright">
-            © 2025 Hatake TCG. All rights reserved.
+            &copy; 2025 Hatake TCG. All rights reserved.
         </div>
     </footer>
 
     <script>
-        // Initialize Supabase with correct credentials
+        // Initialize Supabase
         const supabaseUrl = 'https://llukovlzjhflfhacajps.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxsdWtvdmx6amhmbGZoY2FqcHMiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc1MDAwNjc3MiwiZXhwIjoyMDY1NTgyNzcyfQ.kbaftEOsGUriJOxMlTOFkXUGhLcKBaHwfVLG9S60gpU';
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
+        
         // DOM elements
         const darkModeToggle = document.getElementById('darkModeToggle');
         const body = document.body;
         const userAvatar = document.getElementById('userAvatar');
-        const profilePic = document.getElementById('profilePic');
-        const profileName = document.getElementById('profileName');
-        const profileBio = document.getElementById('profileBio');
-        const mainProfilePic = document.getElementById('mainProfilePic');
-        const mainProfileName = document.getElementById('mainProfileName');
-        const mainProfileBio = document.getElementById('mainProfileBio');
-        const editProfileBtn = document.getElementById('editProfileBtn');
-        const profileModal = document.getElementById('profileModal');
-        const closeModal = document.getElementById('closeModal');
-        const cancelEdit = document.getElementById('cancelEdit');
-        const saveProfile = document.getElementById('saveProfile');
-        const googleSignInBtn = document.getElementById('googleSignInBtn');
-        const googleSignInModalBtn = document.getElementById('googleSignInModalBtn');
-        const emailAuthBtn = document.getElementById('emailAuthBtn');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const authSection = document.getElementById('authSection');
-        const authMessage = document.getElementById('authMessage');
-        const chatInput = document.getElementById('chatInput');
-        const sendMessageBtn = document.getElementById('sendMessageBtn');
-        const chatMessages = document.getElementById('chatMessages');
-        const authModal = document.getElementById('authModal');
-        const closeAuthModal = document.getElementById('closeAuthModal');
-        const loginBtn = document.getElementById('loginBtn');
-        const signupBtn = document.getElementById('signupBtn');
-        const loginEmail = document.getElementById('loginEmail');
-        const loginPassword = document.getElementById('loginPassword');
-        const signupName = document.getElementById('signupName');
-        const signupEmail = document.getElementById('signupEmail');
-        const signupPassword = document.getElementById('signupPassword');
-        const signupConfirmPassword = document.getElementById('signupConfirmPassword');
-        const loginError = document.getElementById('loginError');
-        const signupError = document.getElementById('signupError');
-        const tabBtns = document.querySelectorAll('.tab-btn');
         
-        // Initialize chatHistory
-        let chatHistory = [];
-
         // Check for saved dark mode preference
-        if (localStorage.getItem('darkMode') === 'true') {
-            body.classList.add('dark-mode');
-            darkModeToggle.querySelector('i').classList.remove('fa-moon');
-            darkModeToggle.querySelector('i').classList.add('fa-sun');
+        function initDarkMode() {
+            // Check system preference
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            // Check localStorage for existing preference
+            const storedDarkMode = localStorage.getItem('darkMode');
+            
+            if (storedDarkMode === null) {
+                // If no preference stored, use system preference
+                if (systemPrefersDark) {
+                    body.classList.add('dark-mode');
+                    darkModeToggle.querySelector('i').classList.remove('fa-moon');
+                    darkModeToggle.querySelector('i').classList.add('fa-sun');
+                    localStorage.setItem('darkMode', 'true');
+                }
+            } else if (storedDarkMode === 'true') {
+                body.classList.add('dark-mode');
+                darkModeToggle.querySelector('i').classList.remove('fa-moon');
+                darkModeToggle.querySelector('i').classList.add('fa-sun');
+            }
         }
-
+        
         // Dark mode toggle
         darkModeToggle.addEventListener('click', () => {
             body.classList.toggle('dark-mode');
@@ -1646,349 +1067,9 @@
                 localStorage.setItem('darkMode', 'false');
             }
         });
-
-        // Check authentication state
-        async function checkAuthState() {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (user) {
-                const { data: profile } = await supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', user.id)
-                    .single();
-                
-                if (profile) {
-                    localStorage.setItem('user', JSON.stringify(profile));
-                    updateProfileUI(profile);
-                } else {
-                    const newProfile = { id: user.id, name: user.email.split('@')[0], bio: "", avatar: 0 };
-                    const { error } = await supabase.from('profiles').insert([newProfile]);
-                    if (!error) {
-                        localStorage.setItem('user', JSON.stringify(newProfile));
-                        updateProfileUI(newProfile);
-                    } else {
-                        console.error('Error creating profile:', error.message);
-                    }
-                }
-                logoutBtn.style.display = 'block';
-                authMessage.textContent = `Welcome back, ${user.email.split('@')[0]}!`;
-                googleSignInBtn.style.display = 'none';
-                emailAuthBtn.style.display = 'none';
-                loadChatMessages();
-            } else {
-                logoutBtn.style.display = 'none';
-                googleSignInBtn.style.display = 'flex';
-                emailAuthBtn.style.display = 'flex';
-                authMessage.textContent = 'Sign in to access all community features.';
-                updateProfileUI({ name: "Guest User", bio: "Join our TCG community!", avatar: 0 });
-            }
-        }
-
-        // Update UI with user data
-        function updateProfileUI(user) {
-            profileName.textContent = user.name || "Guest User";
-            profileBio.textContent = user.bio || "Join our TCG community!";
-            mainProfileName.textContent = user.name || "Guest User";
-            mainProfileBio.textContent = user.bio || "Join our TCG community to connect with other players!";
-            
-            const avatarColors = ['#f6ad55', '#2b6cb0', '#48bb78', '#e53e3e'];
-            const avatarIndex = user.avatar || 0;
-            const avatarColor = avatarColors[avatarIndex];
-            
-            userAvatar.style.background = `linear-gradient(135deg, ${avatarColor}, ${darkenColor(avatarColor, 20)})`;
-            profilePic.style.background = `linear-gradient(135deg, ${avatarColor}, ${darkenColor(avatarColor, 20)})`;
-            mainProfilePic.style.background = `linear-gradient(135deg, ${avatarColor}, ${darkenColor(avatarColor, 20)})`;
-            
-            const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
-            userAvatar.textContent = initials || '?';
-            profilePic.textContent = initials || '?';
-            mainProfilePic.textContent = initials || '?';
-            
-            document.getElementById('postCount').textContent = Math.floor(Math.random() * 100);
-            document.getElementById('friendsCount').textContent = Math.floor(Math.random() * 500);
-            document.getElementById('groupsCount').textContent = Math.floor(Math.random() * 20);
-        }
-
-        // Helper function to darken color
-        function darkenColor(color, percent) {
-            let R = parseInt(color.substring(1,3), 16);
-            let G = parseInt(color.substring(3,5), 16);
-            let B = parseInt(color.substring(5,7), 16);
-            
-            R = Math.floor(R * (100 - percent) / 100);
-            G = Math.floor(G * (100 - percent) / 100);
-            B = Math.floor(B * (100 - percent) / 100);
-            
-            return `#${R.toString(16).padStart(2, '0')}${G.toString(16).padStart(2, '0')}${B.toString(16).padStart(2, '0')}`;
-        }
-
-        // Google Sign-In
-        async function signInWithGoogle() {
-            try {
-                const { data, error } = await supabase.auth.signInWithOAuth({
-                    provider: 'google',
-                    options: {
-                        redirectTo: window.location.origin + '/community.html',
-                        scopes: 'email profile'
-                    }
-                });
-                if (error) throw error;
-            } catch (error) {
-                console.error('Error signing in with Google:', error.message);
-                loginError.textContent = 'Failed to sign in with Google. Please try again or check your connection.';
-            }
-        }
-
-        // Logout
-        async function logout() {
-            const { error } = await supabase.auth.signOut();
-            if (error) console.error('Error logging out:', error.message);
-            localStorage.removeItem('user');
-            checkAuthState();
-        }
-
-        // Profile Modal
-        editProfileBtn.addEventListener('click', () => {
-            profileModal.style.display = 'flex';
-            const user = JSON.parse(localStorage.getItem('user')) || {};
-            document.getElementById('editName').value = user.name || '';
-            document.getElementById('editBio').value = user.bio || '';
-            
-            const avatarOptions = document.querySelectorAll('.avatar-option');
-            avatarOptions.forEach(option => {
-                option.classList.remove('selected');
-                if (parseInt(option.dataset.avatar) === (user.avatar || 0)) {
-                    option.classList.add('selected');
-                }
-            });
-        });
-
-        // Close modal
-        function closeProfileModal() {
-            profileModal.style.display = 'none';
-        }
-
-        // Avatar selection
-        document.querySelectorAll('.avatar-option').forEach(option => {
-            option.addEventListener('click', () => {
-                document.querySelectorAll('.avatar-option').forEach(opt => opt.classList.remove('selected'));
-                option.classList.add('selected');
-            });
-        });
-
-        // Save profile
-        saveProfile.addEventListener('click', async () => {
-            const name = document.getElementById('editName').value.trim();
-            const bio = document.getElementById('editBio').value.trim();
-            const selectedAvatar = document.querySelector('.avatar-option.selected');
-            const avatar = selectedAvatar ? parseInt(selectedAvatar.dataset.avatar) : 0;
-            
-            if (!name) {
-                alert('Please enter a display name');
-                return;
-            }
-            
-            const { data: { user } } = await supabase.auth.getUser();
-            if (user) {
-                const { error } = await supabase
-                    .from('profiles')
-                    .update({ name, bio, avatar })
-                    .eq('id', user.id);
-                if (error) {
-                    console.error('Error updating profile:', error.message);
-                } else {
-                    const updatedProfile = { id: user.id, name, bio, avatar };
-                    localStorage.setItem('user', JSON.stringify(updatedProfile));
-                    updateProfileUI(updatedProfile);
-                    closeProfileModal();
-                }
-            }
-        });
-
-        // Chat functionality
-        async function loadChatMessages() {
-            const { data: messages, error } = await supabase
-                .from('messages')
-                .select('*')
-                .order('created_at', { ascending: true });
-            if (error) {
-                console.error('Error loading messages:', error.message);
-            } else {
-                chatHistory = messages.map(msg => ({
-                    sender: msg.user_id === (JSON.parse(localStorage.getItem('user')) || {}).id ? "You" : "Someone",
-                    message: msg.message,
-                    time: new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                }));
-                renderChatMessages();
-            }
-        }
-
-        function renderChatMessages() {
-            chatMessages.innerHTML = '';
-            chatHistory.forEach(msg => {
-                const messageElement = document.createElement('div');
-                const isCurrentUser = msg.sender === "You";
-                messageElement.classList.add('message', isCurrentUser ? 'sent' : 'received');
-                
-                if (!isCurrentUser) {
-                    messageElement.innerHTML = `
-                        <div class="message-sender">${msg.sender}</div>
-                        <div>${msg.message}</div>
-                        <div class="message-time">${msg.time}</div>
-                    `;
-                } else {
-                    messageElement.innerHTML = `
-                        <div>${msg.message}</div>
-                        <div class="message-time">${msg.time}</div>
-                    `;
-                }
-                chatMessages.appendChild(messageElement);
-            });
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        async function addMessage(message, senderId) {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return;
-            
-            const { error } = await supabase
-                .from('messages')
-                .insert([{ user_id: user.id, message, created_at: new Date().toISOString() }]);
-            if (error) {
-                console.error('Error sending message:', error.message);
-            } else {
-                loadChatMessages();
-            }
-        }
-
-        sendMessageBtn.addEventListener('click', async () => {
-            const message = chatInput.value.trim();
-            if (message) {
-                await addMessage(message);
-                chatInput.value = '';
-            }
-        });
-
-        chatInput.addEventListener('keypress', async (e) => {
-            if (e.key === 'Enter') {
-                const message = chatInput.value.trim();
-                if (message) {
-                    await addMessage(message);
-                    chatInput.value = '';
-                }
-            }
-        });
-
-        // Auth Modal Tabs
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                tabBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-                document.getElementById(`${btn.dataset.tab}Tab`).classList.add('active');
-            });
-        });
-
-        // Open Auth Modal
-        userAvatar.addEventListener('click', () => {
-            authModal.style.display = 'flex';
-        });
-
-        // Close Auth Modal
-        closeAuthModal.addEventListener('click', () => {
-            authModal.style.display = 'none';
-            loginError.textContent = '';
-            signupError.textContent = '';
-        });
-
-        // Login with Email
-        async function loginWithEmail() {
-            const email = loginEmail.value.trim();
-            const password = loginPassword.value.trim();
-            
-            if (!email || !password) {
-                loginError.textContent = 'Please fill in all fields';
-                return;
-            }
-            
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-            if (error) {
-                loginError.textContent = error.message;
-            } else {
-                checkAuthState();
-                authModal.style.display = 'none';
-            }
-        }
-
-        // Sign Up with Email
-        async function signupWithEmail() {
-            const name = signupName.value.trim();
-            const email = signupEmail.value.trim();
-            const password = signupPassword.value.trim();
-            const confirmPassword = signupConfirmPassword.value.trim();
-            
-            if (!name || !email || !password || !confirmPassword) {
-                signupError.textContent = 'Please fill in all fields';
-                return;
-            }
-            
-            if (password.length < 6) {
-                signupError.textContent = 'Password must be at least 6 characters';
-                return;
-            }
-            
-            if (password !== confirmPassword) {
-                signupError.textContent = 'Passwords do not match';
-                return;
-            }
-            
-            const { data, error } = await supabase.auth.signUp({
-                email,
-                password,
-                options: { data: { name } }
-            });
-            
-            if (error) {
-                signupError.textContent = error.message;
-            } else {
-                if (data.user) {
-                    const newProfile = { id: data.user.id, name, bio: "", avatar: 0 };
-                    const { error: profileError } = await supabase.from('profiles').insert([newProfile]);
-                    if (profileError) {
-                        signupError.textContent = 'Profile creation failed: ' + profileError.message;
-                    } else {
-                        localStorage.setItem('user', JSON.stringify(newProfile));
-                        checkAuthState();
-                        authModal.style.display = 'none';
-                    }
-                }
-            }
-        }
-
-        // Event listeners
-        closeModal.addEventListener('click', closeProfileModal);
-        cancelEdit.addEventListener('click', closeProfileModal);
-        googleSignInBtn.addEventListener('click', signInWithGoogle);
-        googleSignInModalBtn.addEventListener('click', signInWithGoogle);
-        emailAuthBtn.addEventListener('click', () => {
-            authModal.style.display = 'flex';
-        });
-        logoutBtn.addEventListener('click', logout);
-        loginBtn.addEventListener('click', loginWithEmail);
-        signupBtn.addEventListener('click', signupWithEmail);
-
-        // Close modals when clicking outside
-        window.addEventListener('click', (e) => {
-            if (e.target === profileModal) closeProfileModal();
-            if (e.target === authModal) {
-                authModal.style.display = 'none';
-                loginError.textContent = '';
-                signupError.textContent = '';
-            }
-        });
-
+        
         // Initialize page
-        checkAuthState();
+        initDarkMode();
     </script>
 </body>
 </html>
