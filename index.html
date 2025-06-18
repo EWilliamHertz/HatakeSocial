@@ -6,6 +6,7 @@
     <title>Hatake TCG - Social Platform for Card Game Enthusiasts</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         :root {
             --primary: #1a365d;
@@ -20,16 +21,17 @@
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
-        .dark-mode {
-            --primary: #2d3748;
-            --secondary: #4a5568;
+        [data-theme="dark"] {
+            --primary: #4a5568;
+            --secondary: #2d3748;
+            --accent: #f6ad55;
             --light: #1a202c;
             --dark: #f7fafc;
             --card-bg: #2d3748;
             --card-border: #4a5568;
             --text: #e2e8f0;
             --text-light: #a0aec0;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
         }
 
         * {
@@ -37,7 +39,6 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
         }
 
         body {
@@ -46,19 +47,20 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            transition: all 0.3s ease;
         }
 
         /* Header Styles */
         header {
             background-color: var(--primary);
             color: white;
-            padding: 0.8rem 1.5rem;
+            padding: 1rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
             box-shadow: var(--shadow);
         }
 
@@ -74,6 +76,22 @@
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
         }
 
+        .dark-toggle {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        
+        .dark-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: scale(1.1);
+        }
+
         nav ul {
             display: flex;
             list-style: none;
@@ -84,13 +102,17 @@
             color: white;
             text-decoration: none;
             font-weight: 500;
-            padding: 0.5rem;
-            border-radius: 4px;
-            transition: background-color 0.2s;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         nav a:hover, nav a.active {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
         }
 
         .header-actions {
@@ -105,11 +127,18 @@
 
         .search-container input {
             padding: 0.5rem 1rem 0.5rem 2.5rem;
-            border-radius: 20px;
+            border-radius: 25px;
             border: none;
             background-color: rgba(255, 255, 255, 0.2);
             color: white;
-            width: 200px;
+            width: 250px;
+            transition: all 0.3s;
+        }
+
+        .search-container input:focus {
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.3);
+            width: 300px;
         }
 
         .search-container input::placeholder {
@@ -132,12 +161,20 @@
         .action-icons div {
             position: relative;
             cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .action-icons div:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: scale(1.1);
         }
 
         .action-icons .badge {
             position: absolute;
-            top: -5px;
-            right: -5px;
+            top: -2px;
+            right: -2px;
             background-color: var(--accent);
             color: var(--dark);
             border-radius: 50%;
@@ -148,6 +185,13 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
         .user-avatar {
@@ -163,26 +207,11 @@
             cursor: pointer;
             background-size: cover;
             background-position: center;
+            transition: transform 0.3s;
         }
-        
-        /* Dark mode toggle button */
-        .dark-toggle {
-            background: none;
-            border: none;
-            color: var(--accent);
-            cursor: pointer;
-            font-size: 1.2rem;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.2s;
-        }
-        
-        .dark-toggle:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+
+        .user-avatar:hover {
+            transform: scale(1.1);
         }
 
         /* Main Layout */
@@ -219,10 +248,16 @@
         /* Card Styles */
         .card {
             background-color: var(--card-bg);
-            border-radius: 10px;
+            border-radius: 12px;
             box-shadow: var(--shadow);
             overflow: hidden;
             border: 1px solid var(--card-border);
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .card-title {
@@ -231,6 +266,8 @@
             font-weight: 600;
             border-bottom: 1px solid var(--card-border);
             color: var(--text);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
         }
 
         /* User Card */
@@ -241,7 +278,7 @@
 
         .cover-photo {
             height: 80px;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
         }
 
         .profile-pic {
@@ -259,12 +296,18 @@
             border: 3px solid var(--card-bg);
             background-size: cover;
             background-position: center;
+            transition: transform 0.3s;
+        }
+
+        .profile-pic:hover {
+            transform: scale(1.05);
         }
 
         .user-name {
             font-size: 1.2rem;
             font-weight: 600;
             margin-bottom: 0.25rem;
+            color: var(--text);
         }
 
         .user-bio {
@@ -281,6 +324,12 @@
 
         .stat {
             text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .stat:hover {
+            transform: scale(1.05);
         }
 
         .stat-value {
@@ -297,14 +346,14 @@
         .btn {
             width: calc(100% - 3rem);
             margin: 0 1.5rem 1.5rem;
-            padding: 0.7rem;
-            background-color: var(--primary);
+            padding: 0.8rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -312,7 +361,8 @@
         }
 
         .btn:hover {
-            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
         }
 
         /* Menu Items */
@@ -322,19 +372,21 @@
             gap: 1rem;
             padding: 1rem 1.5rem;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.3s;
             color: var(--text);
             text-decoration: none;
         }
 
         .menu-item:hover {
-            background-color: rgba(0, 0, 0, 0.05);
+            background-color: rgba(246, 173, 85, 0.1);
+            transform: translateX(5px);
         }
 
         .menu-item i {
             font-size: 1.2rem;
             width: 24px;
             text-align: center;
+            color: var(--accent);
         }
 
         /* Create Post */
@@ -351,10 +403,17 @@
         .post-input input {
             flex: 1;
             padding: 0.8rem 1rem;
-            border-radius: 20px;
+            border-radius: 25px;
             border: 1px solid var(--card-border);
             background-color: var(--card-bg);
             color: var(--text);
+            transition: all 0.3s;
+        }
+
+        .post-input input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(246, 173, 85, 0.1);
         }
 
         .post-input input::placeholder {
@@ -373,13 +432,15 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.5rem 1rem;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.3s;
+            color: var(--text);
         }
 
         .post-action:hover {
-            background-color: rgba(0, 0, 0, 0.05);
+            background-color: rgba(246, 173, 85, 0.1);
+            transform: translateY(-2px);
         }
 
         /* Post Card */
@@ -393,8 +454,21 @@
             margin-bottom: 1rem;
         }
 
+        .post-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4299e1, #9f7aea);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
         .post-user {
             font-weight: 600;
+            color: var(--text);
         }
 
         .post-time {
@@ -404,14 +478,20 @@
 
         .post-content {
             margin-bottom: 1rem;
-            line-height: 1.5;
+            line-height: 1.6;
+            color: var(--text);
         }
 
         .post-image {
             height: 300px;
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
             margin-bottom: 1rem;
+            background: linear-gradient(135deg, #e2e8f0, #cbd5e0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
         }
 
         .reactions {
@@ -431,6 +511,11 @@
             align-items: center;
             justify-content: center;
             font-size: 0.8rem;
+            transition: transform 0.3s;
+        }
+
+        .reaction:hover {
+            transform: scale(1.2);
         }
 
         .post-actions-bar {
@@ -442,14 +527,16 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.5rem;
-            border-radius: 5px;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.3s;
+            color: var(--text);
         }
 
         .post-action-btn:hover {
-            background-color: rgba(0, 0, 0, 0.05);
+            background-color: rgba(246, 173, 85, 0.1);
+            transform: translateY(-2px);
         }
 
         /* Shop Sidebar */
@@ -464,13 +551,15 @@
             display: flex;
             gap: 1rem;
             padding: 1rem;
-            border-radius: 8px;
+            border-radius: 12px;
             border: 1px solid var(--card-border);
-            transition: transform 0.2s;
+            transition: all 0.3s;
+            background-color: var(--card-bg);
         }
 
         .product-card:hover {
             transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
         }
 
         .product-image {
@@ -492,6 +581,7 @@
         .product-name {
             font-weight: 600;
             margin-bottom: 0.25rem;
+            color: var(--text);
         }
 
         .product-price {
@@ -509,17 +599,313 @@
         .product-card button {
             width: 100%;
             padding: 0.5rem;
-            background-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             font-weight: 500;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.3s;
         }
 
         .product-card button:hover {
-            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Messenger Widget */
+        .messenger-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .messenger-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), #e53e3e);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .messenger-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .messenger-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .messenger-panel {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 350px;
+            height: 500px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--card-border);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .messenger-panel.active {
+            display: flex;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .messenger-header {
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .messenger-close {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.25rem;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        .messenger-close:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .messenger-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 0.5rem;
+        }
+
+        .chat-item:hover {
+            background-color: rgba(246, 173, 85, 0.1);
+        }
+
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4299e1, #9f7aea);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .online-indicator {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 12px;
+            height: 12px;
+            background-color: #48bb78;
+            border-radius: 50%;
+            border: 2px solid var(--card-bg);
+        }
+
+        .chat-info h4 {
+            color: var(--text);
+            margin-bottom: 0.2rem;
+        }
+
+        .chat-preview {
+            color: var(--text-light);
+            font-size: 0.8rem;
+        }
+
+        .unread-badge {
+            background-color: var(--accent);
+            color: var(--dark);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-left: auto;
+        }
+
+        /* Authentication Modal */
+        .auth-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .auth-modal-content {
+            background-color: var(--card-bg);
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .auth-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .auth-tab.active {
+            border-bottom-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            color: var(--text);
+        }
+
+        .auth-button {
+            width: 100%;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+
+        .auth-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .social-auth {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .google-btn {
+            color: #db4437;
+        }
+
+        .facebook-btn {
+            color: #4267b2;
         }
 
         /* Footer Styles */
@@ -583,13 +969,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background-color 0.2s;
+            transition: all 0.3s;
             color: white;
             text-decoration: none;
         }
 
         .social-link:hover {
             background-color: var(--accent);
+            transform: scale(1.1);
         }
 
         .copyright {
@@ -601,466 +988,15 @@
             font-size: 0.9rem;
         }
 
-        /* Messenger Widget */
-        .messenger-widget {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 350px;
-            height: 450px;
-            background-color: var(--card-bg);
-            border-radius: 15px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--card-border);
-            display: flex;
-            flex-direction: column;
-            z-index: 1000;
-            overflow: hidden;
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-        
-        .messenger-widget.open {
-            transform: translateY(0);
-            opacity: 1;
-        }
-        
-        .messenger-header {
-            background-color: var(--primary);
-            color: white;
-            padding: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-        }
-        
-        .messenger-close {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-        
-        .messenger-friends {
-            padding: 0.5rem;
-            border-bottom: 1px solid var(--card-border);
-            max-height: 150px;
-            overflow-y: auto;
-        }
-        
-        .friend-item {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            padding: 0.8rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        
-        .friend-item:hover {
-            background-color: rgba(0, 0, 0, 0.05);
-        }
-        
-        .friend-avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #f6ad55, #e53e3e);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-        
-        .friend-info {
-            flex: 1;
-        }
-        
-        .friend-name {
-            font-weight: 600;
-        }
-        
-        .friend-status {
-            font-size: 0.8rem;
-            color: var(--text-light);
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-        
-        .online-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: #48bb78;
-        }
-        
-        .messenger-body {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .chat-header {
-            padding: 0.8rem 1rem;
-            border-bottom: 1px solid var(--card-border);
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-        
-        .chat-messages {
-            flex: 1;
-            padding: 1rem;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .message {
-            max-width: 80%;
-            padding: 0.8rem 1rem;
-            border-radius: 18px;
-            position: relative;
-        }
-        
-        .received {
-            background-color: var(--card-border);
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-        }
-        
-        .sent {
-            background-color: var(--secondary);
-            color: white;
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-        }
-        
-        .message-sender {
-            font-weight: 600;
-            margin-bottom: 0.3rem;
-            font-size: 0.9rem;
-        }
-        
-        .message-time {
-            font-size: 0.7rem;
-            opacity: 0.7;
-            text-align: right;
-            margin-top: 0.3rem;
-        }
-        
-        .chat-input {
-            display: flex;
-            padding: 1rem;
-            border-top: 1px solid var(--card-border);
-            background-color: var(--card-bg);
-        }
-        
-        .chat-input input {
-            flex: 1;
-            padding: 0.8rem;
-            border-radius: 20px;
-            border: 1px solid var(--card-border);
-            background-color: var(--card-bg);
-            color: var(--text);
-        }
-        
-        .chat-input button {
-            margin-left: 0.5rem;
-            padding: 0.8rem 1.5rem;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-        }
-        
-        .messenger-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: var(--shadow);
-            z-index: 999;
-        }
-        
-        .messenger-toggle .badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: var(--accent);
-            color: var(--dark);
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-        
-        /* Auth Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .modal-content {
-            background-color: var(--card-bg);
-            border-radius: 10px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-        
-        .modal-header {
-            padding: 1rem 1.5rem;
-            background-color: var(--primary);
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .modal-close {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-        
-        .modal-body {
-            padding: 1.5rem;
-        }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--text);
-        }
-        
-        .form-group input, 
-        .form-group textarea {
-            width: 100%;
-            padding: 0.8rem;
-            border-radius: 5px;
-            border: 1px solid var(--card-border);
-            background-color: var(--card-bg);
-            color: var(--text);
-        }
-        
-        .avatar-options {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .avatar-option {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: border-color 0.2s;
-        }
-        
-        .avatar-option:hover, .avatar-option.selected {
-            border-color: var(--accent);
-        }
-        
-        .modal-footer {
-            padding: 1rem 1.5rem;
-            background-color: rgba(0, 0, 0, 0.05);
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.5rem;
-        }
-        
-        .modal-btn {
-            padding: 0.7rem 1.5rem;
-            border-radius: 5px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        
-        .cancel-btn {
-            background-color: var(--text-light);
-            color: white;
-        }
-        
-        .save-btn {
-            background-color: var(--primary);
-            color: white;
-        }
-        
-        /* Auth Tabs */
-        .tabs {
-            display: flex;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid var(--card-border);
-        }
-        
-        .tab-btn {
-            padding: 0.8rem 1.5rem;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--text-light);
-            position: relative;
-        }
-        
-        .tab-btn.active {
-            color: var(--primary);
-        }
-        
-        .tab-btn.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background-color: var(--primary);
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        .auth-error {
-            color: #e53e3e;
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-            text-align: center;
-        }
-        
-        .divider {
-            text-align: center;
-            margin: 1.5rem 0;
-            position: relative;
-            color: var(--text-light);
-        }
-        
-        .divider::before, .divider::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            width: 40%;
-            height: 1px;
-            background-color: var(--card-border);
-        }
-        
-        .divider::before {
-            left: 0;
-        }
-        
-        .divider::after {
-            right: 0;
-        }
-        
-        /* Social Login Buttons */
-        .auth-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-            margin-top: 1.5rem;
-        }
-        
-        .auth-btn {
-            padding: 0.8rem 1rem;
-            border-radius: 5px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.8rem;
-            transition: opacity 0.2s;
-        }
-        
-        .auth-btn:hover {
-            opacity: 0.9;
-        }
-        
-        .google-btn {
-            background-color: #4285F4;
-            color: white;
-        }
-        
-        .facebook-btn {
-            background-color: #3b5998;
-            color: white;
-        }
-        
-        .email-btn {
-            background-color: var(--primary);
-            color: white;
-        }
-        
-        /* Responsive styles */
+        /* Responsive Design */
         @media (max-width: 1200px) {
-            .shop-sidebar {
-                display: none;
+            main {
+                flex-direction: column;
             }
             
-            .messenger-widget {
-                width: 300px;
-                height: 400px;
-            }
-        }
-
-        @media (max-width: 992px) {
-            .sidebar {
-                display: none;
-            }
-            
-            nav ul {
-                gap: 0.8rem;
-            }
-            
-            .search-container input {
-                width: 150px;
+            .sidebar, .shop-sidebar {
+                flex: none;
+                width: 100%;
             }
         }
 
@@ -1068,6 +1004,7 @@
             header {
                 flex-wrap: wrap;
                 gap: 1rem;
+                padding: 1rem;
             }
             
             .logo-container {
@@ -1082,6 +1019,7 @@
             nav ul {
                 justify-content: center;
                 flex-wrap: wrap;
+                gap: 0.5rem;
             }
             
             .header-actions {
@@ -1089,31 +1027,72 @@
             }
             
             .search-container input {
-                width: 120px;
+                width: 150px;
             }
             
-            .messenger-widget {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-                height: 70vh;
-                border-radius: 15px 15px 0 0;
+            .search-container input:focus {
+                width: 200px;
             }
-            
-            .messenger-toggle {
-                bottom: 80px;
+
+            main {
+                margin: 1rem auto;
+                padding: 0 1rem;
+            }
+
+            .messenger-panel {
+                width: calc(100vw - 40px);
+                right: -10px;
             }
         }
-        
+
         @media (max-width: 480px) {
-            .auth-buttons {
+            .stats {
                 flex-direction: column;
+                gap: 1rem;
             }
             
-            .messenger-widget {
-                height: 80vh;
+            .post-actions {
+                flex-direction: column;
+                gap: 0.5rem;
             }
+            
+            .post-actions-bar {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Smooth Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--text-light);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text);
         }
     </style>
 </head>
@@ -1121,7 +1100,7 @@
     <!-- Header -->
     <header>
         <div class="logo-container">
-            <img src="https://i.imgur.com/2MVmUnZ.png" alt="Hatake TCG Logo" class="logo-img">
+            <img src="https://i.imgur.com/B06rBhI.png" alt="Hatake TCG Logo" class="logo-img">
             <button class="dark-toggle" id="darkModeToggle">
                 <i class="fas fa-moon"></i>
             </button>
@@ -1141,157 +1120,145 @@
         <div class="header-actions">
             <div class="search-container">
                 <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search...">
+                <input type="text" placeholder="Search..." id="searchInput">
             </div>
             
             <div class="action-icons">
-                <div>
+                <div id="notificationsBtn">
                     <i class="fas fa-bell"></i>
                     <span class="badge">3</span>
                 </div>
-                <div>
+                <div id="messagesBtn">
                     <i class="fas fa-comment-alt"></i>
                     <span class="badge">5</span>
                 </div>
-                <div>
-                    <i class="fas fa-shopping-cart snipcart-checkout"></i>
-                    <span class="badge snipcart-items-count">2</span>
+                <div id="cartBtn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="badge">2</span>
                 </div>
             </div>
             
-            <div class="user-avatar" id="userAvatar">?</div>
+            <div class="user-avatar" id="userAvatar">EH</div>
         </div>
     </header>
 
     <!-- Main Content -->
     <main>
         <!-- Left Sidebar -->
-        <div class="sidebar">
+        <aside class="sidebar">
+            <!-- User Card -->
             <div class="card user-card">
                 <div class="cover-photo"></div>
-                <div class="profile-pic" id="profilePic">?</div>
-                <div class="user-name" id="profileName">Guest User</div>
-                <div class="user-bio" id="profileBio">Join our TCG community!</div>
-                
+                <div class="profile-pic">EH</div>
+                <div class="user-name">Ernst Hatake</div>
+                <div class="user-bio">TCG Enthusiast & Community Builder</div>
                 <div class="stats">
                     <div class="stat">
-                        <div class="stat-value" id="postCount">0</div>
-                        <div class="stat-label">Posts</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value" id="friendsCount">0</div>
+                        <div class="stat-value">1.2K</div>
                         <div class="stat-label">Friends</div>
                     </div>
                     <div class="stat">
-                        <div class="stat-value" id="groupsCount">0</div>
-                        <div class="stat-label">Decks</div>
+                        <div class="stat-value">856</div>
+                        <div class="stat-label">Posts</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">2.4K</div>
+                        <div class="stat-label">Cards</div>
                     </div>
                 </div>
-                
-                <button class="btn" id="editProfileBtn"><i class="fas fa-edit"></i> Edit Profile</button>
+                <button class="btn" id="editProfileBtn">
+                    <i class="fas fa-edit"></i>
+                    Edit Profile
+                </button>
             </div>
-            
+
+            <!-- Navigation Menu -->
             <div class="card">
-                <div class="card-title">Shortcuts</div>
-                <a href="groups.html" class="menu-item">
+                <div class="card-title">Quick Access</div>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-home"></i>
+                    <span>News Feed</span>
+                </a>
+                <a href="#" class="menu-item">
                     <i class="fas fa-users"></i>
-                    <span>Groups</span>
+                    <span>Friends</span>
                 </a>
-                <a href="marketplace.html" class="menu-item">
-                    <i class="fas fa-store"></i>
-                    <span>Marketplace</span>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-layer-group"></i>
+                    <span>My Collection</span>
                 </a>
-                <a href="events.html" class="menu-item">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>Events</span>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Trading</span>
                 </a>
-                <a href="deckbuilder.html" class="menu-item">
-                    <i class="fas fa-book"></i>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-trophy"></i>
+                    <span>Tournaments</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-hammer"></i>
                     <span>Deck Builder</span>
                 </a>
-                <a href="memories.html" class="menu-item">
-                    <i class="fas fa-history"></i>
-                    <span>Memories</span>
-                </a>
             </div>
-            
-            <div class="card">
-                <div class="card-title">Your Communities</div>
-                <a href="mtg_commander.html" class="menu-item">
-                    <i class="fas fa-dragon" style="color: #e53e3e;"></i>
-                    <span>MTG Commander</span>
-                </a>
-                <a href="pokemon_trading.html" class="menu-item">
-                    <i class="fas fa-bolt" style="color: #f6ad55;"></i>
-                    <span>Pokémon Trading</span>
-                </a>
-                <a href="yugioh_duelists.html" class="menu-item">
-                    <i class="fas fa-shield-alt" style="color: #48bb78;"></i>
-                    <span>Yu-Gi-Oh! Duelists</span>
-                </a>
-                <a href="communities.html" class="menu-item">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>Discover More</span>
-                </a>
-            </div>
-        </div>
-        
+        </aside>
+
         <!-- Main Feed -->
-        <div class="feed">
+        <section class="feed">
+            <!-- Create Post -->
             <div class="card create-post">
                 <div class="post-input">
-                    <div class="user-avatar" id="postAvatar">?</div>
-                    <input type="text" placeholder="What's on your mind?" id="postInput">
+                    <div class="profile-pic" style="width: 40px; height: 40px; margin: 0; font-size: 1rem;">EH</div>
+                    <input type="text" placeholder="What's on your mind, Ernst?" id="postInput">
                 </div>
-                
                 <div class="post-actions">
-                    <div class="post-action">
-                        <i class="fas fa-video" style="color: #e53e3e;"></i>
-                        <span>Live Video</span>
+                    <div class="post-action" id="photoAction">
+                        <i class="fas fa-image" style="color: #48bb78;"></i>
+                        <span>Photo</span>
                     </div>
-                    <div class="post-action">
-                        <i class="fas fa-images" style="color: #48bb78;"></i>
-                        <span>Photo/Video</span>
+                    <div class="post-action" id="cardAction">
+                        <i class="fas fa-id-card" style="color: #4299e1;"></i>
+                        <span>Card</span>
                     </div>
-                    <div class="post-action">
-                        <i class="fas fa-smile" style="color: #f6ad55;"></i>
-                        <span>Feeling/Activity</span>
+                    <div class="post-action" id="deckAction">
+                        <i class="fas fa-layer-group" style="color: #9f7aea;"></i>
+                        <span>Deck</span>
+                    </div>
+                    <div class="post-action" id="eventAction">
+                        <i class="fas fa-calendar" style="color: #f6ad55;"></i>
+                        <span>Event</span>
                     </div>
                 </div>
             </div>
-            
+
+            <!-- Sample Posts -->
             <div class="card post">
                 <div class="post-header">
-                    <div class="user-avatar" style="background: linear-gradient(135deg, #2b6cb0, #1a365d);">MS</div>
+                    <div class="post-avatar">MS</div>
                     <div>
                         <div class="post-user">Maria Sanchez</div>
-                        <div class="post-time">2 hrs ago · <i class="fas fa-globe-americas"></i></div>
+                        <div class="post-time">2 hours ago</div>
                     </div>
                 </div>
-                
                 <div class="post-content">
-                    Just pulled this amazing Charizard from a booster pack! So excited to add it to my collection 🔥
+                    Just pulled this amazing holographic card from the new set! The artwork is absolutely stunning. Anyone else having luck with these packs?
                 </div>
-                
                 <div class="post-image">
-                    <div style="background: linear-gradient(to right, #f6e05e, #f6ad55); height: 100%; display: flex; align-items: center; justify-content: center; color: #1a202c; font-size: 2rem;">
-                        <i class="fas fa-dragon"></i> Charizard Card
-                    </div>
+                    <i class="fas fa-image" style="font-size: 3rem;"></i>
+                    <span style="margin-left: 1rem;">Card Image</span>
                 </div>
-                
                 <div class="reactions">
-                    <div class="reaction" style="background-color: #2b6cb0;">👍</div>
-                    <div class="reaction" style="background-color: #e53e3e;">❤️</div>
-                    <span>42</span>
+                    <div class="reaction" style="background-color: #4267b2;">👍</div>
+                    <div class="reaction" style="background-color: #e1306c;">❤️</div>
+                    <div class="reaction" style="background-color: #f39c12;">😮</div>
+                    <span style="margin-left: 0.5rem; color: var(--text-light);">24 reactions</span>
                 </div>
-                
                 <div class="post-actions-bar">
                     <div class="post-action-btn">
-                        <i class="far fa-thumbs-up"></i>
+                        <i class="fas fa-thumbs-up"></i>
                         <span>Like</span>
                     </div>
                     <div class="post-action-btn">
-                        <i class="far fa-comment"></i>
+                        <i class="fas fa-comment"></i>
                         <span>Comment</span>
                     </div>
                     <div class="post-action-btn">
@@ -1300,39 +1267,30 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="card post">
                 <div class="post-header">
-                    <div class="user-avatar" style="background: linear-gradient(135deg, #48bb78, #2f855a);">TJ</div>
+                    <div class="post-avatar">TJ</div>
                     <div>
                         <div class="post-user">Thomas Johnson</div>
-                        <div class="post-time">5 hrs ago · <i class="fas fa-user-friends"></i></div>
+                        <div class="post-time">4 hours ago</div>
                     </div>
                 </div>
-                
                 <div class="post-content">
-                    Looking for advice on my new Commander deck. Any suggestions for improving the mana curve? Here's my current deck list:
+                    Looking for advice on my new deck build. I'm running a control strategy but struggling against aggro matchups. Any suggestions for sideboard cards?
                 </div>
-                
-                <div class="post-image">
-                    <div style="background: linear-gradient(to right, #48bb78, #2f855a); height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
-                        <i class="fas fa-scroll"></i> Deck List
-                    </div>
-                </div>
-                
                 <div class="reactions">
-                    <div class="reaction" style="background-color: #f6ad55;">🃏</div>
-                    <div class="reaction" style="background-color: #2b6cb0;">👍</div>
-                    <span>28</span>
+                    <div class="reaction" style="background-color: #4267b2;">👍</div>
+                    <div class="reaction" style="background-color: #f39c12;">🤔</div>
+                    <span style="margin-left: 0.5rem; color: var(--text-light);">12 reactions</span>
                 </div>
-                
                 <div class="post-actions-bar">
                     <div class="post-action-btn">
-                        <i class="far fa-thumbs-up"></i>
+                        <i class="fas fa-thumbs-up"></i>
                         <span>Like</span>
                     </div>
                     <div class="post-action-btn">
-                        <i class="far fa-comment"></i>
+                        <i class="fas fa-comment"></i>
                         <span>Comment</span>
                     </div>
                     <div class="post-action-btn">
@@ -1341,374 +1299,228 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Collection Tracking -->
-            <div class="card">
-                <div class="card-title">Your Card Collection</div>
-                <div style="padding: 1.5rem;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
-                        <div>
-                            <h3 style="margin-bottom: 0.5rem;">Total Cards: 1,245</h3>
-                            <div style="display: flex; gap: 1rem;">
-                                <div style="background-color: rgba(246, 173, 85, 0.2); padding: 0.5rem 1rem; border-radius: 8px;">
-                                    <div style="font-weight: 600;">Estimated Value</div>
-                                    <div style="color: var(--accent); font-weight: 700;">18,540 SEK</div>
-                                </div>
-                                <div style="background-color: rgba(66, 153, 225, 0.2); padding: 0.5rem 1rem; border-radius: 8px;">
-                                    <div style="font-weight: 600;">Top Cards</div>
-                                    <div style="color: var(--secondary); font-weight: 700;">Black Lotus</div>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="btn" style="width: auto; margin: 0;">
-                            <i class="fas fa-plus"></i> Add Cards
-                        </button>
+
+            <div class="card post">
+                <div class="post-header">
+                    <div class="post-avatar">AL</div>
+                    <div>
+                        <div class="post-user">Alex Liu</div>
+                        <div class="post-time">6 hours ago</div>
                     </div>
-                    
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
-                        <div style="background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 8px; aspect-ratio: 2/3; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
-                            <i class="fas fa-dragon"></i>
-                        </div>
-                        <div style="background: linear-gradient(135deg, #e53e3e, #c53030); border-radius: 8px; aspect-ratio: 2/3; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
-                            <i class="fas fa-fire"></i>
-                        </div>
-                        <div style="background: linear-gradient(135deg, #48bb78, #2f855a); border-radius: 8px; aspect-ratio: 2/3; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
-                            <i class="fas fa-leaf"></i>
-                        </div>
-                        <div style="background: linear-gradient(135deg, #f6ad55, #dd6b20); border-radius: 8px; aspect-ratio: 2/3; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
-                            <i class="fas fa-gem"></i>
-                        </div>
+                </div>
+                <div class="post-content">
+                    Tournament results are in! Congratulations to everyone who participated in today's Standard event. The meta is really evolving with these new cards. Can't wait for next week's Modern tournament!
+                </div>
+                <div class="reactions">
+                    <div class="reaction" style="background-color: #4267b2;">👍</div>
+                    <div class="reaction" style="background-color: #e1306c;">❤️</div>
+                    <div class="reaction" style="background-color: #f39c12;">🎉</div>
+                    <span style="margin-left: 0.5rem; color: var(--text-light);">31 reactions</span>
+                </div>
+                <div class="post-actions-bar">
+                    <div class="post-action-btn">
+                        <i class="fas fa-thumbs-up"></i>
+                        <span>Like</span>
+                    </div>
+                    <div class="post-action-btn">
+                        <i class="fas fa-comment"></i>
+                        <span>Comment</span>
+                    </div>
+                    <div class="post-action-btn">
+                        <i class="fas fa-share"></i>
+                        <span>Share</span>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <!-- Right Sidebar (Shop) -->
-        <div class="shop-sidebar">
+        </section>
+
+        <!-- Right Sidebar - Shop -->
+        <aside class="shop-sidebar">
             <div class="card">
                 <div class="card-title">Featured Products</div>
                 <div class="shop-container">
-                    <!-- Product 1 -->
                     <div class="product-card">
                         <div class="product-image">
-                            <i class="fas fa-box-open"></i>
+                            <i class="fas fa-shield-alt"></i>
                         </div>
                         <div class="product-info">
                             <div class="product-name">Matte Sleeves</div>
                             <div class="product-price">89 SEK</div>
-                            <div class="product-meta">100-pack • 66x91mm</div>
-                            <button class="snipcart-add-item"
-                                data-item-id="0.01"
-                                data-item-price="89.00"
-                                data-item-name="Matte Sleeves"
-                                data-item-description="Premium matte finish sleeves. Acid-free, tournament-ready, reduced glare."
-                                data-item-image=""
-                                data-item-url="/">
-                                Add to Cart
-                            </button>
+                            <div class="product-meta">Premium Protection</div>
+                            <button>Add to Cart</button>
                         </div>
                     </div>
                     
-                    <!-- Product 2 -->
                     <div class="product-card">
                         <div class="product-image">
                             <i class="fas fa-book"></i>
                         </div>
                         <div class="product-info">
-                            <div class="product-name">480-Slot Binder</div>
+                            <div class="product-name">Top-Loader Binder</div>
                             <div class="product-price">360 SEK</div>
-                            <div class="product-meta">Premium zippered binder</div>
-                            <button class="snipcart-add-item"
-                                data-item-id="0.02"
-                                data-item-price="360.00"
-                                data-item-name="480-Slot Binder"
-                                data-item-description="Premium zippered binder with side-loading pockets. 480 card capacity, Nordic design."
-                                data-item-image=""
-                                data-item-url="/">
-                                Add to Cart
-                            </button>
+                            <div class="product-meta">20 Pages, 12 Slots</div>
+                            <button>Add to Cart</button>
                         </div>
                     </div>
                     
-                    <!-- Product 3 -->
                     <div class="product-card">
                         <div class="product-image">
                             <i class="fas fa-box"></i>
                         </div>
                         <div class="product-info">
-                            <div class="product-name">35pt Top-Loaders</div>
-                            <div class="product-price">30 SEK</div>
-                            <div class="product-meta">25-pack • Crystal-clear</div>
-                            <button class="snipcart-add-item"
-                                data-item-id="0.031"
-                                data-item-price="30.00"
-                                data-item-name="35pt Top-Loaders"
-                                data-item-description="Crystal-clear protection. Rigid protection, precision-cut edges."
-                                data-item-image=""
-                                data-item-url="/">
-                                Add to Cart
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Product 4 -->
-                    <div class="product-card">
-                        <div class="product-image">
-                            <i class="fas fa-gem"></i>
-                        </div>
-                        <div class="product-info">
-                            <div class="product-name">PU DeckBox</div>
-                            <div class="product-price">300 SEK</div>
-                            <div class="product-meta">160+ card capacity</div>
-                            <button class="snipcart-add-item"
-                                data-item-id="0.4"
-                                data-item-price="300.00"
-                                data-item-name="PU DeckBox"
-                                data-item-description="Premium leather deckbox. Magnetic closure, separate compartments, embossed logo."
-                                data-item-image=""
-                                data-item-url="/">
-                                Add to Cart
-                            </button>
+                            <div class="product-name">PU Deck Box</div>
+                            <div class="product-price">250 SEK</div>
+                            <div class="product-meta">160+ Card Capacity</div>
+                            <button>Add to Cart</button>
                         </div>
                     </div>
                 </div>
             </div>
-            
+
+            <!-- Online Friends -->
             <div class="card">
-                <div class="card-title">Upcoming Events</div>
-                <a href="event_geekcon.html" class="menu-item">
-                    <i class="fas fa-calendar-day" style="color: #e53e3e;"></i>
-                    <div>
-                        <div style="font-weight: 600;">Need to be Geek Convention</div>
-                        <div style="font-size: 0.9rem; color: #718096;">Sept 27, 2025 • Skara</div>
-                    </div>
-                </a>
-                <a href="event_swecard.html" class="menu-item">
-                    <i class="fas fa-calendar-alt" style="color: #2b6cb0;"></i>
-                    <div>
-                        <div style="font-weight: 600;">SweCard Expo</div>
-                        <div style="font-size: 0.9rem; color: #718096;">Oct 11, 2025 • Svedala</div>
-                    </div>
-                </a>
-                <a href="event_local.html" class="menu-item">
-                    <i class="fas fa-calendar-check" style="color: #48bb78;"></i>
-                    <div>
-                        <div style="font-weight: 600;">Falköping Game Night</div>
-                        <div style="font-size: 0.9rem; color: #718096;">Every Friday • 18:00</div>
-                    </div>
-                </a>
-            </div>
-            
-            <!-- Friend Activity -->
-            <div class="card">
-                <div class="card-title">Friend Activity</div>
-                <div class="shop-container">
-                    <div class="friend-item">
-                        <div class="friend-avatar">MS</div>
-                        <div class="friend-info">
-                            <div class="friend-name">Maria Sanchez</div>
-                            <div class="friend-status">
-                                <span class="online-dot"></span> Online
-                            </div>
+                <div class="card-title">Online Friends</div>
+                <div style="padding: 1rem;">
+                    <div class="chat-item">
+                        <div class="chat-avatar">
+                            MS
+                            <div class="online-indicator"></div>
+                        </div>
+                        <div class="chat-info">
+                            <h4>Maria Sanchez</h4>
+                            <div class="chat-preview">Online</div>
                         </div>
                     </div>
-                    <div class="friend-item">
-                        <div class="friend-avatar">TJ</div>
-                        <div class="friend-info">
-                            <div class="friend-name">Thomas Johnson</div>
-                            <div class="friend-status">
-                                <span>Playing MTG</span>
-                            </div>
+                    <div class="chat-item">
+                        <div class="chat-avatar">
+                            TJ
+                            <div class="online-indicator"></div>
+                        </div>
+                        <div class="chat-info">
+                            <h4>Thomas Johnson</h4>
+                            <div class="chat-preview">Online</div>
                         </div>
                     </div>
-                    <div class="friend-item">
-                        <div class="friend-avatar">AK</div>
-                        <div class="friend-info">
-                            <div class="friend-name">Alex Kim</div>
-                            <div class="friend-status">
-                                <span>Added 5 new cards</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="friend-item">
-                        <div class="friend-avatar">RS</div>
-                        <div class="friend-info">
-                            <div class="friend-name">Ravi Singh</div>
-                            <div class="friend-status">
-                                <span>Posted a new deck</span>
-                            </div>
+                    <div class="chat-item">
+                        <div class="chat-avatar">AL</div>
+                        <div class="chat-info">
+                            <h4>Alex Liu</h4>
+                            <div class="chat-preview">Away</div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </aside>
     </main>
 
     <!-- Messenger Widget -->
-    <div class="messenger-toggle" id="messengerToggle">
-        <i class="fas fa-comments"></i>
-        <span class="badge">3</span>
-    </div>
-    
-    <div class="messenger-widget" id="messengerWidget">
-        <div class="messenger-header">
-            <span>Chat</span>
-            <button class="messenger-close" id="messengerClose">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
+    <div class="messenger-widget">
+        <button class="messenger-toggle" id="messengerToggle">
+            <i class="fas fa-comment-alt"></i>
+            <span class="messenger-badge">3</span>
+        </button>
         
-        <div class="messenger-friends">
-            <div class="friend-item">
-                <div class="friend-avatar">MS</div>
-                <div class="friend-info">
-                    <div class="friend-name">Maria Sanchez</div>
-                    <div class="friend-status">
-                        <span class="online-dot"></span> Online
+        <div class="messenger-panel" id="messengerPanel">
+            <div class="messenger-header">
+                <h3>Messages</h3>
+                <button class="messenger-close" id="messengerClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="messenger-content">
+                <div class="chat-item">
+                    <div class="chat-avatar">
+                        MS
+                        <div class="online-indicator"></div>
+                    </div>
+                    <div class="chat-info">
+                        <h4>Maria Sanchez</h4>
+                        <div class="chat-preview">Hey! Want to trade some cards?</div>
+                    </div>
+                    <div class="unread-badge">2</div>
+                </div>
+                <div class="chat-item">
+                    <div class="chat-avatar">TJ</div>
+                    <div class="chat-info">
+                        <h4>Thomas Johnson</h4>
+                        <div class="chat-preview">Thanks for the deck advice!</div>
+                    </div>
+                    <div class="unread-badge">1</div>
+                </div>
+                <div class="chat-item">
+                    <div class="chat-avatar">AL</div>
+                    <div class="chat-info">
+                        <h4>Alex Liu</h4>
+                        <div class="chat-preview">See you at the tournament!</div>
                     </div>
                 </div>
-            </div>
-            <div class="friend-item">
-                <div class="friend-avatar">TJ</div>
-                <div class="friend-info">
-                    <div class="friend-name">Thomas Johnson</div>
-                    <div class="friend-status">Active 10m ago</div>
-                </div>
-            </div>
-            <div class="friend-item">
-                <div class="friend-avatar">AK</div>
-                <div class="friend-info">
-                    <div class="friend-name">Alex Kim</div>
-                    <div class="friend-status">Active 1h ago</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="messenger-body">
-            <div class="chat-header">
-                <div class="friend-avatar">MS</div>
-                <div>
-                    <div class="friend-name">Maria Sanchez</div>
-                    <div class="friend-status">
-                        <span class="online-dot"></span> Online
-                    </div>
-                </div>
-            </div>
-            
-            <div class="chat-messages" id="chatMessages">
-                <div class="message received">
-                    <div class="message-sender">Maria Sanchez</div>
-                    <div>Anyone going to the tournament this weekend?</div>
-                    <div class="message-time">10:24 AM</div>
-                </div>
-                <div class="message sent">
-                    <div>I'll be there! Bringing my new Commander deck</div>
-                    <div class="message-time">10:26 AM</div>
-                </div>
-                <div class="message received">
-                    <div class="message-sender">Maria Sanchez</div>
-                    <div>Awesome! I have some cards to trade if you're interested</div>
-                    <div class="message-time">10:28 AM</div>
-                </div>
-            </div>
-            
-            <div class="chat-input">
-                <input type="text" placeholder="Type a message..." id="chatInput">
-                <button id="sendMessageBtn"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
 
-    <!-- Edit Profile Modal -->
-    <div class="modal" id="profileModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Edit Profile</h3>
-                <button class="modal-close" id="closeModal">&times;</button>
+    <!-- Authentication Modal -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-modal-content">
+            <span class="auth-close" id="authClose">&times;</span>
+            
+            <div class="auth-tabs">
+                <div class="auth-tab active" data-tab="login">Login</div>
+                <div class="auth-tab" data-tab="register">Register</div>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="editName">Display Name</label>
-                    <input type="text" id="editName" placeholder="Enter your name">
-                </div>
-                <div class="form-group">
-                    <label for="editBio">Bio</label>
-                    <textarea id="editBio" rows="3" placeholder="Tell us about yourself"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Profile Picture</label>
-                    <div class="avatar-options">
-                        <div class="avatar-option" style="background-color: #f6ad55;" data-avatar="1"></div>
-                        <div class="avatar-option" style="background-color: #2b6cb0;" data-avatar="2"></div>
-                        <div class="avatar-option" style="background-color: #48bb78;" data-avatar="3"></div>
-                        <div class="avatar-option" style="background-color: #e53e3e;" data-avatar="4"></div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Favorite Games</label>
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem;">
-                        <label style="display: flex; gap: 0.5rem; align-items: center; padding: 0.5rem; background: rgba(0,0,0,0.05); border-radius: 5px;">
-                            <input type="checkbox" name="games" value="mtg">
-                            <span>Magic: The Gathering</span>
-                        </label>
-                        <label style="display: flex; gap: 0.5rem; align-items: center; padding: 0.5rem; background: rgba(0,0,0,0.05); border-radius: 5px;">
-                            <input type="checkbox" name="games" value="pokemon">
-                            <span>Pokémon TCG</span>
-                        </label>
-                        <label style="display: flex; gap: 0.5rem; align-items: center; padding: 0.5rem; background: rgba(0,0,0,0.05); border-radius: 5px;">
-                            <input type="checkbox" name="games" value="yugioh">
-                            <span>Yu-Gi-Oh!</span>
-                        </label>
-                        <label style="display: flex; gap: 0.5rem; align-items: center; padding: 0.5rem; background: rgba(0,0,0,0.05); border-radius: 5px;">
-                            <input type="checkbox" name="games" value="flesh">
-                            <span>Flesh and Blood</span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="modal-btn cancel-btn" id="cancelEdit">Cancel</button>
-                <button class="modal-btn save-btn" id="saveProfile">Save Changes</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Auth Modal -->
-    <div class="modal" id="authModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Sign In</h3>
-                <button class="modal-close" id="closeAuthModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="auth-buttons">
-                    <button class="auth-btn google-btn" id="googleSignInBtn">
-                        <i class="fab fa-google"></i> Sign in with Google
-                    </button>
-                    <button class="auth-btn facebook-btn" id="facebookSignInBtn">
-                        <i class="fab fa-facebook-f"></i> Sign in with Facebook
-                    </button>
-                    <button class="auth-btn email-btn" id="emailSignInBtn">
-                        <i class="fas fa-envelope"></i> Sign in with Email
-                    </button>
-                </div>
-                
-                <div class="divider">or</div>
-                
+            
+            <!-- Login Form -->
+            <div id="loginForm" class="auth-form active">
                 <div class="form-group">
                     <label for="loginEmail">Email</label>
-                    <input type="email" id="loginEmail" placeholder="Enter your email">
+                    <input type="email" id="loginEmail" required>
                 </div>
                 <div class="form-group">
                     <label for="loginPassword">Password</label>
-                    <input type="password" id="loginPassword" placeholder="Enter your password">
+                    <input type="password" id="loginPassword" required>
                 </div>
-                <div id="loginError" class="auth-error"></div>
-                <button class="btn" id="loginBtn">Login</button>
+                <button class="auth-button" id="loginBtn">Login</button>
                 
-                <div style="text-align: center; margin-top: 1rem;">
-                    <a href="#" style="color: var(--secondary);">Forgot password?</a>
-                    <p style="margin-top: 0.5rem;">Don't have an account? <a href="#" style="color: var(--secondary);" id="showSignup">Sign up</a></p>
+                <div class="social-auth">
+                    <button class="social-btn google-btn" id="googleLoginBtn">
+                        <i class="fab fa-google"></i>
+                        Google
+                    </button>
+                    <button class="social-btn facebook-btn" id="facebookLoginBtn">
+                        <i class="fab fa-facebook-f"></i>
+                        Facebook
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Register Form -->
+            <div id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="registerName">Full Name</label>
+                    <input type="text" id="registerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" required>
+                </div>
+                <button class="auth-button" id="registerBtn">Register</button>
+                
+                <div class="social-auth">
+                    <button class="social-btn google-btn" id="googleRegisterBtn">
+                        <i class="fab fa-google"></i>
+                        Google
+                    </button>
+                    <button class="social-btn facebook-btn" id="facebookRegisterBtn">
+                        <i class="fab fa-facebook-f"></i>
+                        Facebook
+                    </button>
                 </div>
             </div>
         </div>
@@ -1718,414 +1530,425 @@
     <footer>
         <div class="footer-content">
             <div class="footer-section">
-                <div class="footer-title">About Hatake TCG</div>
-                <p>Hatake is a premium TCG accessories brand founded by passionate players who understand what collectors and competitors need.</p>
-                <p>This website was built by DeepSeek.</p>
+                <h3 class="footer-title">Hatake TCG</h3>
+                <p>Your premier destination for TCG community, trading, and premium accessories.</p>
                 <div class="social-links">
-                    <a href="https://www.facebook.com/HatakeCardShop/" class="social-link"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://discord.com/invite/Puq5ncSbjt" class="social-link"><i class="fab fa-discord"></i></a>
-                    <a href="https://instagram.com/hatakese" class="social-link"><i class="fab fa-instagram"></i></a>
-                    <a href="https://twitter.com" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
                 </div>
             </div>
-            
             <div class="footer-section">
-                <div class="footer-title">Quick Links</div>
+                <h3 class="footer-title">Quick Links</h3>
                 <ul class="footer-links">
                     <li><a href="index.html">Home</a></li>
                     <li><a href="shop.html">Shop</a></li>
                     <li><a href="events.html">Events</a></li>
                     <li><a href="community.html">Community</a></li>
-                    <li><a href="deckbuilder.html">Deck Builder</a></li>
+                    <li><a href="about.html">About</a></li>
                 </ul>
             </div>
-            
             <div class="footer-section">
-                <div class="footer-title">Products</div>
+                <h3 class="footer-title">Community</h3>
                 <ul class="footer-links">
-                    <li><a href="shop.html?category=sleeves">Sleeves & Protectors</a></li>
-                    <li><a href="shop.html?category=binders">Binders & Portfolios</a></li>
-                    <li><a href="shop.html?category=deckboxes">Deck Boxes</a></li>
-                    <li><a href="shop.html?category=playmats">Playmats</a></li>
-                    <li><a href="shop.html?category=bags">Bags & Accessories</a></li>
+                    <li><a href="#">Trading Hub</a></li>
+                    <li><a href="#">Deck Builder</a></li>
+                    <li><a href="#">Tournaments</a></li>
+                    <li><a href="#">Card Database</a></li>
+                    <li><a href="#">Forums</a></li>
                 </ul>
             </div>
-            
             <div class="footer-section">
-                <div class="footer-title">Contact Us</div>
+                <h3 class="footer-title">Support</h3>
                 <ul class="footer-links">
-                    <li><i class="fas fa-envelope"></i> ernst@hatake.eu</li>
-                    <li><i class="fas fa-phone"></i> +46 123 456 789</li>
-                    <li><i class="fas fa-map-marker-alt"></i> Falköping, Sweden</li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Shipping Info</a></li>
+                    <li><a href="#">Returns</a></li>
+                    <li><a href="#">FAQ</a></li>
                 </ul>
             </div>
         </div>
-        
         <div class="copyright">
-            &copy; 2025 Hatake TCG. All rights reserved.
+            <p>&copy; 2025 Hatake TCG. All rights reserved.</p>
         </div>
     </footer>
 
-    <!-- Snipcart Configuration -->
-    <div hidden id="snipcart" data-api-key="ZDJjNmYwNTUtMmUwOC00MjBlLTk3YmQtNWFhNGQzNzE1NzhkNjM4ODUwOTE1MzE1MDMxMzQ0" data-config-modal-style="side"></div>
-
     <script>
-        // Initialize Supabase
-        const supabaseUrl = 'https://llukovlzjhflfhacajps.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxsdWtvdmx6amhmbGZoY2FqcHMiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc1MDAwNjc3MiwiZXhwIjoyMDY1NTgyNzcyfQ.kbaftEOsGUriJOxMlTOFkXUGhLcKBaHwfVLG9S60gpU';
+        // Supabase Configuration
+        const supabaseUrl = 'https://llukovlzjhflhfhcajps.supabase.co/';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxsdWtvdmx6amhmbGhmaGNhanBzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAwMDY3NzIsImV4cCI6MjA2NTU4Mjc3Mn0.kbaftEOsGUriJOxMlTOFkXUGhLcKBaHwfVLG9S60gpU';
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-        
-        // DOM elements
+
+        // Global state
+        let currentUser = null;
+        let isAuthenticated = false;
+
+        // Dark Mode Toggle
         const darkModeToggle = document.getElementById('darkModeToggle');
         const body = document.body;
-        const userAvatar = document.getElementById('userAvatar');
-        const profilePic = document.getElementById('profilePic');
-        const profileName = document.getElementById('profileName');
-        const profileBio = document.getElementById('profileBio');
-        const editProfileBtn = document.getElementById('editProfileBtn');
-        const profileModal = document.getElementById('profileModal');
-        const closeModal = document.getElementById('closeModal');
-        const cancelEdit = document.getElementById('cancelEdit');
-        const saveProfile = document.getElementById('saveProfile');
-        const authModal = document.getElementById('authModal');
-        const closeAuthModal = document.getElementById('closeAuthModal');
-        const googleSignInBtn = document.getElementById('googleSignInBtn');
-        const facebookSignInBtn = document.getElementById('facebookSignInBtn');
-        const messengerToggle = document.getElementById('messengerToggle');
-        const messengerWidget = document.getElementById('messengerWidget');
-        const messengerClose = document.getElementById('messengerClose');
-        const chatInput = document.getElementById('chatInput');
-        const sendMessageBtn = document.getElementById('sendMessageBtn');
-        const chatMessages = document.getElementById('chatMessages');
-        const loginBtn = document.getElementById('loginBtn');
-        const loginEmail = document.getElementById('loginEmail');
-        const loginPassword = document.getElementById('loginPassword');
-        const loginError = document.getElementById('loginError');
-        const showSignup = document.getElementById('showSignup');
-        const postAvatar = document.getElementById('postAvatar');
         
-        // Initialize chatHistory
-        let chatHistory = [];
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        body.setAttribute('data-theme', currentTheme);
         
-        // Check for saved dark mode preference
-        function initDarkMode() {
-            // Check system preference
-            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            
-            // Check localStorage for existing preference
-            const storedDarkMode = localStorage.getItem('darkMode');
-            
-            if (storedDarkMode === null) {
-                // If no preference stored, use system preference
-                if (systemPrefersDark) {
-                    body.classList.add('dark-mode');
-                    darkModeToggle.querySelector('i').classList.remove('fa-moon');
-                    darkModeToggle.querySelector('i').classList.add('fa-sun');
-                    localStorage.setItem('darkMode', 'true');
-                }
-            } else if (storedDarkMode === 'true') {
-                body.classList.add('dark-mode');
-                darkModeToggle.querySelector('i').classList.remove('fa-moon');
-                darkModeToggle.querySelector('i').classList.add('fa-sun');
-            }
-        }
+        // Update toggle icon based on current theme
+        updateToggleIcon(currentTheme);
         
-        // Dark mode toggle
         darkModeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            const icon = darkModeToggle.querySelector('i');
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             
-            if (body.classList.contains('dark-mode')) {
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
-                localStorage.setItem('darkMode', 'true');
-            } else {
-                icon.classList.remove('fa-sun');
-                icon.classList.add('fa-moon');
-                localStorage.setItem('darkMode', 'false');
-            }
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateToggleIcon(newTheme);
         });
         
-        // Check authentication state
-        async function checkAuthState() {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (user) {
-                const { data: profile } = await supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', user.id)
-                    .single();
-                
-                if (profile) {
-                    localStorage.setItem('user', JSON.stringify(profile));
-                    updateProfileUI(profile);
-                } else {
-                    const newProfile = { id: user.id, name: user.email.split('@')[0], bio: "", avatar: 0 };
-                    const { error } = await supabase.from('profiles').insert([newProfile]);
-                    if (!error) {
-                        localStorage.setItem('user', JSON.stringify(newProfile));
-                        updateProfileUI(newProfile);
-                    }
-                }
+        function updateToggleIcon(theme) {
+            const icon = darkModeToggle.querySelector('i');
+            icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        // Authentication Modal
+        const authModal = document.getElementById('authModal');
+        const authClose = document.getElementById('authClose');
+        const authTabs = document.querySelectorAll('.auth-tab');
+        const authForms = document.querySelectorAll('.auth-form');
+        const userAvatar = document.getElementById('userAvatar');
+
+        // Show auth modal when user avatar is clicked and not authenticated
+        userAvatar.addEventListener('click', () => {
+            if (!isAuthenticated) {
+                authModal.style.display = 'block';
             } else {
-                updateProfileUI({ name: "Guest User", bio: "Join our TCG community!", avatar: 0 });
+                // Show user menu
+                showUserMenu();
+            }
+        });
+
+        // Close auth modal
+        authClose.addEventListener('click', () => {
+            authModal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === authModal) {
+                authModal.style.display = 'none';
+            }
+        });
+
+        // Auth tab switching
+        authTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.getAttribute('data-tab');
+                
+                // Remove active class from all tabs and forms
+                authTabs.forEach(t => t.classList.remove('active'));
+                authForms.forEach(f => f.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding form
+                tab.classList.add('active');
+                document.getElementById(tabName + 'Form').classList.add('active');
+            });
+        });
+
+        // Authentication functions
+        async function loginUser(email, password) {
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) throw error;
+                
+                currentUser = data.user;
+                isAuthenticated = true;
+                updateUIForAuthenticatedUser();
+                authModal.style.display = 'none';
+                
+                // Save login state
+                localStorage.setItem('isAuthenticated', 'true');
+                localStorage.setItem('userEmail', email);
+                
+                showNotification('Login successful!', 'success');
+            } catch (error) {
+                showNotification('Login failed: ' + error.message, 'error');
             }
         }
-        
-        // Update UI with user data
-        function updateProfileUI(user) {
-            profileName.textContent = user.name || "Guest User";
-            profileBio.textContent = user.bio || "Join our TCG community!";
-            
-            const avatarColors = ['#f6ad55', '#2b6cb0', '#48bb78', '#e53e3e'];
-            const avatarIndex = user.avatar || 0;
-            const avatarColor = avatarColors[avatarIndex];
-            
-            userAvatar.style.background = `linear-gradient(135deg, ${avatarColor}, ${darkenColor(avatarColor, 20)})`;
-            profilePic.style.background = `linear-gradient(135deg, ${avatarColor}, ${darkenColor(avatarColor, 20)})`;
-            postAvatar.style.background = `linear-gradient(135deg, ${avatarColor}, ${darkenColor(avatarColor, 20)})`;
-            
-            const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
-            userAvatar.textContent = initials;
-            profilePic.textContent = initials;
-            postAvatar.textContent = initials;
-            
-            document.getElementById('postCount').textContent = Math.floor(Math.random() * 100);
-            document.getElementById('friendsCount').textContent = Math.floor(Math.random() * 500);
-            document.getElementById('groupsCount').textContent = Math.floor(Math.random() * 20);
+
+        async function registerUser(name, email, password) {
+            try {
+                const { data, error } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            full_name: name
+                        }
+                    }
+                });
+                
+                if (error) throw error;
+                
+                showNotification('Registration successful! Please check your email for verification.', 'success');
+                
+                // Switch to login tab
+                document.querySelector('[data-tab="login"]').click();
+            } catch (error) {
+                showNotification('Registration failed: ' + error.message, 'error');
+            }
         }
-        
-        // Helper function to darken color
-        function darkenColor(color, percent) {
-            let R = parseInt(color.substring(1,3), 16);
-            let G = parseInt(color.substring(3,5), 16);
-            let B = parseInt(color.substring(5,7), 16);
-            
-            R = Math.floor(R * (100 - percent) / 100);
-            G = Math.floor(G * (100 - percent) / 100);
-            B = Math.floor(B * (100 - percent) / 100);
-            
-            return `#${R.toString(16).padStart(2, '0')}${G.toString(16).padStart(2, '0')}${B.toString(16).padStart(2, '0')}`;
-        }
-        
-        // Google Sign-In
-        async function signInWithGoogle() {
+
+        async function loginWithGoogle() {
             try {
                 const { data, error } = await supabase.auth.signInWithOAuth({
                     provider: 'google',
-                    options: { redirectTo: window.location.origin + '/index.html' }
+                    options: {
+                        redirectTo: window.location.origin
+                    }
                 });
+                
                 if (error) throw error;
             } catch (error) {
-                console.error('Error signing in:', error.message);
-                loginError.textContent = 'Failed to sign in with Google. Please try again.';
+                showNotification('Google login failed: ' + error.message, 'error');
             }
         }
-        
-        // Facebook Sign-In
-        async function signInWithFacebook() {
+
+        async function loginWithFacebook() {
             try {
                 const { data, error } = await supabase.auth.signInWithOAuth({
                     provider: 'facebook',
-                    options: { redirectTo: window.location.origin + '/index.html' }
+                    options: {
+                        redirectTo: window.location.origin
+                    }
                 });
+                
                 if (error) throw error;
             } catch (error) {
-                console.error('Error signing in:', error.message);
-                loginError.textContent = 'Failed to sign in with Facebook. Please try again.';
+                showNotification('Facebook login failed: ' + error.message, 'error');
             }
         }
-        
-        // Profile Modal
-        editProfileBtn.addEventListener('click', () => {
-            profileModal.style.display = 'flex';
-            const user = JSON.parse(localStorage.getItem('user')) || {};
-            document.getElementById('editName').value = user.name || '';
-            document.getElementById('editBio').value = user.bio || '';
-            
-            const avatarOptions = document.querySelectorAll('.avatar-option');
-            avatarOptions.forEach(option => {
-                option.classList.remove('selected');
-                if (parseInt(option.dataset.avatar) === user.avatar) {
-                    option.classList.add('selected');
-                }
-            });
-        });
-        
-        // Close modal
-        function closeProfileModal() {
-            profileModal.style.display = 'none';
+
+        function updateUIForAuthenticatedUser() {
+            // Update user avatar with user initials or photo
+            if (currentUser) {
+                const name = currentUser.user_metadata?.full_name || currentUser.email;
+                const initials = name.split(' ').map(n => n[0]).join('').toUpperCase();
+                userAvatar.textContent = initials;
+                userAvatar.style.cursor = 'pointer';
+            }
         }
-        
-        // Avatar selection
-        document.querySelectorAll('.avatar-option').forEach(option => {
-            option.addEventListener('click', () => {
-                document.querySelectorAll('.avatar-option').forEach(opt => opt.classList.remove('selected'));
-                option.classList.add('selected');
-            });
-        });
-        
-        // Save profile
-        saveProfile.addEventListener('click', async () => {
-            const name = document.getElementById('editName').value.trim();
-            const bio = document.getElementById('editBio').value.trim();
-            const selectedAvatar = document.querySelector('.avatar-option.selected');
-            const avatar = selectedAvatar ? parseInt(selectedAvatar.dataset.avatar) : 0;
+
+        function showUserMenu() {
+            // Simple user menu for now
+            const menu = confirm('User Menu\n\n1. Profile\n2. Settings\n3. Logout\n\nClick OK for logout, Cancel to close');
+            if (menu) {
+                logout();
+            }
+        }
+
+        async function logout() {
+            try {
+                const { error } = await supabase.auth.signOut();
+                if (error) throw error;
+                
+                currentUser = null;
+                isAuthenticated = false;
+                localStorage.removeItem('isAuthenticated');
+                localStorage.removeItem('userEmail');
+                
+                // Reset UI
+                userAvatar.textContent = 'EH';
+                showNotification('Logged out successfully!', 'success');
+            } catch (error) {
+                showNotification('Logout failed: ' + error.message, 'error');
+            }
+        }
+
+        function showNotification(message, type) {
+            // Simple notification system
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 3000;
+                animation: slideIn 0.3s ease-out;
+                background-color: ${type === 'success' ? '#48bb78' : '#e53e3e'};
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
             
-            if (!name) {
-                alert('Please enter a display name');
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Event listeners for auth forms
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (email && password) {
+                loginUser(email, password);
+            }
+        });
+
+        document.getElementById('registerBtn').addEventListener('click', () => {
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                showNotification('Passwords do not match!', 'error');
                 return;
             }
             
-            const { data: { user } } = await supabase.auth.getUser();
-            if (user) {
-                const { error } = await supabase
-                    .from('profiles')
-                    .update({ name, bio, avatar })
-                    .eq('id', user.id);
-                if (error) {
-                    console.error('Error updating profile:', error.message);
-                } else {
-                    const updatedProfile = { id: user.id, name, bio, avatar };
-                    localStorage.setItem('user', JSON.stringify(updatedProfile));
-                    updateProfileUI(updatedProfile);
-                    closeProfileModal();
-                }
+            if (name && email && password) {
+                registerUser(name, email, password);
             }
         });
+
+        // Social login buttons
+        document.getElementById('googleLoginBtn').addEventListener('click', loginWithGoogle);
+        document.getElementById('googleRegisterBtn').addEventListener('click', loginWithGoogle);
+        document.getElementById('facebookLoginBtn').addEventListener('click', loginWithFacebook);
+        document.getElementById('facebookRegisterBtn').addEventListener('click', loginWithFacebook);
+
+        // Messenger Widget
+        const messengerToggle = document.getElementById('messengerToggle');
+        const messengerPanel = document.getElementById('messengerPanel');
+        const messengerClose = document.getElementById('messengerClose');
         
-        // Messenger functionality
         messengerToggle.addEventListener('click', () => {
-            messengerWidget.classList.toggle('open');
+            messengerPanel.classList.toggle('active');
         });
         
         messengerClose.addEventListener('click', () => {
-            messengerWidget.classList.remove('open');
+            messengerPanel.classList.remove('active');
         });
         
-        // Add sample messages to chat
-        function loadChatMessages() {
-            chatMessages.innerHTML = '';
-            chatHistory.forEach(msg => {
-                const messageElement = document.createElement('div');
-                const isCurrentUser = msg.sender === "You";
-                messageElement.classList.add('message', isCurrentUser ? 'sent' : 'received');
+        // Close messenger when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!messengerToggle.contains(e.target) && !messengerPanel.contains(e.target)) {
+                messengerPanel.classList.remove('active');
+            }
+        });
+
+        // Other event handlers
+        document.getElementById('notificationsBtn').addEventListener('click', () => {
+            showNotification('Notifications feature coming soon!', 'success');
+        });
+        
+        document.getElementById('messagesBtn').addEventListener('click', () => {
+            messengerPanel.classList.toggle('active');
+        });
+        
+        document.getElementById('cartBtn').addEventListener('click', () => {
+            window.location.href = 'shop.html';
+        });
+
+        // Post creation
+        document.getElementById('postInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && e.target.value.trim()) {
+                createPost(e.target.value);
+                e.target.value = '';
+            }
+        });
+
+        function createPost(content) {
+            // Simple post creation simulation
+            showNotification('Post created successfully!', 'success');
+        }
+
+        // Check authentication state on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check if user was previously authenticated
+            const wasAuthenticated = localStorage.getItem('isAuthenticated');
+            
+            if (wasAuthenticated) {
+                // Check current session
+                const { data: { session } } = await supabase.auth.getSession();
                 
-                if (!isCurrentUser) {
-                    messageElement.innerHTML = `
-                        <div class="message-sender">${msg.sender}</div>
-                        <div>${msg.message}</div>
-                        <div class="message-time">${msg.time}</div>
-                    `;
+                if (session) {
+                    currentUser = session.user;
+                    isAuthenticated = true;
+                    updateUIForAuthenticatedUser();
                 } else {
-                    messageElement.innerHTML = `
-                        <div>${msg.message}</div>
-                        <div class="message-time">${msg.time}</div>
-                    `;
+                    // Clear stale auth state
+                    localStorage.removeItem('isAuthenticated');
+                    localStorage.removeItem('userEmail');
                 }
-                chatMessages.appendChild(messageElement);
+            }
+            
+            // Listen for auth state changes
+            supabase.auth.onAuthStateChange((event, session) => {
+                if (event === 'SIGNED_IN' && session) {
+                    currentUser = session.user;
+                    isAuthenticated = true;
+                    updateUIForAuthenticatedUser();
+                    localStorage.setItem('isAuthenticated', 'true');
+                } else if (event === 'SIGNED_OUT') {
+                    currentUser = null;
+                    isAuthenticated = false;
+                    localStorage.removeItem('isAuthenticated');
+                    localStorage.removeItem('userEmail');
+                    userAvatar.textContent = 'EH';
+                }
             });
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+        });
+
+        // Auto-detect system theme preference
+        if (window.matchMedia && !localStorage.getItem('theme')) {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = prefersDark ? 'dark' : 'light';
+            body.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            updateToggleIcon(theme);
         }
         
-        // Add a new message to chat
-        function addMessage(message, sender) {
-            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            chatHistory.push({ sender, message, time });
-            loadChatMessages();
-        }
-        
-        sendMessageBtn.addEventListener('click', () => {
-            const message = chatInput.value.trim();
-            if (message) {
-                addMessage(message, "You");
-                chatInput.value = '';
-                
-                // Add a simulated response after a short delay
-                setTimeout(() => {
-                    const responses = [
-                        "That's great to hear!",
-                        "I'll be there too!",
-                        "What deck are you bringing?",
-                        "I have some cards to trade if you're interested",
-                        "Looking forward to seeing everyone!"
-                    ];
-                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                    addMessage(randomResponse, "Maria Sanchez");
-                }, 1000);
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (!localStorage.getItem('theme')) {
+                const theme = e.matches ? 'dark' : 'light';
+                body.setAttribute('data-theme', theme);
+                updateToggleIcon(theme);
             }
         });
-        
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendMessageBtn.click();
-            }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            // Implement search logic here
+            console.log('Searching for:', query);
         });
-        
-        // Initial chat messages
-        chatHistory = [
-            { sender: "Maria Sanchez", message: "Anyone going to the tournament this weekend?", time: "10:24 AM" },
-            { sender: "You", message: "I'll be there! Bringing my new Commander deck", time: "10:26 AM" },
-            { sender: "Maria Sanchez", message: "Awesome! I have some cards to trade if you're interested", time: "10:28 AM" }
-        ];
-        loadChatMessages();
-        
-        // Login with Email
-        async function loginWithEmail() {
-            const email = loginEmail.value.trim();
-            const password = loginPassword.value.trim();
-            
-            if (!email || !password) {
-                loginError.textContent = 'Please fill in all fields';
-                return;
-            }
-            
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-            if (error) {
-                loginError.textContent = error.message;
-            } else {
-                checkAuthState();
-                authModal.style.display = 'none';
-            }
-        }
-        
-        // Event listeners
-        closeModal.addEventListener('click', closeProfileModal);
-        cancelEdit.addEventListener('click', closeProfileModal);
-        googleSignInBtn.addEventListener('click', signInWithGoogle);
-        facebookSignInBtn.addEventListener('click', signInWithFacebook);
-        loginBtn.addEventListener('click', loginWithEmail);
-        userAvatar.addEventListener('click', () => {
-            authModal.style.display = 'flex';
+
+        // Add loading states to buttons
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (!this.classList.contains('loading') && !this.id.includes('Toggle') && !this.id.includes('Close')) {
+                    const originalText = this.innerHTML;
+                    this.classList.add('loading');
+                    this.innerHTML = '<span class="loading"></span>';
+                    
+                    setTimeout(() => {
+                        this.classList.remove('loading');
+                        this.innerHTML = originalText;
+                    }, 1000);
+                }
+            });
         });
-        closeAuthModal.addEventListener('click', () => {
-            authModal.style.display = 'none';
-            loginError.textContent = '';
-        });
-        showSignup.addEventListener('click', (e) => {
-            e.preventDefault();
-            loginError.textContent = 'Signup functionality coming soon!';
-        });
-        
-        // Close modals when clicking outside
-        window.addEventListener('click', (e) => {
-            if (e.target === profileModal) closeProfileModal();
-            if (e.target === authModal) {
-                authModal.style.display = 'none';
-                loginError.textContent = '';
-            }
-        });
-        
-        // Initialize page
-        initDarkMode();
-        checkAuthState();
-        
-        // Simulate cart items
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                document.querySelector('.snipcart-items-count').textContent = '2';
-            }, 1000);
-        });
+
+        console.log('HatakeSocial Platform Loaded');
     </script>
 </body>
 </html>
+
