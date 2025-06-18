@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hatake TCG - Community Platform</title>
+    <title>Hatake TCG - Community</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -18,25 +18,23 @@
             --text: #2d3748;
             --text-light: #718096;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --dark-primary: #2d3748;
-            --dark-secondary: #4a5568;
-            --dark-card-bg: #2d3748;
-            --dark-card-border: #4a5568;
-            --dark-text: #e2e8f0;
-            --dark-text-light: #a0aec0;
-            --dark-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+            --success: #48bb78;
+            --warning: #ed8936;
+            --error: #e53e3e;
+            --info: #4299e1;
         }
 
-        .dark-mode {
-            --primary: var(--dark-primary);
-            --secondary: var(--dark-secondary);
-            --light: var(--dark);
-            --dark: var(--light);
-            --card-bg: var(--dark-card-bg);
-            --card-border: var(--dark-card-border);
-            --text: var(--dark-text);
-            --text-light: var(--dark-text-light);
-            --shadow: var(--dark-shadow);
+        [data-theme="dark"] {
+            --primary: #4a5568;
+            --secondary: #2d3748;
+            --accent: #f6ad55;
+            --light: #1a202c;
+            --dark: #f7fafc;
+            --card-bg: #2d3748;
+            --card-border: #4a5568;
+            --text: #e2e8f0;
+            --text-light: #a0aec0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
         }
 
         * {
@@ -44,28 +42,26 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
         }
 
         body {
             background-color: var(--light);
             color: var(--text);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            transition: all 0.3s ease;
         }
 
         /* Header Styles */
         header {
             background-color: var(--primary);
             color: white;
-            padding: 0.8rem 1.5rem;
+            padding: 1rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
             box-shadow: var(--shadow);
         }
 
@@ -80,6 +76,21 @@
             width: auto;
         }
 
+        .dark-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        .dark-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
         nav ul {
             display: flex;
             list-style: none;
@@ -90,13 +101,17 @@
             color: white;
             text-decoration: none;
             font-weight: 500;
-            padding: 0.5rem;
-            border-radius: 4px;
-            transition: background-color 0.2s;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         nav a:hover, nav a.active {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
         }
 
         .header-actions {
@@ -111,11 +126,18 @@
 
         .search-container input {
             padding: 0.5rem 1rem 0.5rem 2.5rem;
-            border-radius: 20px;
+            border-radius: 25px;
             border: none;
             background-color: rgba(255, 255, 255, 0.2);
             color: white;
-            width: 200px;
+            width: 250px;
+            transition: all 0.3s;
+        }
+
+        .search-container input:focus {
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.3);
+            width: 300px;
         }
 
         .search-container input::placeholder {
@@ -138,12 +160,19 @@
         .action-icons div {
             position: relative;
             cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        .action-icons div:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
         .action-icons .badge {
             position: absolute;
-            top: -5px;
-            right: -5px;
+            top: -2px;
+            right: -2px;
             background-color: var(--accent);
             color: var(--dark);
             border-radius: 50%;
@@ -154,6 +183,13 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
         .user-avatar {
@@ -167,383 +203,615 @@
             color: white;
             font-weight: bold;
             cursor: pointer;
-            background-size: cover;
-            background-position: center;
-        }
-        
-        /* Platform Analytics Dashboard */
-        .dashboard {
-            max-width: 1400px;
-            margin: 2rem auto;
-            padding: 0 1.5rem;
-        }
-        
-        .dashboard-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .dashboard-header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            color: var(--primary);
-        }
-        
-        .dashboard-header p {
-            color: var(--text-light);
-            max-width: 800px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-        
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-        
-        .dashboard-card {
-            background-color: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-            padding: 1.5rem;
-            border: 1px solid var(--card-border);
-        }
-        
-        .dashboard-card h3 {
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--primary);
-        }
-        
-        .card-content {
-            padding: 1rem 0;
-        }
-        
-        .metric {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.8rem 0;
-            border-bottom: 1px solid var(--card-border);
-        }
-        
-        .metric:last-child {
-            border-bottom: none;
-        }
-        
-        .metric-value {
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-        
-        .metric-label {
-            color: var(--text-light);
-        }
-        
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-        
-        .feature-card {
-            background-color: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-            padding: 1.5rem;
-            border: 1px solid var(--card-border);
             transition: transform 0.3s;
         }
-        
-        .feature-card:hover {
-            transform: translateY(-5px);
+
+        .user-avatar:hover {
+            transform: scale(1.1);
         }
-        
-        .feature-card h3 {
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--primary);
+
+        /* Main Content Layout */
+        .main-container {
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            gap: 1.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            min-height: calc(100vh - 80px);
         }
-        
-        .feature-list {
-            list-style: none;
-        }
-        
-        .feature-list li {
-            padding: 0.7rem 0;
-            border-bottom: 1px solid var(--card-border);
-            display: flex;
-            align-items: flex-start;
-            gap: 0.7rem;
-        }
-        
-        .feature-list li:last-child {
-            border-bottom: none;
-        }
-        
-        .feature-list li i {
-            color: var(--accent);
-            margin-top: 3px;
-        }
-        
-        .roadmap {
-            margin-bottom: 3rem;
-        }
-        
-        .roadmap-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .roadmap-header h2 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            color: var(--primary);
-        }
-        
-        .phase-container {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-        
-        .phase {
+
+        /* Sidebar Styles */
+        .sidebar {
             background-color: var(--card-bg);
-            border-radius: 10px;
+            border-radius: 12px;
             box-shadow: var(--shadow);
             padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
             border: 1px solid var(--card-border);
+        }
+
+        .profile-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f6ad55, #e53e3e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0 auto 1rem;
             position: relative;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .profile-avatar:hover {
+            transform: scale(1.05);
+        }
+
+        .online-indicator {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 16px;
+            height: 16px;
+            background-color: var(--success);
+            border-radius: 50%;
+            border: 2px solid var(--card-bg);
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 1rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .edit-profile-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 1rem;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .edit-profile-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .shortcuts {
+            margin-bottom: 2rem;
+        }
+
+        .shortcuts h3 {
+            margin-bottom: 1rem;
+            color: var(--text);
+            font-size: 1.1rem;
+        }
+
+        .shortcut-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .shortcut-item:hover {
+            background-color: rgba(246, 173, 85, 0.1);
+            transform: translateX(5px);
+        }
+
+        .shortcut-item i {
+            color: var(--accent);
+            width: 20px;
+        }
+
+        .shortcut-badge {
+            position: absolute;
+            right: 0.5rem;
+            background-color: var(--accent);
+            color: var(--dark);
+            border-radius: 12px;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        /* Main Feed */
+        .main-feed {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--card-border);
             overflow: hidden;
         }
-        
-        .phase-header {
+
+        .feed-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--card-border);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-align: center;
+        }
+
+        .feed-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feed-header p {
+            opacity: 0.9;
+        }
+
+        .post-composer {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .composer-input {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .composer-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f6ad55, #e53e3e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .composer-input input {
+            flex: 1;
+            padding: 1rem;
+            border: 1px solid var(--card-border);
+            border-radius: 25px;
+            background-color: var(--light);
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .composer-input input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .composer-actions {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--card-border);
+            margin-left: 66px;
         }
-        
-        .phase-title {
-            font-size: 1.5rem;
-            color: var(--primary);
+
+        .composer-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .composer-btn {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            background: none;
+            color: var(--text-light);
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s;
         }
-        
-        .phase-priority {
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
+
+        .composer-btn:hover {
+            background-color: rgba(246, 173, 85, 0.1);
+            color: var(--accent);
+        }
+
+        .post-btn {
+            background: linear-gradient(135deg, var(--accent), #e53e3e);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
             font-weight: 600;
+            transition: all 0.3s;
         }
-        
-        .priority-critical {
-            background-color: rgba(229, 62, 62, 0.2);
-            color: #e53e3e;
+
+        .post-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
         }
-        
-        .priority-high {
-            background-color: rgba(246, 173, 85, 0.2);
-            color: #f6ad55;
+
+        .feed-content {
+            max-height: 600px;
+            overflow-y: auto;
         }
-        
-        .priority-medium {
-            background-color: rgba(66, 153, 225, 0.2);
-            color: #4299e1;
+
+        .post {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--card-border);
+            transition: background-color 0.3s;
         }
-        
-        .phase-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
+
+        .post:hover {
+            background-color: rgba(246, 173, 85, 0.05);
         }
-        
-        .feature-item {
-            padding: 1rem;
-            border-radius: 8px;
-            background-color: rgba(0, 0, 0, 0.03);
-            border-left: 4px solid var(--accent);
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
         }
-        
-        .feature-item h4 {
-            margin-bottom: 0.5rem;
+
+        .post-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4299e1, #9f7aea);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .post-info h4 {
             color: var(--text);
+            margin-bottom: 0.2rem;
         }
-        
-        .feature-item p {
+
+        .post-time {
             color: var(--text-light);
             font-size: 0.9rem;
         }
-        
-        .metrics-section {
-            margin-bottom: 3rem;
+
+        .post-content {
+            margin-bottom: 1rem;
+            line-height: 1.6;
         }
-        
-        .metrics-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .metrics-header h2 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            color: var(--primary);
-        }
-        
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .metric-card {
-            background-color: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-            padding: 1.5rem;
-            border: 1px solid var(--card-border);
-            text-align: center;
-            transition: transform 0.3s;
-        }
-        
-        .metric-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .metric-value-lg {
-            font-size: 2.5rem;
-            font-weight: 700;
+
+        .post-image {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
             margin: 1rem 0;
-            color: var(--primary);
         }
-        
-        .metric-label-lg {
+
+        .post-actions {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .post-action {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             color: var(--text-light);
-            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.3s;
         }
-        
-        .metric-target {
-            margin-top: 0.5rem;
-            font-weight: 600;
+
+        .post-action:hover {
+            background-color: rgba(246, 173, 85, 0.1);
             color: var(--accent);
         }
-        
-        .monetization-section {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 3rem 2rem;
-            border-radius: 10px;
-            margin-bottom: 3rem;
+
+        .post-action.liked {
+            color: var(--error);
         }
-        
-        .monetization-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .monetization-header h2 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .monetization-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+
+        /* Right Sidebar */
+        .right-sidebar {
+            display: flex;
+            flex-direction: column;
             gap: 1.5rem;
         }
-        
-        .monetization-card {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 1.5rem;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+
+        .widget {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--card-border);
+            overflow: hidden;
         }
-        
-        .monetization-card h3 {
-            margin-bottom: 1rem;
+
+        .widget-header {
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
-        
-        .monetization-list {
-            list-style: none;
-        }
-        
-        .monetization-list li {
-            padding: 0.7rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: flex-start;
-            gap: 0.7rem;
-        }
-        
-        .monetization-list li:last-child {
-            border-bottom: none;
-        }
-        
-        .monetization-list li i {
-            margin-top: 3px;
-        }
-        
-        .conclusion-section {
-            background-color: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-            padding: 2.5rem;
-            border: 1px solid var(--card-border);
-            margin-bottom: 3rem;
-        }
-        
-        .conclusion-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .conclusion-header h2 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            color: var(--primary);
-        }
-        
-        .success-factors {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-        
-        .factor-card {
-            background-color: rgba(246, 173, 85, 0.1);
-            border-radius: 8px;
+
+        .widget-content {
             padding: 1.5rem;
-            border-left: 4px solid var(--accent);
         }
-        
-        .factor-card h4 {
+
+        .community-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
             margin-bottom: 0.5rem;
-            color: var(--primary);
         }
-        
-        /* Responsive styles */
+
+        .community-item:hover {
+            background-color: rgba(246, 173, 85, 0.1);
+        }
+
+        .community-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent), #e53e3e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .community-info h4 {
+            color: var(--text);
+            margin-bottom: 0.2rem;
+        }
+
+        .community-members {
+            color: var(--text-light);
+            font-size: 0.8rem;
+        }
+
+        .online-friends {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .friend-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 0.5rem;
+        }
+
+        .friend-item:hover {
+            background-color: rgba(246, 173, 85, 0.1);
+        }
+
+        .friend-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4299e1, #9f7aea);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .friend-status {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 12px;
+            height: 12px;
+            background-color: var(--success);
+            border-radius: 50%;
+            border: 2px solid var(--card-bg);
+        }
+
+        /* Messenger Widget */
+        .messenger-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .messenger-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), #e53e3e);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .messenger-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .messenger-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--error);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .messenger-panel {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 350px;
+            height: 500px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--card-border);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .messenger-panel.active {
+            display: flex;
+        }
+
+        .messenger-header {
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .messenger-close {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .messenger-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 0.5rem;
+        }
+
+        .chat-item:hover {
+            background-color: rgba(246, 173, 85, 0.1);
+        }
+
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4299e1, #9f7aea);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .chat-info h4 {
+            color: var(--text);
+            margin-bottom: 0.2rem;
+        }
+
+        .chat-preview {
+            color: var(--text-light);
+            font-size: 0.8rem;
+        }
+
+        .unread-badge {
+            background-color: var(--accent);
+            color: var(--dark);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-left: auto;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 250px 1fr 280px;
+            }
+        }
+
         @media (max-width: 992px) {
-            .dashboard-grid, .feature-grid, .metrics-grid, .monetization-grid {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            .main-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
             }
             
-            .phase-content {
-                grid-template-columns: 1fr;
+            .sidebar, .right-sidebar {
+                position: static;
+                order: 2;
+            }
+            
+            .main-feed {
+                order: 1;
             }
         }
 
@@ -551,6 +819,7 @@
             header {
                 flex-wrap: wrap;
                 gap: 1rem;
+                padding: 1rem;
             }
             
             .logo-container {
@@ -565,6 +834,7 @@
             nav ul {
                 justify-content: center;
                 flex-wrap: wrap;
+                gap: 0.5rem;
             }
             
             .header-actions {
@@ -572,18 +842,80 @@
             }
             
             .search-container input {
-                width: 120px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .dashboard-grid, .feature-grid, .metrics-grid, .monetization-grid {
-                grid-template-columns: 1fr;
+                width: 150px;
             }
             
-            .dashboard-header h1 {
-                font-size: 2rem;
+            .search-container input:focus {
+                width: 200px;
             }
+            
+            .main-container {
+                padding: 1rem;
+            }
+            
+            .messenger-panel {
+                width: 300px;
+                height: 400px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 0.5rem;
+            }
+            
+            .sidebar, .widget {
+                margin: 0;
+            }
+            
+            .composer-actions {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+                margin-left: 0;
+            }
+            
+            .composer-buttons {
+                justify-content: center;
+            }
+            
+            .messenger-panel {
+                width: calc(100vw - 40px);
+                right: -10px;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Smooth Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--text-light);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text);
         }
     </style>
 </head>
@@ -611,465 +943,619 @@
         <div class="header-actions">
             <div class="search-container">
                 <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search communities...">
+                <input type="text" placeholder="Search communities..." id="searchInput">
             </div>
             
             <div class="action-icons">
-                <div>
+                <div id="notificationsBtn">
                     <i class="fas fa-bell"></i>
                     <span class="badge">3</span>
                 </div>
-                <div>
+                <div id="messagesBtn">
                     <i class="fas fa-comment-alt"></i>
                     <span class="badge">5</span>
                 </div>
-                <div>
+                <div id="cartBtn">
                     <i class="fas fa-shopping-cart"></i>
                     <span class="badge">2</span>
                 </div>
             </div>
             
-            <div class="user-avatar" id="userAvatar">?</div>
+            <div class="user-avatar" id="userAvatar">EH</div>
         </div>
     </header>
 
-    <!-- Platform Analysis & Recommendations -->
-    <div class="dashboard">
-        <div class="dashboard-header">
-            <h1>HatakeSocial Platform Analysis & Recommendations</h1>
-            <p>Transforming HatakeSocial into the premier TCG-focused social platform for collectors and players worldwide</p>
-        </div>
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="profile-section">
+                <div class="profile-avatar">
+                    EH
+                    <div class="online-indicator"></div>
+                </div>
+                <h3>Ernst-William Hertz</h3>
+                <p>MTG Commander Player • Founder</p>
+                <div class="profile-stats">
+                    <div class="stat">
+                        <div class="stat-number">92</div>
+                        <div class="stat-label">Posts</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">171</div>
+                        <div class="stat-label">Friends</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">16</div>
+                        <div class="stat-label">Groups</div>
+                    </div>
+                </div>
+                <button class="edit-profile-btn">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </button>
+            </div>
+
+            <div class="shortcuts">
+                <h3>Shortcuts</h3>
+                <div class="shortcut-item">
+                    <i class="fas fa-users"></i>
+                    <span>Groups</span>
+                    <span class="shortcut-badge">10</span>
+                </div>
+                <div class="shortcut-item">
+                    <i class="fas fa-store"></i>
+                    <span>Marketplace</span>
+                    <span class="shortcut-badge">11</span>
+                </div>
+                <div class="shortcut-item">
+                    <i class="fas fa-calendar"></i>
+                    <span>Events</span>
+                    <span class="shortcut-badge">12</span>
+                </div>
+                <div class="shortcut-item">
+                    <i class="fas fa-layer-group"></i>
+                    <span>Deck Builder</span>
+                    <span class="shortcut-badge">13</span>
+                </div>
+                <div class="shortcut-item">
+                    <i class="fas fa-clock"></i>
+                    <span>Memories</span>
+                    <span class="shortcut-badge">14</span>
+                </div>
+            </div>
+
+            <div class="shortcuts">
+                <h3>Your Communities</h3>
+                <div class="shortcut-item">
+                    <i class="fas fa-dragon"></i>
+                    <span>MTG Commander</span>
+                    <span class="shortcut-badge">15</span>
+                </div>
+                <div class="shortcut-item">
+                    <i class="fas fa-bolt"></i>
+                    <span>Pokémon Trading</span>
+                    <span class="shortcut-badge">16</span>
+                </div>
+                <div class="shortcut-item">
+                    <i class="fas fa-eye"></i>
+                    <span>Yu-Gi-Oh! Duelists</span>
+                    <span class="shortcut-badge">17</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Feed -->
+        <main class="main-feed">
+            <div class="feed-header">
+                <h1>Join the Hatake TCG Community</h1>
+                <p>Connect with fellow TCG enthusiasts, share strategies, trade cards, and participate in events</p>
+            </div>
+
+            <div class="post-composer">
+                <div class="composer-input">
+                    <div class="composer-avatar">EH</div>
+                    <input type="text" placeholder="What's on your mind, Ernst-William?" id="postInput">
+                </div>
+                <div class="composer-actions">
+                    <div class="composer-buttons">
+                        <button class="composer-btn">
+                            <i class="fas fa-video"></i> Live Video
+                        </button>
+                        <button class="composer-btn">
+                            <i class="fas fa-photo-video"></i> Photo/Video
+                        </button>
+                        <button class="composer-btn">
+                            <i class="fas fa-smile"></i> Feeling/Activity
+                        </button>
+                    </div>
+                    <button class="post-btn" id="postBtn">Post</button>
+                </div>
+            </div>
+
+            <div class="feed-content" id="feedContent">
+                <!-- Sample Posts -->
+                <div class="post">
+                    <div class="post-header">
+                        <div class="post-avatar">MS</div>
+                        <div class="post-info">
+                            <h4>Maria Sanchez</h4>
+                            <div class="post-time">2 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        Just pulled this amazing Charizard from a booster pack! So excited to add it to my collection 🔥
+                        <img src="https://images.pokemontcg.io/base1/4_hires.png" alt="Charizard Card" class="post-image">
+                    </div>
+                    <div class="post-actions">
+                        <div class="post-action">
+                            <i class="fas fa-heart"></i>
+                            <span>42</span>
+                        </div>
+                        <div class="post-action">
+                            <i class="fas fa-comment"></i>
+                            <span>Comment</span>
+                        </div>
+                        <div class="post-action">
+                            <i class="fas fa-share"></i>
+                            <span>Share</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="post">
+                    <div class="post-header">
+                        <div class="post-avatar">TJ</div>
+                        <div class="post-info">
+                            <h4>Thomas Johnson</h4>
+                            <div class="post-time">5 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        Looking for advice on my new Commander deck. Any suggestions for improving the mana curve? Here's my current deck list:
+                        <div style="background: var(--light); padding: 1rem; border-radius: 8px; margin: 1rem 0; text-align: center; color: var(--text-light);">
+                            <i class="fas fa-layer-group fa-2x"></i>
+                            <p>Deck List</p>
+                        </div>
+                    </div>
+                    <div class="post-actions">
+                        <div class="post-action">
+                            <i class="fas fa-heart"></i>
+                            <span>28</span>
+                        </div>
+                        <div class="post-action">
+                            <i class="fas fa-comment"></i>
+                            <span>Comment</span>
+                        </div>
+                        <div class="post-action">
+                            <i class="fas fa-share"></i>
+                            <span>Share</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="post">
+                    <div class="post-header">
+                        <div class="post-avatar">AL</div>
+                        <div class="post-info">
+                            <h4>Alex Liu</h4>
+                            <div class="post-time">1 day ago</div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        Excited for the upcoming tournament this weekend! Who else is participating? Let's meet up and trade some cards! 🎯
+                    </div>
+                    <div class="post-actions">
+                        <div class="post-action">
+                            <i class="fas fa-heart"></i>
+                            <span>15</span>
+                        </div>
+                        <div class="post-action">
+                            <i class="fas fa-comment"></i>
+                            <span>Comment</span>
+                        </div>
+                        <div class="post-action">
+                            <i class="fas fa-share"></i>
+                            <span>Share</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="right-sidebar">
+            <!-- Featured Communities -->
+            <div class="widget">
+                <div class="widget-header">
+                    <i class="fas fa-fire"></i>
+                    <span>Featured Communities</span>
+                </div>
+                <div class="widget-content">
+                    <div class="community-item">
+                        <div class="community-icon">MTG</div>
+                        <div class="community-info">
+                            <h4>MTG Commander</h4>
+                            <div class="community-members">12.5k members</div>
+                        </div>
+                    </div>
+                    <div class="community-item">
+                        <div class="community-icon">PKM</div>
+                        <div class="community-info">
+                            <h4>Pokémon TCG</h4>
+                            <div class="community-members">15.2k members</div>
+                        </div>
+                    </div>
+                    <div class="community-item">
+                        <div class="community-icon">YGO</div>
+                        <div class="community-info">
+                            <h4>Yu-Gi-Oh! Duelists</h4>
+                            <div class="community-members">9.7k members</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Online Friends -->
+            <div class="widget">
+                <div class="widget-header">
+                    <i class="fas fa-user-friends"></i>
+                    <span>Online Friends</span>
+                </div>
+                <div class="widget-content">
+                    <div class="online-friends">
+                        <div class="friend-item">
+                            <div class="friend-avatar">
+                                MS
+                                <div class="friend-status"></div>
+                            </div>
+                            <div class="friend-info">
+                                <h4>Maria Sanchez</h4>
+                            </div>
+                        </div>
+                        <div class="friend-item">
+                            <div class="friend-avatar">
+                                TJ
+                                <div class="friend-status"></div>
+                            </div>
+                            <div class="friend-info">
+                                <h4>Thomas Johnson</h4>
+                            </div>
+                        </div>
+                        <div class="friend-item">
+                            <div class="friend-avatar">
+                                AL
+                                <div class="friend-status"></div>
+                            </div>
+                            <div class="friend-info">
+                                <h4>Alex Liu</h4>
+                            </div>
+                        </div>
+                        <div class="friend-item">
+                            <div class="friend-avatar">
+                                SK
+                                <div class="friend-status"></div>
+                            </div>
+                            <div class="friend-info">
+                                <h4>Sarah Kim</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Events -->
+            <div class="widget">
+                <div class="widget-header">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Upcoming Events</span>
+                </div>
+                <div class="widget-content">
+                    <div class="community-item">
+                        <div class="community-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="community-info">
+                            <h4>Need to be Geek Convention</h4>
+                            <div class="community-members">Sept 27, 2025 • Skara</div>
+                        </div>
+                    </div>
+                    <div class="community-item">
+                        <div class="community-icon">
+                            <i class="fas fa-cards-blank"></i>
+                        </div>
+                        <div class="community-info">
+                            <h4>SweCard Expo</h4>
+                            <div class="community-members">Oct 11, 2025 • Svedala</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Messenger Widget -->
+    <div class="messenger-widget">
+        <button class="messenger-toggle" id="messengerToggle">
+            <i class="fas fa-comment-alt"></i>
+            <span class="messenger-badge">3</span>
+        </button>
         
-        <!-- Executive Summary -->
-        <div class="dashboard-card">
-            <h3><i class="fas fa-file-alt"></i> Executive Summary</h3>
-            <div class="card-content">
-                <p>HatakeSocial is a promising TCG-focused social platform with a solid foundation featuring multi-page architecture, basic community features, and e-commerce integration. However, several critical improvements are needed to transform it into a competitive social media platform for TCG collectors and players.</p>
+        <div class="messenger-panel" id="messengerPanel">
+            <div class="messenger-header">
+                <h3>Messages</h3>
+                <button class="messenger-close" id="messengerClose">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-        </div>
-        
-        <!-- Strengths & Critical Fixes -->
-        <div class="dashboard-grid">
-            <div class="dashboard-card">
-                <h3><i class="fas fa-thumbs-up"></i> Current Platform Strengths</h3>
-                <div class="card-content">
-                    <div class="metric">
-                        <span class="metric-label">Multi-page Architecture</span>
-                        <span class="metric-value"><i class="fas fa-check-circle" style="color: #48bb78;"></i></span>
+            <div class="messenger-content">
+                <div class="chat-item">
+                    <div class="chat-avatar">
+                        MS
+                        <div class="friend-status"></div>
                     </div>
-                    <div class="metric">
-                        <span class="metric-label">TCG-Focused Design</span>
-                        <span class="metric-value"><i class="fas fa-check-circle" style="color: #48bb78;"></i></span>
+                    <div class="chat-info">
+                        <h4>Maria Sanchez</h4>
+                        <div class="chat-preview">Hey! Want to trade some cards?</div>
                     </div>
-                    <div class="metric">
-                        <span class="metric-label">E-commerce Integration</span>
-                        <span class="metric-value"><i class="fas fa-check-circle" style="color: #48bb78;"></i></span>
+                    <div class="unread-badge">2</div>
+                </div>
+                <div class="chat-item">
+                    <div class="chat-avatar">
+                        TJ
+                        <div class="friend-status"></div>
                     </div>
-                    <div class="metric">
-                        <span class="metric-label">Community Structure</span>
-                        <span class="metric-value"><i class="fas fa-check-circle" style="color: #48bb78;"></i></span>
+                    <div class="chat-info">
+                        <h4>Thomas Johnson</h4>
+                        <div class="chat-preview">Thanks for the deck advice!</div>
                     </div>
-                    <div class="metric">
-                        <span class="metric-label">Event Management</span>
-                        <span class="metric-value"><i class="fas fa-check-circle" style="color: #48bb78;"></i></span>
+                    <div class="unread-badge">1</div>
+                </div>
+                <div class="chat-item">
+                    <div class="chat-avatar">AL</div>
+                    <div class="chat-info">
+                        <h4>Alex Liu</h4>
+                        <div class="chat-preview">See you at the tournament!</div>
                     </div>
-                    <div class="metric">
-                        <span class="metric-label">Basic Social Features</span>
-                        <span class="metric-value"><i class="fas fa-check-circle" style="color: #48bb78;"></i></span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="dashboard-card">
-                <h3><i class="fas fa-exclamation-triangle"></i> Critical Fixes Required</h3>
-                <div class="card-content">
-                    <div class="metric">
-                        <span class="metric-label">Technical Infrastructure</span>
-                        <span class="metric-value"><i class="fas fa-wrench" style="color: #e53e3e;"></i></span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">User Experience</span>
-                        <span class="metric-value"><i class="fas fa-wrench" style="color: #e53e3e;"></i></span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">Security & Authentication</span>
-                        <span class="metric-value"><i class="fas fa-wrench" style="color: #e53e3e;"></i></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Requested Features -->
-        <div class="feature-grid">
-            <div class="feature-card">
-                <h3><i class="fas fa-comments"></i> Messenger Widget</h3>
-                <ul class="feature-list">
-                    <li><i class="fas fa-check-circle"></i> Private Messaging System</li>
-                    <li><i class="fas fa-check-circle"></i> Group Chat Functionality</li>
-                    <li><i class="fas fa-check-circle"></i> Message Notifications</li>
-                    <li><i class="fas fa-check-circle"></i> File Sharing</li>
-                    <li><i class="fas fa-check-circle"></i> Online Status Indicators</li>
-                </ul>
-            </div>
-            
-            <div class="feature-card">
-                <h3><i class="fas fa-moon"></i> Dark Mode</h3>
-                <ul class="feature-list">
-                    <li><i class="fas fa-check-circle"></i> Theme Toggle</li>
-                    <li><i class="fas fa-check-circle"></i> System Preference Detection</li>
-                    <li><i class="fas fa-check-circle"></i> localStorage Persistence</li>
-                    <li><i class="fas fa-check-circle"></i> Smooth Transitions</li>
-                    <li><i class="fas fa-check-circle"></i> Comprehensive Coverage</li>
-                </ul>
-            </div>
-            
-            <div class="feature-card">
-                <h3><i class="fas fa-user-lock"></i> Persistent Login</h3>
-                <ul class="feature-list">
-                    <li><i class="fas fa-check-circle"></i> Session Management</li>
-                    <li><i class="fas fa-check-circle"></i> localStorage Integration</li>
-                    <li><i class="fas fa-check-circle"></i> Auto-refresh Tokens</li>
-                    <li><i class="fas fa-check-circle"></i> Cross-page Consistency</li>
-                    <li><i class="fas fa-check-circle"></i> Session Timeout Warnings</li>
-                </ul>
-            </div>
-            
-            <div class="feature-card">
-                <h3><i class="fas fa-sign-in-alt"></i> Social Login</h3>
-                <ul class="feature-list">
-                    <li><i class="fas fa-check-circle"></i> Facebook Login</li>
-                    <li><i class="fas fa-check-circle"></i> Google Login</li>
-                    <li><i class="fas fa-check-circle"></i> Profile Import</li>
-                    <li><i class="fas fa-check-circle"></i> Account Linking</li>
-                    <li><i class="fas fa-check-circle"></i> Privacy Controls</li>
-                </ul>
-            </div>
-        </div>
-        
-        <!-- Implementation Roadmap -->
-        <div class="roadmap">
-            <div class="roadmap-header">
-                <h2><i class="fas fa-road"></i> Implementation Roadmap</h2>
-                <p>Systematic approach to transforming HatakeSocial into a premier TCG platform</p>
-            </div>
-            
-            <div class="phase-container">
-                <div class="phase">
-                    <div class="phase-header">
-                        <div class="phase-title"><i class="fas fa-hard-hat"></i> Phase 1: Foundation</div>
-                        <div class="phase-priority priority-critical">Priority: Critical</div>
-                    </div>
-                    <div class="phase-content">
-                        <div class="feature-item">
-                            <h4>Technical Infrastructure</h4>
-                            <p>Fix mobile responsiveness and cross-browser compatibility</p>
-                        </div>
-                        <div class="feature-item">
-                            <h4>Dark Mode</h4>
-                            <p>Implement with localStorage persistence</p>
-                        </div>
-                        <div class="feature-item">
-                            <h4>Social Login</h4>
-                            <p>Add Facebook login alongside Google OAuth</p>
-                        </div>
-                        <div class="feature-item">
-                            <h4>Messenger Widget</h4>
-                            <p>Develop basic messenger for friend communication</p>
-                        </div>
-                        <div class="feature-item">
-                            <h4>Session Management</h4>
-                            <p>Enhance for persistent login across pages</p>
-                        </div>
-                        <div class="feature-item">
-                            <h4>Security Measures</h4>
-                            <p>Implement basic security and input validation</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="phase">
-                    <div class="phase-header">
-                        <div class="phase-title"><i class="fas fa-users"></i> Phase 2: Social Features</div>
-                        <div class="phase-priority priority-high">Priority: High</div>
-                    </div>
-                    <div class="phase-content">
-                        <div class="feature-item">
-                            <h4>Friend System</h4>
-                            <p>Complete with requests and management</p>
-                        </div>
-                        <div class="feature-item">
-                            <h4>Advanced Messaging</h4>
-                            <p>Group chats and file sharing</p>
-                        </div>
-                        <div class="feature-item">
-                            <h4>User Profiles</h4>
-                            <p>Enhance with collection showcases</p>
-                        </div>
-                        <div class="feature-item">
-                            <h4>Activity Feed</h4>
-                            <p>Personalized feed and notification system</p>
-                        </div>
-                        <div class="feature-item">
-                            <h4>Trading System</h4>
-                            <p>Basic trading with trade proposals</p>
-                        </div>
-                        <div class="feature-item">
-                            <h4>Mobile Design</h4>
-                            <p>Responsive design improvements</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="phase">
-                    <div class="phase-header">
-                        <div class="phase-title"><i class="fas fa-dragon"></i> Phase 3: TCG-Specific Tools</div>
-                        <div class="phase-priority priority-medium">Priority: Medium</div>
-                    </div>
-                    <div class="phase-content">
-                        <div class="feature-item">
-                            <h4>Collection Management</h4>
-                            <p>Digital collection tracker and wishlist system</p>
-                        </div>
-                        <div class="feature-item">
-                            <h4>Deck Builder</h4>
-                            <p>Advanced builder with analysis tools</p>
-                        </div>
-                        <div class="feature-item">
-                            <h4>Tournament System</h4>
-                            <p>Creation and management tools</p>
-                        </div>
-                        <div class="feature-item">
-                            <h4>Card Database</h4>
-                            <p>Integration with real-time pricing</p>
-                        </div>
-                        <div class="feature-item">
-                            <h4>Trade Matching</h4>
-                            <p>AI-powered recommendation engine</p>
-                        </div>
-                        <div class="feature-item">
-                            <h4>Search Capabilities</h4>
-                            <p>Enhanced search and filtering</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Success Metrics -->
-        <div class="metrics-section">
-            <div class="metrics-header">
-                <h2><i class="fas fa-chart-line"></i> Success Metrics & KPIs</h2>
-                <p>Key performance indicators to measure platform success</p>
-            </div>
-            
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <i class="fas fa-users fa-2x"></i>
-                    <div class="metric-value-lg">10,000+</div>
-                    <div class="metric-label-lg">Daily Active Users</div>
-                    <div class="metric-target">First Year Target</div>
-                </div>
-                
-                <div class="metric-card">
-                    <i class="fas fa-sync-alt fa-2x"></i>
-                    <div class="metric-value-lg">70%+</div>
-                    <div class="metric-label-lg">Weekly Return Rate</div>
-                    <div class="metric-target">User Retention</div>
-                </div>
-                
-                <div class="metric-card">
-                    <i class="fas fa-trade fa-2x"></i>
-                    <div class="metric-value-lg">500+</div>
-                    <div class="metric-label-lg">Monthly Trades</div>
-                    <div class="metric-target">Trading Activity</div>
-                </div>
-                
-                <div class="metric-card">
-                    <i class="fas fa-trophy fa-2x"></i>
-                    <div class="metric-value-lg">50+</div>
-                    <div class="metric-label-lg">Monthly Tournaments</div>
-                    <div class="metric-target">Event Participation</div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Monetization Strategies -->
-        <div class="monetization-section">
-            <div class="monetization-header">
-                <h2><i class="fas fa-money-bill-wave"></i> Monetization Strategies</h2>
-                <p>Sustainable revenue models for platform growth</p>
-            </div>
-            
-            <div class="monetization-grid">
-                <div class="monetization-card">
-                    <h3><i class="fas fa-crown"></i> Premium Subscriptions</h3>
-                    <ul class="monetization-list">
-                        <li><i class="fas fa-circle"></i> Hatake Pro: Advanced features</li>
-                        <li><i class="fas fa-circle"></i> Creator Subscriptions</li>
-                        <li><i class="fas fa-circle"></i> Tournament Organizer Tools</li>
-                        <li><i class="fas fa-circle"></i> Advanced Analytics</li>
-                        <li><i class="fas fa-circle"></i> Ad-Free Experience</li>
-                    </ul>
-                </div>
-                
-                <div class="monetization-card">
-                    <h3><i class="fas fa-exchange-alt"></i> Transaction-Based</h3>
-                    <ul class="monetization-list">
-                        <li><i class="fas fa-circle"></i> Trading Fees (high-value)</li>
-                        <li><i class="fas fa-circle"></i> Marketplace Commission</li>
-                        <li><i class="fas fa-circle"></i> Event Registration Fees</li>
-                        <li><i class="fas fa-circle"></i> Premium Listings</li>
-                        <li><i class="fas fa-circle"></i> Escrow Services</li>
-                    </ul>
-                </div>
-                
-                <div class="monetization-card">
-                    <h3><i class="fas fa-handshake"></i> Partnerships & Ads</h3>
-                    <ul class="monetization-list">
-                        <li><i class="fas fa-circle"></i> Sponsored Content</li>
-                        <li><i class="fas fa-circle"></i> Affiliate Marketing</li>
-                        <li><i class="fas fa-circle"></i> Event Sponsorships</li>
-                        <li><i class="fas fa-circle"></i> Targeted Advertising</li>
-                        <li><i class="fas fa-circle"></i> Data Insights</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Conclusion -->
-        <div class="conclusion-section">
-            <div class="conclusion-header">
-                <h2>Conclusion</h2>
-                <p>HatakeSocial has strong potential to become the premier social platform for TCG collectors and players. The current foundation provides a solid starting point, but significant development is needed to compete with established social platforms while serving the unique needs of the TCG community.</p>
-            </div>
-            
-            <div class="success-factors">
-                <div class="factor-card">
-                    <h4><i class="fas fa-mobile-alt"></i> Mobile Experience</h4>
-                    <p>Prioritizing mobile experience from the beginning to reach wider audience</p>
-                </div>
-                
-                <div class="factor-card">
-                    <h4><i class="fas fa-tools"></i> Robust Tools</h4>
-                    <p>Building robust trading and collection management tools as platform differentiators</p>
-                </div>
-                
-                <div class="factor-card">
-                    <h4><i class="fas fa-users"></i> Community Features</h4>
-                    <p>Creating strong community features that encourage engagement and retention</p>
-                </div>
-                
-                <div class="factor-card">
-                    <h4><i class="fas fa-shield-alt"></i> Security & Trust</h4>
-                    <p>Maintaining security and trust in all transactions to build user confidence</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <div class="footer-title">About Hatake TCG</div>
-                <p>Hatake is a premium TCG accessories brand founded by passionate players who understand what collectors and competitors need.</p>
-                <div class="social-links">
-                    <a href="https://www.facebook.com/HatakeCardShop/" class="social-link"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://discord.com/invite/Puq5ncSbjt" class="social-link"><i class="fab fa-discord"></i></a>
-                    <a href="https://instagram.com/hatakese" class="social-link"><i class="fab fa-instagram"></i></a>
-                    <a href="https://twitter.com" class="social-link"><i class="fab fa-twitter"></i></a>
-                </div>
-            </div>
-            
-            <div class="footer-section">
-                <div class="footer-title">Quick Links</div>
-                <ul class="footer-links">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="shop.html">Shop</a></li>
-                    <li><a href="events.html">Events</a></li>
-                    <li><a href="community.html">Community</a></li>
-                    <li><a href="deckbuilder.html">Deck Builder</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-section">
-                <div class="footer-title">Community</div>
-                <ul class="footer-links">
-                    <li><a href="#">MTG Commander</a></li>
-                    <li><a href="#">MTG cEDH</a></li>
-                    <li><a href="#">Pokémon TCG</a></li>
-                    <li><a href="#">Yu-Gi-Oh! Duelists</a></li>
-                    <li><a href="#">Regional Groups</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-section">
-                <div class="footer-title">Contact Us</div>
-                <ul class="footer-links">
-                    <li><i class="fas fa-envelope"></i> ernst@hatake.eu</li>
-                    <li><i class="fas fa-phone"></i> +46 123 456 789</li>
-                    <li><i class="fas fa-map-marker-alt"></i> Falköping, Sweden</li>
-                </ul>
-            </div>
-        </div>
-        
-        <div class="copyright">
-            &copy; 2025 Hatake TCG. All rights reserved.
-        </div>
-    </footer>
-
     <script>
-        // Initialize Supabase
-        const supabaseUrl = 'https://llukovlzjhflfhacajps.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxsdWtvdmx6amhmbGZoY2FqcHMiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc1MDAwNjc3MiwiZXhwIjoyMDY1NTgyNzcyfQ.kbaftEOsGUriJOxMlTOFkXUGhLcKBaHwfVLG9S60gpU';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-        
-        // DOM elements
+        // Dark Mode Toggle
         const darkModeToggle = document.getElementById('darkModeToggle');
         const body = document.body;
-        const userAvatar = document.getElementById('userAvatar');
         
-        // Check for saved dark mode preference
-        function initDarkMode() {
-            // Check system preference
-            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        body.setAttribute('data-theme', currentTheme);
+        
+        // Update toggle icon based on current theme
+        updateToggleIcon(currentTheme);
+        
+        darkModeToggle.addEventListener('click', () => {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             
-            // Check localStorage for existing preference
-            const storedDarkMode = localStorage.getItem('darkMode');
-            
-            if (storedDarkMode === null) {
-                // If no preference stored, use system preference
-                if (systemPrefersDark) {
-                    body.classList.add('dark-mode');
-                    darkModeToggle.querySelector('i').classList.remove('fa-moon');
-                    darkModeToggle.querySelector('i').classList.add('fa-sun');
-                    localStorage.setItem('darkMode', 'true');
-                }
-            } else if (storedDarkMode === 'true') {
-                body.classList.add('dark-mode');
-                darkModeToggle.querySelector('i').classList.remove('fa-moon');
-                darkModeToggle.querySelector('i').classList.add('fa-sun');
-            }
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateToggleIcon(newTheme);
+        });
+        
+        function updateToggleIcon(theme) {
+            const icon = darkModeToggle.querySelector('i');
+            icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
         }
         
-        // Dark mode toggle
-        darkModeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            const icon = darkModeToggle.querySelector('i');
-            
-            if (body.classList.contains('dark-mode')) {
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
-                localStorage.setItem('darkMode', 'true');
-            } else {
-                icon.classList.remove('fa-sun');
-                icon.classList.add('fa-moon');
-                localStorage.setItem('darkMode', 'false');
+        // Messenger Widget
+        const messengerToggle = document.getElementById('messengerToggle');
+        const messengerPanel = document.getElementById('messengerPanel');
+        const messengerClose = document.getElementById('messengerClose');
+        
+        messengerToggle.addEventListener('click', () => {
+            messengerPanel.classList.toggle('active');
+        });
+        
+        messengerClose.addEventListener('click', () => {
+            messengerPanel.classList.remove('active');
+        });
+        
+        // Close messenger when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!messengerToggle.contains(e.target) && !messengerPanel.contains(e.target)) {
+                messengerPanel.classList.remove('active');
             }
         });
         
-        // Initialize page
-        initDarkMode();
+        // Post Creation
+        const postBtn = document.getElementById('postBtn');
+        const postInput = document.getElementById('postInput');
+        const feedContent = document.getElementById('feedContent');
+        
+        postBtn.addEventListener('click', createPost);
+        postInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                createPost();
+            }
+        });
+        
+        function createPost() {
+            const content = postInput.value.trim();
+            if (!content) return;
+            
+            const post = document.createElement('div');
+            post.className = 'post';
+            post.innerHTML = `
+                <div class="post-header">
+                    <div class="post-avatar">EH</div>
+                    <div class="post-info">
+                        <h4>Ernst-William Hertz</h4>
+                        <div class="post-time">Just now</div>
+                    </div>
+                </div>
+                <div class="post-content">${content}</div>
+                <div class="post-actions">
+                    <div class="post-action">
+                        <i class="fas fa-heart"></i>
+                        <span>0</span>
+                    </div>
+                    <div class="post-action">
+                        <i class="fas fa-comment"></i>
+                        <span>Comment</span>
+                    </div>
+                    <div class="post-action">
+                        <i class="fas fa-share"></i>
+                        <span>Share</span>
+                    </div>
+                </div>
+            `;
+            
+            feedContent.insertBefore(post, feedContent.firstChild);
+            postInput.value = '';
+            
+            // Add animation
+            post.style.opacity = '0';
+            post.style.transform = 'translateY(-20px)';
+            setTimeout(() => {
+                post.style.transition = 'all 0.3s ease';
+                post.style.opacity = '1';
+                post.style.transform = 'translateY(0)';
+            }, 10);
+        }
+        
+        // Post Actions
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.post-action')) {
+                const action = e.target.closest('.post-action');
+                const icon = action.querySelector('i');
+                
+                if (icon.classList.contains('fa-heart')) {
+                    action.classList.toggle('liked');
+                    const count = action.querySelector('span');
+                    const currentCount = parseInt(count.textContent);
+                    count.textContent = action.classList.contains('liked') ? 
+                        currentCount + 1 : currentCount - 1;
+                }
+            }
+        });
+        
+        // Search Functionality
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            // Implement search logic here
+            console.log('Searching for:', query);
+        });
+        
+        // Notification Handlers
+        document.getElementById('notificationsBtn').addEventListener('click', () => {
+            alert('Notifications feature coming soon!');
+        });
+        
+        document.getElementById('messagesBtn').addEventListener('click', () => {
+            messengerPanel.classList.toggle('active');
+        });
+        
+        document.getElementById('cartBtn').addEventListener('click', () => {
+            window.location.href = 'shop.html';
+        });
+        
+        // User Avatar Click
+        document.getElementById('userAvatar').addEventListener('click', () => {
+            alert('Profile menu coming soon!');
+        });
+        
+        // Shortcut Items
+        document.querySelectorAll('.shortcut-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const text = item.querySelector('span').textContent;
+                console.log('Navigating to:', text);
+                // Implement navigation logic
+            });
+        });
+        
+        // Community Items
+        document.querySelectorAll('.community-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const name = item.querySelector('h4').textContent;
+                console.log('Joining community:', name);
+                // Implement community navigation
+            });
+        });
+        
+        // Friend Items
+        document.querySelectorAll('.friend-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const name = item.querySelector('h4').textContent;
+                console.log('Opening chat with:', name);
+                // Implement chat opening
+            });
+        });
+        
+        // Chat Items in Messenger
+        document.querySelectorAll('.chat-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const name = item.querySelector('h4').textContent;
+                console.log('Opening chat with:', name);
+                // Implement full chat interface
+            });
+        });
+        
+        // Auto-detect system theme preference
+        if (window.matchMedia && !localStorage.getItem('theme')) {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = prefersDark ? 'dark' : 'light';
+            body.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            updateToggleIcon(theme);
+        }
+        
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (!localStorage.getItem('theme')) {
+                const theme = e.matches ? 'dark' : 'light';
+                body.setAttribute('data-theme', theme);
+                updateToggleIcon(theme);
+            }
+        });
+        
+        // Simulate real-time updates
+        setInterval(() => {
+            // Update online status, new messages, etc.
+            const badges = document.querySelectorAll('.badge, .messenger-badge, .unread-badge');
+            badges.forEach(badge => {
+                if (Math.random() > 0.95) { // 5% chance to update
+                    const current = parseInt(badge.textContent);
+                    badge.textContent = current + 1;
+                    badge.style.animation = 'pulse 0.5s ease-in-out';
+                    setTimeout(() => {
+                        badge.style.animation = '';
+                    }, 500);
+                }
+            });
+        }, 5000);
+        
+        // Initialize tooltips and other interactive elements
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('HatakeSocial Community Platform Loaded');
+            
+            // Add loading states to buttons
+            document.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (!this.classList.contains('loading')) {
+                        const originalText = this.innerHTML;
+                        this.classList.add('loading');
+                        this.innerHTML = '<span class="loading"></span>';
+                        
+                        setTimeout(() => {
+                            this.classList.remove('loading');
+                            this.innerHTML = originalText;
+                        }, 1000);
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>
+
