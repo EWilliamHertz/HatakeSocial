@@ -468,6 +468,11 @@
             color: white;
         }
         
+        .email-btn {
+            background-color: #2b6cb0;
+            color: white;
+        }
+        
         /* Modal */
         .modal {
             display: none;
@@ -1156,7 +1161,10 @@
                         <button class="auth-btn google-btn" id="googleSignInBtn">
                             <i class="fab fa-google"></i> Sign in with Google
                         </button>
-                        <button class="auth-btn" id="logoutBtn" style="display: none; background-color: #e53e3e;">
+                        <button class="auth-btn email-btn" id="emailAuthBtn">
+                            <i class="fas fa-envelope"></i> Register/Login with Email
+                        </button>
+                        <button class="auth-btn logout-btn" id="logoutBtn" style="display: none;">
                             <i class="fas fa-sign-out-alt"></i> Logout
                         </button>
                     </div>
@@ -1419,7 +1427,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Edit Profile</h3>
-                <button class="modal-close" id="closeModal">&times;</button>
+                <button class="modal-close" id="closeModal">×</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
@@ -1469,7 +1477,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Sign In / Sign Up</h3>
-                <button class="modal-close" id="closeAuthModal">&times;</button>
+                <button class="modal-close" id="closeAuthModal">×</button>
             </div>
             <div class="modal-body">
                 <div class="tabs">
@@ -1565,16 +1573,16 @@
         </div>
         
         <div class="copyright">
-            &copy; 2025 Hatake TCG. All rights reserved.
+            © 2025 Hatake TCG. All rights reserved.
         </div>
     </footer>
 
-  <script>
-        // Initialize Supabase
+    <script>
+        // Initialize Supabase with correct credentials
         const supabaseUrl = 'https://llukovlzjhflfhacajps.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxsdWtvdmx6amhmbGZoY2FqcHMiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc1MDAwNjc3MiwiZXhwIjoyMDY1NTgyNzcyfQ.kbaftEOsGUriJOxMlTOFkXUGhLcKBaHwfVLG9S60gpU';
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-        
+
         // DOM elements
         const darkModeToggle = document.getElementById('darkModeToggle');
         const body = document.body;
@@ -1592,6 +1600,7 @@
         const saveProfile = document.getElementById('saveProfile');
         const googleSignInBtn = document.getElementById('googleSignInBtn');
         const googleSignInModalBtn = document.getElementById('googleSignInModalBtn');
+        const emailAuthBtn = document.getElementById('emailAuthBtn');
         const logoutBtn = document.getElementById('logoutBtn');
         const authSection = document.getElementById('authSection');
         const authMessage = document.getElementById('authMessage');
@@ -1614,14 +1623,14 @@
         
         // Initialize chatHistory
         let chatHistory = [];
-        
+
         // Check for saved dark mode preference
         if (localStorage.getItem('darkMode') === 'true') {
             body.classList.add('dark-mode');
             darkModeToggle.querySelector('i').classList.remove('fa-moon');
             darkModeToggle.querySelector('i').classList.add('fa-sun');
         }
-        
+
         // Dark mode toggle
         darkModeToggle.addEventListener('click', () => {
             body.classList.toggle('dark-mode');
@@ -1637,7 +1646,7 @@
                 localStorage.setItem('darkMode', 'false');
             }
         });
-        
+
         // Check authentication state
         async function checkAuthState() {
             const { data: { user } } = await supabase.auth.getUser();
@@ -1657,20 +1666,24 @@
                     if (!error) {
                         localStorage.setItem('user', JSON.stringify(newProfile));
                         updateProfileUI(newProfile);
+                    } else {
+                        console.error('Error creating profile:', error.message);
                     }
                 }
                 logoutBtn.style.display = 'block';
                 authMessage.textContent = `Welcome back, ${user.email.split('@')[0]}!`;
                 googleSignInBtn.style.display = 'none';
+                emailAuthBtn.style.display = 'none';
                 loadChatMessages();
             } else {
                 logoutBtn.style.display = 'none';
                 googleSignInBtn.style.display = 'flex';
+                emailAuthBtn.style.display = 'flex';
                 authMessage.textContent = 'Sign in to access all community features.';
                 updateProfileUI({ name: "Guest User", bio: "Join our TCG community!", avatar: 0 });
             }
         }
-        
+
         // Update UI with user data
         function updateProfileUI(user) {
             profileName.textContent = user.name || "Guest User";
@@ -1687,15 +1700,15 @@
             mainProfilePic.style.background = `linear-gradient(135deg, ${avatarColor}, ${darkenColor(avatarColor, 20)})`;
             
             const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
-            userAvatar.textContent = initials;
-            profilePic.textContent = initials;
-            mainProfilePic.textContent = initials;
+            userAvatar.textContent = initials || '?';
+            profilePic.textContent = initials || '?';
+            mainProfilePic.textContent = initials || '?';
             
             document.getElementById('postCount').textContent = Math.floor(Math.random() * 100);
             document.getElementById('friendsCount').textContent = Math.floor(Math.random() * 500);
             document.getElementById('groupsCount').textContent = Math.floor(Math.random() * 20);
         }
-        
+
         // Helper function to darken color
         function darkenColor(color, percent) {
             let R = parseInt(color.substring(1,3), 16);
@@ -1708,21 +1721,24 @@
             
             return `#${R.toString(16).padStart(2, '0')}${G.toString(16).padStart(2, '0')}${B.toString(16).padStart(2, '0')}`;
         }
-        
+
         // Google Sign-In
         async function signInWithGoogle() {
             try {
                 const { data, error } = await supabase.auth.signInWithOAuth({
                     provider: 'google',
-                    options: { redirectTo: window.location.origin + '/community.html' }
+                    options: {
+                        redirectTo: window.location.origin + '/community.html',
+                        scopes: 'email profile'
+                    }
                 });
                 if (error) throw error;
             } catch (error) {
-                console.error('Error signing in:', error.message);
-                loginError.textContent = 'Failed to sign in with Google. Please try again.';
+                console.error('Error signing in with Google:', error.message);
+                loginError.textContent = 'Failed to sign in with Google. Please try again or check your connection.';
             }
         }
-        
+
         // Logout
         async function logout() {
             const { error } = await supabase.auth.signOut();
@@ -1730,7 +1746,7 @@
             localStorage.removeItem('user');
             checkAuthState();
         }
-        
+
         // Profile Modal
         editProfileBtn.addEventListener('click', () => {
             profileModal.style.display = 'flex';
@@ -1741,17 +1757,17 @@
             const avatarOptions = document.querySelectorAll('.avatar-option');
             avatarOptions.forEach(option => {
                 option.classList.remove('selected');
-                if (parseInt(option.dataset.avatar) === user.avatar) {
+                if (parseInt(option.dataset.avatar) === (user.avatar || 0)) {
                     option.classList.add('selected');
                 }
             });
         });
-        
+
         // Close modal
         function closeProfileModal() {
             profileModal.style.display = 'none';
         }
-        
+
         // Avatar selection
         document.querySelectorAll('.avatar-option').forEach(option => {
             option.addEventListener('click', () => {
@@ -1759,7 +1775,7 @@
                 option.classList.add('selected');
             });
         });
-        
+
         // Save profile
         saveProfile.addEventListener('click', async () => {
             const name = document.getElementById('editName').value.trim();
@@ -1788,7 +1804,7 @@
                 }
             }
         });
-        
+
         // Chat functionality
         async function loadChatMessages() {
             const { data: messages, error } = await supabase
@@ -1806,7 +1822,7 @@
                 renderChatMessages();
             }
         }
-        
+
         function renderChatMessages() {
             chatMessages.innerHTML = '';
             chatHistory.forEach(msg => {
@@ -1830,21 +1846,21 @@
             });
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
-        
+
         async function addMessage(message, senderId) {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) return;
             
             const { error } = await supabase
                 .from('messages')
-                .insert([{ user_id: user.id, message }]);
+                .insert([{ user_id: user.id, message, created_at: new Date().toISOString() }]);
             if (error) {
                 console.error('Error sending message:', error.message);
             } else {
                 loadChatMessages();
             }
         }
-        
+
         sendMessageBtn.addEventListener('click', async () => {
             const message = chatInput.value.trim();
             if (message) {
@@ -1852,7 +1868,7 @@
                 chatInput.value = '';
             }
         });
-        
+
         chatInput.addEventListener('keypress', async (e) => {
             if (e.key === 'Enter') {
                 const message = chatInput.value.trim();
@@ -1862,7 +1878,7 @@
                 }
             }
         });
-        
+
         // Auth Modal Tabs
         tabBtns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -1872,19 +1888,19 @@
                 document.getElementById(`${btn.dataset.tab}Tab`).classList.add('active');
             });
         });
-        
+
         // Open Auth Modal
         userAvatar.addEventListener('click', () => {
             authModal.style.display = 'flex';
         });
-        
+
         // Close Auth Modal
         closeAuthModal.addEventListener('click', () => {
             authModal.style.display = 'none';
             loginError.textContent = '';
             signupError.textContent = '';
         });
-        
+
         // Login with Email
         async function loginWithEmail() {
             const email = loginEmail.value.trim();
@@ -1903,7 +1919,7 @@
                 authModal.style.display = 'none';
             }
         }
-        
+
         // Sign Up with Email
         async function signupWithEmail() {
             const name = signupName.value.trim();
@@ -1948,16 +1964,19 @@
                 }
             }
         }
-        
+
         // Event listeners
         closeModal.addEventListener('click', closeProfileModal);
         cancelEdit.addEventListener('click', closeProfileModal);
         googleSignInBtn.addEventListener('click', signInWithGoogle);
         googleSignInModalBtn.addEventListener('click', signInWithGoogle);
+        emailAuthBtn.addEventListener('click', () => {
+            authModal.style.display = 'flex';
+        });
         logoutBtn.addEventListener('click', logout);
         loginBtn.addEventListener('click', loginWithEmail);
         signupBtn.addEventListener('click', signupWithEmail);
-        
+
         // Close modals when clicking outside
         window.addEventListener('click', (e) => {
             if (e.target === profileModal) closeProfileModal();
@@ -1967,7 +1986,7 @@
                 signupError.textContent = '';
             }
         });
-        
+
         // Initialize page
         checkAuthState();
     </script>
